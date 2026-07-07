@@ -1,0 +1,42 @@
+---
+interface Props {
+  name: string;
+  quote: string;
+  source?: string;
+}
+
+const { name, quote, source } = Astro.props;
+---
+
+<figure class="review-card content-card">
+  <blockquote>{quote}</blockquote>
+  <figcaption>
+    <strong>{name}</strong>
+    {source && <span>{source}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .review-card {
+    margin: 0;
+    padding: 22px;
+  }
+
+  blockquote {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  figcaption {
+    display: grid;
+    gap: 3px;
+    margin-top: 18px;
+  }
+
+  span {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+</style>

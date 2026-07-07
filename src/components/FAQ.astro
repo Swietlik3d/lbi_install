@@ -1,0 +1,63 @@
+---
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: FAQItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section
+      class="section section-band faq-section"
+      aria-labelledby="faq-heading"
+    >
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="faq-heading">Veelgestelde vragen</h2>
+        </div>
+        <div class="faq-list">
+          {items.map((item) => (
+            <details>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .faq-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  details {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+  }
+
+  summary {
+    cursor: pointer;
+    padding: 18px 20px;
+    color: var(--color-ink);
+    font-weight: 850;
+  }
+
+  p {
+    margin: 0;
+    padding: 0 20px 20px;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import "@/styles/global.css";
+import Seo from "@/components/Seo.astro";
+import SchemaJsonLd from "@/components/SchemaJsonLd.astro";
+import type { CollectionEntry } from "astro:content";
+import type { SiteConfig } from "@/config/sites";
+
+type PageEntry = CollectionEntry<"pages">;
+
+interface Props {
+  page: PageEntry;
+  site: SiteConfig;
+  schemaItems?: Array<Record<string, unknown> | null>;
+}
+
+const { page, site, schemaItems = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <Seo page={page} site={site} />
+    <SchemaJsonLd items={schemaItems} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

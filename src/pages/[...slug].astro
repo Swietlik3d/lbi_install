@@ -1,0 +1,71 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import ServiceLayout from "@/layouts/ServiceLayout.astro";
+import EmergencyLayout from "@/layouts/EmergencyLayout.astro";
+import ContactLayout from "@/layouts/ContactLayout.astro";
+import { getNavigation } from "@/config/navigation";
+import { getSiteById, type SiteId } from "@/config/sites";
+import { readdirSync } from "node:fs";
+
+function collectionHasMarkdown(name: "projects" | "reviews") {
+  try {
+    return readdirSync(new URL(`../content/${name}`, import.meta.url)).some(
+      (file) => file.endsWith(".md"),
+    );
+  } catch {
+    return false;
+  }
+}
+
+export async function getStaticPaths() {
+  const siteId = (process.env.SITE_ID || "lbi") as SiteId;
+  const pages = await getCollection(
+    "pages",
+    ({ data }) => data.site === siteId && !data.draft,
+  );
+
+  return pages.map((page) => ({
+    params: {
+      slug:
+        page.data.path === "/"
+          ? undefined
+          : page.data.path.replace(/^\/|\/$/g, ""),
+    },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const site = getSiteById(page.data.site);
+const nav = getNavigation(site.id);
+const projects = collectionHasMarkdown("projects")
+  ? await getCollection(
+      "projects",
+      ({ data }) => data.site === site.id && !data.draft,
+    )
+  : [];
+const reviews = collectionHasMarkdown("reviews")
+  ? await getCollection(
+      "reviews",
+      ({ data }) => data.site === site.id && !data.draft,
+    )
+  : [];
+const settings = (
+  await getCollection("settings", ({ data }) => data.site === site.id)
+)[0];
+
+const layoutProps = { page, site, nav, projects, reviews, settings };
+---
+
+{
+  page.data.page_type === "contact" ? (
+    <ContactLayout {...layoutProps} />
+  ) : site.id !== "lbi" ? (
+    <EmergencyLayout {...layoutProps} />
+  ) : page.data.page_type === "service" ? (
+    <ServiceLayout {...layoutProps} />
+  ) : (
+    <PageLayout {...layoutProps} />
+  )
+}

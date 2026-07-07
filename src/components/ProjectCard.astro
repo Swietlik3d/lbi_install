@@ -1,0 +1,65 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  location?: string;
+  image?: {
+    src?: string;
+    alt?: string;
+  };
+}
+
+const { title, summary, location, image } = Astro.props;
+---
+
+<article class="project-card content-card">
+  {
+    image?.src && (
+      <img
+        src={image.src}
+        alt={image.alt || title}
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
+  <div>
+    {location && <span>{location}</span>}
+    <h3>{title}</h3>
+    <p>{summary}</p>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    overflow: hidden;
+  }
+
+  img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  div {
+    padding: 20px;
+  }
+
+  span {
+    color: var(--color-accent-dark);
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    margin: 8px 0;
+    font-size: 1.18rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+</style>

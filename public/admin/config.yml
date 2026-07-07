@@ -1,0 +1,321 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+editor:
+  preview: false
+
+collections:
+  - name: "lbi_pages"
+    label: "LBI pages"
+    folder: "src/content/pages/lbi"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    media_folder: "../../../public/images/lbi"
+    public_folder: "/images/lbi"
+    fields: &page_fields
+      - {
+          label: "Site",
+          name: "site",
+          widget: "select",
+          options: ["lbi", "elektra", "lekkage", "gas"],
+        }
+      - { label: "Path", name: "path", widget: "string" }
+      - {
+          label: "Page type",
+          name: "page_type",
+          widget: "select",
+          options:
+            [
+              "home",
+              "service",
+              "overview",
+              "projects",
+              "reviews",
+              "area",
+              "about",
+              "contact",
+              "legal",
+            ],
+        }
+      - { label: "Meta title", name: "meta_title", widget: "string" }
+      - { label: "Meta description", name: "meta_description", widget: "text" }
+      - {
+          label: "Focus keyword",
+          name: "focus_keyword",
+          widget: "string",
+          required: false,
+        }
+      - {
+          label: "Secondary keywords",
+          name: "secondary_keywords",
+          widget: "list",
+          required: false,
+        }
+      - { label: "H1", name: "h1", widget: "string" }
+      - label: "Hero"
+        name: "hero"
+        widget: "object"
+        fields:
+          - { label: "Heading", name: "heading", widget: "string" }
+          - { label: "Text", name: "text", widget: "text" }
+          - label: "Image"
+            name: "image"
+            widget: "object"
+            required: false
+            fields:
+              - {
+                  label: "Source",
+                  name: "src",
+                  widget: "image",
+                  required: false,
+                }
+              - {
+                  label: "Alt text",
+                  name: "alt",
+                  widget: "string",
+                  required: false,
+                }
+          - {
+              label: "Highlights",
+              name: "highlights",
+              widget: "list",
+              required: false,
+            }
+      - label: "Sections"
+        name: "sections"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "ID", name: "id", widget: "string", required: false }
+          - { label: "Heading", name: "heading", widget: "string" }
+          - { label: "Body", name: "body", widget: "text", required: false }
+          - {
+              label: "Variant",
+              name: "variant",
+              widget: "select",
+              options:
+                [
+                  "text",
+                  "cards",
+                  "split",
+                  "steps",
+                  "contact",
+                  "projects",
+                  "reviews",
+                ],
+              default: "text",
+            }
+          - label: "Items"
+            name: "items"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Text", name: "text", widget: "text", required: false }
+              - {
+                  label: "Href",
+                  name: "href",
+                  widget: "string",
+                  required: false,
+                }
+      - label: "Primary CTA"
+        name: "cta_primary"
+        widget: "object"
+        fields:
+          - { label: "Label", name: "label", widget: "string" }
+          - { label: "Href", name: "href", widget: "string" }
+      - label: "Secondary CTA"
+        name: "cta_secondary"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Label", name: "label", widget: "string" }
+          - { label: "Href", name: "href", widget: "string" }
+      - label: "FAQ"
+        name: "faqs"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Question", name: "question", widget: "string" }
+          - { label: "Answer", name: "answer", widget: "text" }
+      - label: "Internal links"
+        name: "internal_links"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Label", name: "label", widget: "string" }
+          - { label: "Href", name: "href", widget: "string" }
+      - label: "Image plan"
+        name: "image_plan"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Source", name: "src", widget: "image", required: false }
+          - {
+              label: "Alt text",
+              name: "alt",
+              widget: "string",
+              required: false,
+            }
+      - {
+          label: "Schema type",
+          name: "schema_type",
+          widget: "select",
+          options: ["LocalBusiness", "Service", "FAQPage", "WebPage"],
+          default: "WebPage",
+        }
+      - {
+          label: "Safety alert",
+          name: "safety_alert",
+          widget: "boolean",
+          default: false,
+        }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+
+  - name: "elektra_pages"
+    label: "Elektra pages"
+    folder: "src/content/pages/elektra"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    media_folder: "../../../public/images/elektra"
+    public_folder: "/images/elektra"
+    fields: *page_fields
+
+  - name: "lekkage_pages"
+    label: "Lekkage pages"
+    folder: "src/content/pages/lekkage"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    media_folder: "../../../public/images/lekkage"
+    public_folder: "/images/lekkage"
+    fields: *page_fields
+
+  - name: "gas_pages"
+    label: "Gas pages"
+    folder: "src/content/pages/gas"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    media_folder: "../../../public/images/gas"
+    public_folder: "/images/gas"
+    fields: *page_fields
+
+  - name: "projects"
+    label: "Projects"
+    folder: "src/content/projects"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - {
+          label: "Site",
+          name: "site",
+          widget: "select",
+          options: ["lbi", "elektra", "lekkage", "gas"],
+          default: "lbi",
+        }
+      - { label: "Title", name: "title", widget: "string" }
+      - {
+          label: "Location",
+          name: "location",
+          widget: "string",
+          default: "Helmond",
+        }
+      - { label: "Summary", name: "summary", widget: "text" }
+      - label: "Image"
+        name: "image"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Source", name: "src", widget: "image", required: false }
+          - {
+              label: "Alt text",
+              name: "alt",
+              widget: "string",
+              required: false,
+            }
+      - { label: "Services", name: "services", widget: "list", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+
+  - name: "reviews"
+    label: "Reviews"
+    folder: "src/content/reviews"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - {
+          label: "Site",
+          name: "site",
+          widget: "select",
+          options: ["lbi", "elektra", "lekkage", "gas"],
+          default: "lbi",
+        }
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Quote", name: "quote", widget: "text" }
+      - { label: "Source", name: "source", widget: "string", required: false }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - {
+          label: "Rating",
+          name: "rating",
+          widget: "number",
+          value_type: "float",
+          min: 1,
+          max: 5,
+          required: false,
+        }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+
+  - name: "global_settings"
+    label: "Global settings"
+    folder: "src/content/settings"
+    create: false
+    extension: "yml"
+    format: "yaml"
+    fields:
+      - {
+          label: "Site",
+          name: "site",
+          widget: "select",
+          options: ["lbi", "elektra", "lekkage", "gas"],
+        }
+      - {
+          label: "Contact form enabled",
+          name: "contact_form_enabled",
+          widget: "boolean",
+          default: false,
+        }
+      - {
+          label: "Contact form provider",
+          name: "contact_form_provider",
+          widget: "select",
+          options: ["netlify", "formspree", "custom", "disabled"],
+          default: "disabled",
+        }
+      - {
+          label: "Contact form action",
+          name: "contact_form_action",
+          widget: "string",
+          required: false,
+        }
+      - {
+          label: "Analytics enabled",
+          name: "analytics_enabled",
+          widget: "boolean",
+          default: false,
+        }
+      - {
+          label: "Analytics ID",
+          name: "analytics_id",
+          widget: "string",
+          required: false,
+        }

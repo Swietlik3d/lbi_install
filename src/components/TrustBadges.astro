@@ -1,0 +1,85 @@
+---
+import Icon from "./Icon.astro";
+import type { SiteConfig } from "@/config/sites";
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+const items = [
+  { title: "Direct contact", text: site.phone },
+  { title: "Lokale focus", text: site.area },
+  { title: "Duidelijke afspraken", text: "Geen verzonnen claims" },
+];
+---
+
+<section class="trust-strip" aria-label="Vertrouwenspunten">
+  <div class="container trust-grid">
+    {
+      items.map((item) => (
+        <div class="trust-item">
+          <Icon name="check" size={19} />
+          <div>
+            <strong>{item.title}</strong>
+            <span>{item.text}</span>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .trust-strip {
+    border-block: 1px solid rgb(22 32 28 / 0.08);
+    background: var(--color-surface);
+  }
+
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+  }
+
+  .trust-item {
+    display: flex;
+    min-height: 94px;
+    align-items: center;
+    gap: 13px;
+    padding: 18px 18px 18px 0;
+  }
+
+  svg {
+    flex: 0 0 auto;
+    color: var(--color-accent-dark);
+  }
+
+  strong,
+  span {
+    display: block;
+  }
+
+  strong {
+    margin-bottom: 4px;
+    font-size: 0.98rem;
+  }
+
+  span {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    font-weight: 750;
+  }
+
+  @media (max-width: 760px) {
+    .trust-grid {
+      grid-template-columns: 1fr;
+      padding: 8px 0;
+    }
+
+    .trust-item {
+      min-height: auto;
+      padding: 14px 0;
+    }
+  }
+</style>

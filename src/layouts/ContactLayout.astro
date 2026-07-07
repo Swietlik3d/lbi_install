@@ -1,0 +1,31 @@
+---
+import PageLayout from "./PageLayout.astro";
+import type { CollectionEntry } from "astro:content";
+import type { SiteConfig } from "@/config/sites";
+import type { NavItem } from "@/config/navigation";
+
+type PageEntry = CollectionEntry<"pages">;
+type ProjectEntry = CollectionEntry<"projects">;
+type ReviewEntry = CollectionEntry<"reviews">;
+type SettingsEntry = CollectionEntry<"settings">;
+
+interface Props {
+  page: PageEntry;
+  site: SiteConfig;
+  nav: NavItem[];
+  projects: ProjectEntry[];
+  reviews: ReviewEntry[];
+  settings?: SettingsEntry;
+}
+
+const { page, site, nav, projects, reviews, settings } = Astro.props;
+---
+
+<PageLayout
+  page={page}
+  site={site}
+  nav={nav}
+  projects={projects}
+  reviews={reviews}
+  settings={settings}
+/>

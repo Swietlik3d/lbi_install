@@ -1,0 +1,56 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="safety-alert" aria-labelledby="safety-alert-heading">
+  <div class="container safety-inner">
+    <Icon name="alert" size={28} />
+    <div>
+      <h2 id="safety-alert-heading">Ruikt u gas?</h2>
+      <p>
+        Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel
+        geen elektrische apparaten aan of uit. Sluit de hoofdkraan indien dit
+        veilig kan, ga naar buiten en bel het Nationaal Storingsnummer
+        0800-9009. Bij direct gevaar: bel 112.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .safety-alert {
+    border-block: 1px solid color-mix(in srgb, var(--color-safety) 30%, white);
+    background: var(--color-safety-bg);
+    color: var(--color-safety);
+    padding: 22px 0;
+  }
+
+  .safety-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  svg {
+    margin-top: 2px;
+  }
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 1.18rem;
+  }
+
+  p {
+    max-width: 950px;
+    margin: 0;
+    font-weight: 750;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 520px) {
+    .safety-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

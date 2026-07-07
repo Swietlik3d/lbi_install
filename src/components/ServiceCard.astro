@@ -1,0 +1,81 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  title: string;
+  text?: string;
+  href?: string;
+}
+
+const { title, text, href } = Astro.props;
+const Tag = href ? "a" : "div";
+---
+
+<Tag class="service-card content-card" href={href}>
+  <span class="service-icon" aria-hidden="true">
+    <Icon name="wrench" size={22} />
+  </span>
+  <strong>{title}</strong>
+  {text && <p>{text}</p>}
+  {
+    href && (
+      <span class="service-link">
+        Bekijk
+        <Icon name="arrow" size={17} />
+      </span>
+    )
+  }
+</Tag>
+
+<style>
+  .service-card {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 22px;
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  a.service-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent) 55%,
+      var(--color-border)
+    );
+    box-shadow: var(--shadow-soft);
+  }
+
+  .service-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-accent) 20%, white);
+    color: var(--color-accent-dark);
+  }
+
+  strong {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+
+  .service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    color: var(--color-accent-dark);
+    font-weight: 850;
+  }
+</style>

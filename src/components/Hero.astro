@@ -1,0 +1,256 @@
+---
+import Icon from "./Icon.astro";
+import type { CollectionEntry } from "astro:content";
+import type { SiteConfig } from "@/config/sites";
+
+type PageEntry = CollectionEntry<"pages">;
+
+interface Props {
+  page: PageEntry;
+  site: SiteConfig;
+}
+
+const { page, site } = Astro.props;
+const fallbackImages: Record<string, string> = {
+  lbi: "/images/lbi/hero-installaties.png",
+  elektra: "/images/elektra/hero-elektra.png",
+  lekkage: "/images/lekkage/hero-lekkage.png",
+  gas: "/images/gas/hero-gas.png",
+};
+const imageSrc = page.data.hero.image?.src || fallbackImages[site.id];
+const imageAlt =
+  page.data.hero.image?.alt ||
+  page.data.image_plan?.[0]?.alt ||
+  site.primaryService;
+---
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <h1>{page.data.h1}</h1>
+      <p class="hero-lead">{page.data.hero.heading}</p>
+      <p class="hero-text">{page.data.hero.text}</p>
+      <div class="hero-actions">
+        <a
+          class="button button--primary"
+          href={page.data.cta_primary.href}
+          data-event={page.data.cta_primary.href.startsWith("tel:")
+            ? "phone_click"
+            : undefined}
+          data-site={site.id}
+          data-page={page.data.path}
+        >
+          <Icon name="phone" size={18} />
+          {page.data.cta_primary.label}
+        </a>
+        {
+          page.data.cta_secondary && (
+            <a
+              class="button button--secondary"
+              href={page.data.cta_secondary.href}
+              data-event={
+                page.data.cta_secondary.href.includes("wa.me")
+                  ? "whatsapp_click"
+                  : undefined
+              }
+              data-site={site.id}
+              data-page={page.data.path}
+            >
+              <Icon name="message" size={18} />
+              {page.data.cta_secondary.label}
+            </a>
+          )
+        }
+      </div>
+      {
+        page.data.hero.highlights.length > 0 && (
+          <ul class="hero-highlights" aria-label="Belangrijke punten">
+            {page.data.hero.highlights.map((highlight) => (
+              <li>
+                <Icon name="check" size={17} />
+                {highlight}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="hero-media" aria-label={imageAlt}>
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        width="1600"
+        height="900"
+        loading="eager"
+        decoding="async"
+      />
+      <div class="hero-contact">
+        <strong>{site.phone}</strong>
+        <span>{site.area}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: clip;
+    padding: 68px 0 72px;
+  }
+
+  .hero::before {
+    position: absolute;
+    inset: auto 0 0;
+    height: 42%;
+    background: color-mix(in srgb, var(--color-bg-strong) 70%, white);
+    content: "";
+  }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+    align-items: center;
+    gap: 48px;
+  }
+
+  .hero-copy {
+    max-width: 650px;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 700px;
+    font-size: clamp(2.55rem, 7vw, 5.7rem);
+    font-weight: 900;
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  .hero-lead {
+    margin: 22px 0 0;
+    color: var(--color-ink);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .hero-text {
+    margin: 16px 0 0;
+    max-width: 620px;
+    color: var(--color-muted);
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .hero-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero-highlights li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    font-weight: 800;
+  }
+
+  .hero-highlights svg {
+    color: var(--color-accent-dark);
+  }
+
+  .hero-media {
+    position: relative;
+    min-height: clamp(320px, 47vw, 575px);
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    background: #ddd;
+  }
+
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+  }
+
+  .hero-contact {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    display: grid;
+    gap: 3px;
+    max-width: min(280px, calc(100% - 36px));
+    border: 1px solid rgb(255 255 255 / 0.42);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.92);
+    padding: 13px 15px;
+    box-shadow: 0 16px 36px rgb(20 28 38 / 0.16);
+  }
+
+  .hero-contact strong {
+    font-size: 1.1rem;
+  }
+
+  .hero-contact span {
+    color: var(--color-muted);
+    font-size: 0.86rem;
+    font-weight: 750;
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      padding-top: 42px;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .hero-media {
+      min-height: 330px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .hero {
+      padding: 34px 0 54px;
+    }
+
+    h1 {
+      font-size: clamp(2.25rem, 12vw, 3.25rem);
+    }
+
+    .hero-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .hero-media {
+      min-height: 265px;
+    }
+
+    .hero-contact {
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+    }
+  }
+</style>

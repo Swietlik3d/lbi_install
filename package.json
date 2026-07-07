@@ -1,0 +1,39 @@
+{
+  "name": "lbi-install-multisite",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "dev:lbi": "cross-env SITE_ID=lbi astro dev",
+    "dev:elektra": "cross-env SITE_ID=elektra astro dev",
+    "dev:lekkage": "cross-env SITE_ID=lekkage astro dev",
+    "dev:gas": "cross-env SITE_ID=gas astro dev",
+    "build": "astro check && astro build",
+    "build:lbi": "cross-env SITE_ID=lbi astro check && cross-env SITE_ID=lbi astro build && node scripts/generate-sitemap.mjs lbi && node scripts/generate-robots.mjs lbi",
+    "build:elektra": "cross-env SITE_ID=elektra astro check && cross-env SITE_ID=elektra astro build && node scripts/generate-sitemap.mjs elektra && node scripts/generate-robots.mjs elektra",
+    "build:lekkage": "cross-env SITE_ID=lekkage astro check && cross-env SITE_ID=lekkage astro build && node scripts/generate-sitemap.mjs lekkage && node scripts/generate-robots.mjs lekkage",
+    "build:gas": "cross-env SITE_ID=gas astro check && cross-env SITE_ID=gas astro build && node scripts/generate-sitemap.mjs gas && node scripts/generate-robots.mjs gas",
+    "build:all": "node scripts/build-all.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/tailwind": "^5.1.5",
+    "astro": "^5.9.2",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "gray-matter": "^4.0.3",
+    "postcss": "^8.4.49",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "prettier": "^3.5.3",
+    "prettier-plugin-astro": "^0.14.1"
+  }
+}

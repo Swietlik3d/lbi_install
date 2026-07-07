@@ -1,0 +1,26 @@
+---
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+import StickyCallBar from "./StickyCallBar.astro";
+import type { SiteConfig } from "@/config/sites";
+import type { NavItem } from "@/config/navigation";
+
+interface Props {
+  site: SiteConfig;
+  nav: NavItem[];
+  currentPath: string;
+}
+
+const { site, nav, currentPath } = Astro.props;
+const style = `--color-accent:${site.theme.accent};--color-accent-dark:${site.theme.accentDark};--color-bg-strong:${site.theme.surfaceTint};`;
+---
+
+<div class="site-shell" style={style}>
+  <a class="skip-link" href="#main">Naar inhoud</a>
+  <Header site={site} nav={nav} currentPath={currentPath} />
+  <main id="main" class="site-main">
+    <slot />
+  </main>
+  <Footer site={site} nav={nav} currentPath={currentPath} />
+  <StickyCallBar site={site} currentPath={currentPath} />
+</div>

@@ -1,0 +1,105 @@
+---
+import Icon from "./Icon.astro";
+import type { SiteConfig } from "@/config/sites";
+
+interface Props {
+  site: SiteConfig;
+  currentPath: string;
+}
+
+const { site, currentPath } = Astro.props;
+---
+
+<div class="contact-block">
+  <div>
+    <h3>Contactgegevens</h3>
+    <p>
+      Gebruik telefoon of WhatsApp voor snel contact. Een formulier kan later
+      statisch worden gekoppeld.
+    </p>
+  </div>
+  <ul>
+    <li>
+      <Icon name="phone" size={19} />
+      <a
+        href={site.phoneHref}
+        data-event="phone_click"
+        data-site={site.id}
+        data-page={currentPath}
+      >
+        {site.phone}
+      </a>
+    </li>
+    <li>
+      <Icon name="message" size={19} />
+      <a
+        href={site.whatsappHref}
+        data-event="whatsapp_click"
+        data-site={site.id}
+        data-page={currentPath}
+      >
+        WhatsApp openen
+      </a>
+    </li>
+    <li>
+      <Icon name="mail" size={19} />
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .contact-block {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(280px, 1fr);
+    gap: 28px;
+    align-items: start;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    padding: 26px;
+  }
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 1.45rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+
+  ul {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-ink);
+    font-weight: 850;
+  }
+
+  svg {
+    color: var(--color-accent-dark);
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  @media (max-width: 720px) {
+    .contact-block {
+      grid-template-columns: 1fr;
+      padding: 20px;
+    }
+  }
+</style>

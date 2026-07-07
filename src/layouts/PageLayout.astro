@@ -1,0 +1,242 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+import Layout from "@/components/Layout.astro";
+import Hero from "@/components/Hero.astro";
+import TrustBadges from "@/components/TrustBadges.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ServiceGrid from "@/components/ServiceGrid.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import ReviewCard from "@/components/ReviewCard.astro";
+import FAQ from "@/components/FAQ.astro";
+import SafetyAlert from "@/components/SafetyAlert.astro";
+import ContactBlock from "@/components/ContactBlock.astro";
+import ContactForm from "@/components/ContactForm.astro";
+import InternalLinks from "@/components/InternalLinks.astro";
+import CTASection from "@/components/CTASection.astro";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  localBusinessSchema,
+  serviceSchema,
+} from "@/config/schema";
+import type { SiteConfig } from "@/config/sites";
+import type { NavItem } from "@/config/navigation";
+
+type PageEntry = CollectionEntry<"pages">;
+type ProjectEntry = CollectionEntry<"projects">;
+type ReviewEntry = CollectionEntry<"reviews">;
+type SettingsEntry = CollectionEntry<"settings">;
+
+interface Props {
+  page: PageEntry;
+  site: SiteConfig;
+  nav: NavItem[];
+  projects: ProjectEntry[];
+  reviews: ReviewEntry[];
+  settings?: SettingsEntry;
+}
+
+const { page, site, nav, projects, reviews, settings } = Astro.props;
+const breadcrumbs =
+  page.data.path === "/"
+    ? [{ label: "Home", href: "/" }]
+    : [
+        { label: "Home", href: "/" },
+        { label: page.data.h1, href: page.data.path },
+      ];
+
+const schemaItems = [
+  page.data.schema_type === "LocalBusiness" ? localBusinessSchema(site) : null,
+  page.data.schema_type === "Service" ? serviceSchema(site, page) : null,
+  faqSchema(page),
+  breadcrumbSchema(site, breadcrumbs),
+];
+---
+
+<BaseLayout page={page} site={site} schemaItems={schemaItems}>
+  <Layout site={site} nav={nav} currentPath={page.data.path}>
+    <Breadcrumbs items={breadcrumbs} />
+    {page.data.safety_alert && <SafetyAlert />}
+    <Hero page={page} site={site} />
+    <TrustBadges site={site} />
+
+    {
+      page.data.sections.map((section, index) => (
+        <section
+          class:list={["section", { "section-band": index % 2 === 1 }]}
+          id={section.id}
+        >
+          <div class="container section-stack">
+            <div class="section-heading">
+              {section.eyebrow && <p class="eyebrow">{section.eyebrow}</p>}
+              <h2>{section.heading}</h2>
+              {section.body && <p>{section.body}</p>}
+            </div>
+
+            {section.variant === "cards" && (
+              <ServiceGrid items={section.items} />
+            )}
+
+            {section.variant === "steps" && (
+              <div class="steps">
+                {section.items.map((item) => (
+                  <article>
+                    <h3>{item.title}</h3>
+                    {item.text && <p>{item.text}</p>}
+                  </article>
+                ))}
+              </div>
+            )}
+
+            {section.variant === "text" && section.items.length > 0 && (
+              <ServiceGrid items={section.items} />
+            )}
+
+            {section.variant === "split" && (
+              <div class="split-block">
+                <div class="prose-lite">
+                  {section.body && <p>{section.body}</p>}
+                </div>
+                {section.image?.src && (
+                  <img
+                    src={section.image.src}
+                    alt={section.image.alt || section.heading}
+                    loading="lazy"
+                  />
+                )}
+              </div>
+            )}
+
+            {section.variant === "contact" && (
+              <>
+                <ContactBlock site={site} currentPath={page.data.path} />
+                <ContactForm
+                  site={site}
+                  currentPath={page.data.path}
+                  settings={settings}
+                />
+              </>
+            )}
+
+            {section.variant === "projects" && (
+              <>
+                {projects.length > 0 ? (
+                  <div class="card-grid">
+                    {projects.map((project) => (
+                      <ProjectCard
+                        title={project.data.title}
+                        summary={project.data.summary}
+                        location={project.data.location}
+                        image={project.data.image}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p class="empty-state">
+                    Er zijn nog geen echte projecten toegevoegd. Voeg alleen
+                    projecten toe met echte foto's en toestemming.
+                  </p>
+                )}
+              </>
+            )}
+
+            {section.variant === "reviews" && (
+              <>
+                {reviews.length > 0 ? (
+                  <div class="card-grid">
+                    {reviews.map((review) => (
+                      <ReviewCard
+                        name={review.data.name}
+                        quote={review.data.quote}
+                        source={review.data.source}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p class="empty-state">
+                    Er zijn nog geen echte reviews toegevoegd. Deze site toont
+                    geen fictieve klantreacties.
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      ))
+    }
+
+    <FAQ items={page.data.faqs} />
+
+    <section class="section section--tight">
+      <div class="container">
+        <InternalLinks links={page.data.internal_links} />
+      </div>
+    </section>
+
+    <CTASection page={page} site={site} />
+  </Layout>
+</BaseLayout>
+
+<style>
+  .section-stack {
+    display: grid;
+    gap: 28px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-border);
+  }
+
+  .steps article {
+    min-height: 178px;
+    background: var(--color-surface);
+    padding: 24px;
+  }
+
+  .steps h3 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+  }
+
+  .steps p,
+  .empty-state {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+
+  .split-block {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
+    gap: 28px;
+    align-items: center;
+  }
+
+  .split-block img {
+    width: 100%;
+    border-radius: 8px;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .empty-state {
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.58);
+    padding: 20px;
+    font-weight: 750;
+  }
+
+  @media (max-width: 760px) {
+    .split-block {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

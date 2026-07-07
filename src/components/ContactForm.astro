@@ -1,0 +1,110 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { SiteConfig } from "@/config/sites";
+
+type SettingsEntry = CollectionEntry<"settings">;
+
+interface Props {
+  site: SiteConfig;
+  currentPath: string;
+  settings?: SettingsEntry;
+}
+
+const { site, currentPath, settings } = Astro.props;
+const enabled = settings?.data.contact_form_enabled ?? false;
+const provider = settings?.data.contact_form_provider ?? "disabled";
+const action = settings?.data.contact_form_action || undefined;
+const isNetlify = provider === "netlify";
+---
+
+{
+  enabled && (
+    <form
+      class="contact-form"
+      name={`${site.id}-contact`}
+      method="post"
+      action={action}
+      data-netlify={isNetlify ? "true" : undefined}
+    >
+      {isNetlify && (
+        <input type="hidden" name="form-name" value={`${site.id}-contact`} />
+      )}
+      <div class="form-grid">
+        <label>
+          Naam
+          <input name="name" autocomplete="name" required />
+        </label>
+        <label>
+          Telefoon of e-mail
+          <input name="contact" autocomplete="tel email" required />
+        </label>
+      </div>
+      <label>
+        Bericht
+        <textarea name="message" rows="5" required />
+      </label>
+      <button
+        class="button button--primary"
+        type="submit"
+        data-event="contact_submit"
+        data-site={site.id}
+        data-page={currentPath}
+      >
+        Versturen
+      </button>
+    </form>
+  )
+}
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: 16px;
+    margin-top: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    padding: 22px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  label {
+    display: grid;
+    gap: 7px;
+    color: var(--color-ink);
+    font-size: 0.9rem;
+    font-weight: 850;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: white;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 13px;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  button {
+    justify-self: start;
+    cursor: pointer;
+  }
+
+  @media (max-width: 680px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

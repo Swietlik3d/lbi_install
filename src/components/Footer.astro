@@ -1,0 +1,216 @@
+---
+import Icon from "./Icon.astro";
+import type { SiteConfig } from "@/config/sites";
+import type { NavItem } from "@/config/navigation";
+
+interface Props {
+  site: SiteConfig;
+  nav: NavItem[];
+  currentPath: string;
+}
+
+const { site, nav, currentPath } = Astro.props;
+const privacyHref =
+  site.id === "lbi"
+    ? "/privacy-cookies/"
+    : "https://www.lbi-helmond.nl/privacy-cookies/";
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true"
+        >{site.brandName.slice(0, 1)}</span
+      >
+      <div>
+        <strong>{site.brandName}</strong>
+        {site.subtitle && <p>{site.subtitle}</p>}
+        {
+          site.parentBrand && (
+            <p>
+              <a href="https://www.lbi-helmond.nl/">
+                Meer over LBI Installaties
+              </a>
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    <div>
+      <h2>Navigatie</h2>
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href={privacyHref}>Privacy en cookies</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Contact</h2>
+      <ul class="contact-list">
+        <li>
+          <Icon name="phone" size={17} />
+          <a
+            href={site.phoneHref}
+            data-event="phone_click"
+            data-site={site.id}
+            data-page={currentPath}
+          >
+            {site.phone}
+          </a>
+        </li>
+        <li>
+          <Icon name="message" size={17} />
+          <a
+            href={site.whatsappHref}
+            data-event="whatsapp_click"
+            data-site={site.id}
+            data-page={currentPath}
+          >
+            WhatsApp
+          </a>
+        </li>
+        <li>
+          <Icon name="mail" size={17} />
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Gegevens</h2>
+      <dl>
+        <div>
+          <dt>Werkgebied</dt>
+          <dd>{site.area}</dd>
+        </div>
+        <div>
+          <dt>KVK</dt>
+          <dd>{site.kvk}</dd>
+        </div>
+        <div>
+          <dt>BTW</dt>
+          <dd>{site.btw}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid rgb(22 32 28 / 0.1);
+    background: #18201d;
+    color: white;
+    padding: 54px 0 84px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr 1fr 0.9fr;
+    gap: 34px;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .brand-mark {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--color-accent);
+    color: #111;
+    font-weight: 900;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1.18rem;
+  }
+
+  h2 {
+    margin: 0 0 14px;
+    font-size: 0.9rem;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  p,
+  li,
+  dt,
+  dd {
+    color: rgb(255 255 255 / 0.72);
+  }
+
+  p {
+    margin: 0 0 9px;
+    line-height: 1.6;
+  }
+
+  a:hover {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  ul,
+  dl {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    margin: 0 0 10px;
+  }
+
+  .contact-list li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  dl {
+    display: grid;
+    gap: 12px;
+  }
+
+  dt {
+    font-size: 0.76rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 3px 0 0;
+  }
+
+  @media (max-width: 860px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .site-footer {
+      padding-bottom: 112px;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

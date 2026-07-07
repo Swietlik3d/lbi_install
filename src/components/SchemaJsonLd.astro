@@ -1,0 +1,18 @@
+---
+interface Props {
+  items: Array<Record<string, unknown> | null>;
+}
+
+const { items } = Astro.props;
+const graph = items.filter(Boolean);
+---
+
+{
+  graph.length > 0 && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(graph.length === 1 ? graph[0] : graph)}
+    />
+  )
+}

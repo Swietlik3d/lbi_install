@@ -1,0 +1,111 @@
+---
+import Icon from "./Icon.astro";
+import type { CollectionEntry } from "astro:content";
+import type { SiteConfig } from "@/config/sites";
+
+type PageEntry = CollectionEntry<"pages">;
+
+interface Props {
+  page: PageEntry;
+  site: SiteConfig;
+}
+
+const { page, site } = Astro.props;
+---
+
+<section class="cta-section">
+  <div class="container cta-inner">
+    <div>
+      <h2>Bespreek uw situatie met {site.brandName}</h2>
+      <p>
+        Bel of stuur een WhatsApp. De site gebruikt placeholders waar
+        definitieve bedrijfsgegevens nog ontbreken.
+      </p>
+    </div>
+    <div class="cta-actions">
+      <a
+        class="button button--primary"
+        href={page.data.cta_primary.href}
+        data-event={page.data.cta_primary.href.startsWith("tel:")
+          ? "phone_click"
+          : undefined}
+        data-site={site.id}
+        data-page={page.data.path}
+      >
+        <Icon name="phone" size={18} />
+        {page.data.cta_primary.label}
+      </a>
+      {
+        page.data.cta_secondary && (
+          <a
+            class="button button--secondary"
+            href={page.data.cta_secondary.href}
+            data-event={
+              page.data.cta_secondary.href.includes("wa.me")
+                ? "whatsapp_click"
+                : undefined
+            }
+            data-site={site.id}
+            data-page={page.data.path}
+          >
+            <Icon name="message" size={18} />
+            {page.data.cta_secondary.label}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section {
+    padding: 58px 0;
+    background: var(--color-ink);
+    color: white;
+  }
+
+  .cta-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+  }
+
+  h2 {
+    max-width: 650px;
+    margin: 0;
+    font-size: clamp(1.85rem, 4vw, 3rem);
+    line-height: 1.08;
+  }
+
+  p {
+    max-width: 620px;
+    margin: 14px 0 0;
+    color: rgb(255 255 255 / 0.76);
+    line-height: 1.7;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .button--secondary {
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 760px) {
+    .cta-inner {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .cta-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      justify-content: stretch;
+    }
+  }
+</style>

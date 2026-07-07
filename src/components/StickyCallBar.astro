@@ -1,0 +1,72 @@
+---
+import Icon from "./Icon.astro";
+import type { SiteConfig } from "@/config/sites";
+
+interface Props {
+  site: SiteConfig;
+  currentPath: string;
+}
+
+const { site, currentPath } = Astro.props;
+---
+
+<aside class="sticky-call" aria-label="Snelle contactknoppen">
+  <a
+    href={site.phoneHref}
+    data-event="phone_click"
+    data-site={site.id}
+    data-page={currentPath}
+  >
+    <Icon name="phone" size={18} />
+    <span>Bel direct</span>
+  </a>
+  <a
+    href={site.whatsappHref}
+    data-event="whatsapp_click"
+    data-site={site.id}
+    data-page={currentPath}
+  >
+    <Icon name="message" size={18} />
+    <span>WhatsApp</span>
+  </a>
+</aside>
+
+<style>
+  .sticky-call {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    z-index: 50;
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 8px;
+    background: #18201d;
+    box-shadow: var(--shadow-soft);
+    padding: 8px;
+  }
+
+  a {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 6px;
+    background: white;
+    color: #18201d;
+    font-weight: 900;
+  }
+
+  a:first-child {
+    background: var(--color-accent);
+  }
+
+  @media (max-width: 760px) {
+    .sticky-call {
+      display: grid;
+    }
+  }
+</style>

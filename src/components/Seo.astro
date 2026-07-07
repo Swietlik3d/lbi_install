@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { SiteConfig } from "@/config/sites";
+
+type PageEntry = CollectionEntry<"pages">;
+
+interface Props {
+  page: PageEntry;
+  site: SiteConfig;
+}
+
+const { page, site } = Astro.props;
+const canonical = new URL(page.data.path, site.domain).toString();
+const title = page.data.meta_title;
+const description = page.data.meta_description;
+const image = new URL(
+  `/images/${site.id}/hero-${site.id === "lbi" ? "installaties" : site.id}.png`,
+  site.domain,
+).toString();
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta
+  name="robots"
+  content={page.data.draft ? "noindex,nofollow" : "index,follow"}
+/>
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={site.language} />
+<meta property="og:site_name" content={site.brandName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />

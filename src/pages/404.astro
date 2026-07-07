@@ -1,0 +1,76 @@
+---
+import "@/styles/global.css";
+import Layout from "@/components/Layout.astro";
+import { getNavigation } from "@/config/navigation";
+import { getSiteById } from "@/config/sites";
+
+Astro.response.status = 404;
+
+const site = getSiteById(import.meta.env.PUBLIC_SITE_ID || "lbi");
+const nav = getNavigation(site.id);
+const currentPath = "/404/";
+const style = `--color-accent:${site.theme.accent};--color-accent-dark:${site.theme.accentDark};--color-bg-strong:${site.theme.surfaceTint};`;
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pagina niet gevonden | {site.brandName}</title>
+    <meta name="robots" content="noindex,follow" />
+  </head>
+  <body style={style}>
+    <Layout site={site} nav={nav} currentPath={currentPath}>
+      <section class="not-found">
+        <div class="container">
+          <p>404</p>
+          <h1>Pagina niet gevonden</h1>
+          <p class="lead">
+            De pagina bestaat niet voor {site.brandName}. Ga terug naar de
+            homepage of neem contact op.
+          </p>
+          <div class="actions">
+            <a class="button button--primary" href="/">Naar home</a>
+            <a class="button button--secondary" href={site.phoneHref}
+              >Bel direct</a
+            >
+          </div>
+        </div>
+      </section>
+    </Layout>
+  </body>
+</html>
+
+<style>
+  .not-found {
+    padding: 96px 0;
+  }
+
+  .not-found p:first-child {
+    margin: 0 0 8px;
+    color: var(--color-accent-dark);
+    font-weight: 900;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    line-height: 1;
+  }
+
+  .lead {
+    max-width: 620px;
+    margin: 18px 0 0;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+</style>

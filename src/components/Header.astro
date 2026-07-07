@@ -1,0 +1,299 @@
+---
+import Icon from "./Icon.astro";
+import type { SiteConfig } from "@/config/sites";
+import type { NavItem } from "@/config/navigation";
+
+interface Props {
+  site: SiteConfig;
+  nav: NavItem[];
+  currentPath: string;
+}
+
+const { site, nav, currentPath } = Astro.props;
+const isCurrent = (href: string) =>
+  href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label={`${site.brandName} home`}>
+      <span class="brand-mark" aria-hidden="true"
+        >{site.brandName.slice(0, 1)}</span
+      >
+      <span class="brand-copy">
+        <strong>{site.brandName}</strong>
+        {site.subtitle && <small>{site.subtitle}</small>}
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Hoofdnavigatie">
+      {
+        nav.map((item) => (
+          <a
+            class:list={["nav-link", { "is-active": isCurrent(item.href) }]}
+            href={item.href}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="header-actions">
+      <a
+        class="button button--primary header-phone"
+        href={site.phoneHref}
+        data-event="phone_click"
+        data-site={site.id}
+        data-page={currentPath}
+      >
+        <Icon name="phone" size={18} />
+        <span>{site.phone}</span>
+      </a>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Menu openen"
+        aria-expanded="false"
+        data-menu-toggle
+      >
+        <Icon name="menu" size={23} />
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" data-menu hidden>
+    <div class="container mobile-menu-inner">
+      <div class="mobile-menu-head">
+        <strong>{site.brandName}</strong>
+        <button
+          class="menu-close"
+          type="button"
+          aria-label="Menu sluiten"
+          data-menu-close
+        >
+          <Icon name="x" size={22} />
+        </button>
+      </div>
+      <nav aria-label="Mobiele navigatie">
+        {
+          nav.map((item) => (
+            <a
+              class:list={[
+                "mobile-link",
+                { "is-active": isCurrent(item.href) },
+              ]}
+              href={item.href}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="mobile-actions">
+        <a
+          class="button button--primary"
+          href={site.phoneHref}
+          data-event="phone_click"
+          data-site={site.id}
+          data-page={currentPath}
+        >
+          <Icon name="phone" size={18} />
+          Bel direct
+        </a>
+        <a
+          class="button button--secondary"
+          href={site.whatsappHref}
+          data-event="whatsapp_click"
+          data-site={site.id}
+          data-page={currentPath}
+        >
+          <Icon name="message" size={18} />
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector("[data-menu-toggle]");
+  const close = document.querySelector("[data-menu-close]");
+  const menu = document.querySelector("[data-menu]");
+
+  function setMenu(open: boolean) {
+    if (
+      !(menu instanceof HTMLElement) ||
+      !(toggle instanceof HTMLButtonElement)
+    )
+      return;
+    menu.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+  }
+
+  toggle?.addEventListener("click", () =>
+    setMenu(menu?.hasAttribute("hidden") ?? true),
+  );
+  close?.addEventListener("click", () => setMenu(false));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setMenu(false);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: var(--header-height);
+    border-bottom: 1px solid rgb(22 32 28 / 0.08);
+    background: color-mix(in srgb, var(--color-bg) 92%, white);
+    backdrop-filter: blur(16px);
+  }
+
+  .header-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .brand {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-mark {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--color-accent-dark);
+    color: white;
+    font-weight: 900;
+  }
+
+  .brand-copy {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+  }
+
+  .brand-copy strong {
+    overflow: hidden;
+    font-size: 1rem;
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .brand-copy small {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .nav-link {
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--color-muted);
+    font-size: 0.92rem;
+    font-weight: 800;
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active {
+    background: rgb(255 255 255 / 0.76);
+    color: var(--color-ink);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .menu-toggle,
+  .menu-close {
+    display: none;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .mobile-menu-inner {
+    padding: 18px 0 22px;
+  }
+
+  .mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .mobile-link {
+    display: block;
+    border-top: 1px solid rgb(22 32 28 / 0.08);
+    padding: 15px 0;
+    color: var(--color-ink);
+    font-weight: 850;
+  }
+
+  .mobile-link.is-active {
+    color: var(--color-accent-dark);
+  }
+
+  .mobile-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  @media (max-width: 960px) {
+    .desktop-nav,
+    .header-phone {
+      display: none;
+    }
+
+    .menu-toggle,
+    .menu-close {
+      display: grid;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .brand-copy strong {
+      max-width: 210px;
+    }
+
+    .mobile-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
