@@ -1,0 +1,189 @@
+---
+import { getCurrentSite } from "../config/sites";
+import type { CollectionEntry } from "astro:content";
+
+type PageData = CollectionEntry<"pages">["data"];
+
+interface Props {
+  page: PageData;
+}
+
+const site = getCurrentSite();
+const pagePath = Astro.url.pathname;
+
+const helpItems = [
+  {
+    title: "Gaslucht opsporen",
+    text: "Wij sporen gaslekkages snel en nauwkeurig op met professionele apparatuur.",
+    icon: "flame",
+  },
+  {
+    title: "Gasstoring oplossen",
+    text: "We lossen gasstoringen snel en vakkundig op, zodat u weer veilig verder kunt.",
+    icon: "wrench",
+  },
+  {
+    title: "Controle van gasleiding",
+    text: "Inspectie en controle van gasleidingen voor een veilige en betrouwbare installatie.",
+    icon: "search",
+  },
+  {
+    title: "Afsluiten en veiligstellen",
+    text: "We sluiten de gastoevoer af en stellen uw installatie veilig bij direct gevaar.",
+    icon: "lock",
+  },
+];
+
+const proofItems = [
+  { title: "24/7 bereikbaar", text: "Dag en nacht, ook in het weekend.", icon: "clock" },
+  { title: "Snelle hulp", text: "Binnen korte tijd ter plaatse.", icon: "bolt" },
+  { title: "Veilig gewerkt", text: "Volgens de hoogste veiligheidsnormen.", icon: "shield" },
+  { title: "Helmond en omgeving", text: "Wij kennen de regio en staan snel voor u klaar.", icon: "pin" },
+];
+
+const steps = [
+  { title: "U belt", text: "Bel ons direct. We stellen een paar vragen en komen meteen in actie.", icon: "phone" },
+  { title: "Wij komen", text: "Onze monteur is snel onderweg naar u in Helmond en omgeving.", icon: "truck" },
+  { title: "Wij lossen het veilig op", text: "We vinden het probleem en lossen het vakkundig en veilig voor u op.", icon: "shield" },
+];
+
+function iconPath(icon: string) {
+  const paths: Record<string, string> = {
+    flame: "M12 22c4.8 0 8-3.3 8-7.8 0-4.4-3.6-7.4-5.6-12.2-.8 4-4.7 5.2-4.7 9.1-1.8-.8-2.8-2.6-2.9-5.1C4.6 8.8 4 11.2 4 14.2 4 18.7 7.2 22 12 22z",
+    wrench: "M21 6.5a6.2 6.2 0 0 1-8.1 7.8l-7.1 7.1a2.1 2.1 0 0 1-3-3l7.1-7.1A6.2 6.2 0 0 1 17.7 3l-3.4 3.4 3.3 3.3L21 6.5z",
+    search: "M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z M21 21l-4.3-4.3",
+    lock: "M6 10h12v10H6z M9 10V7a3 3 0 0 1 6 0v3 M12 14v2",
+    clock: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2",
+    bolt: "M13 2 4 14h7l-1 8 10-13h-7V2z",
+    shield: "M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z M9 12l2 2 4-5",
+    pin: "M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12z M12 12.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z",
+    phone: "M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z",
+    truck: "M3 7h11v9H3z M14 10h4l3 3v3h-7z M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z",
+    chat: "M4 5h16v12H8l-4 4V5z M8 9h8 M8 13h5",
+    check: "M20 6 9 17l-5-5",
+  };
+  return paths[icon] ?? paths.flame;
+}
+---
+
+<div class="gas-landing">
+  <section class="gas-hero" aria-labelledby="gas-hero-title">
+    <img
+      src="/images/gas/gas-burner-hero.png"
+      alt="Brandende gaspit met blauwe vlam op een schone kookplaat"
+      class="gas-hero__image"
+      width="1536"
+      height="1024"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="gas-shell gas-hero__inner">
+      <div class="gas-hero__copy">
+        <p class="gas-kicker">Awaria gazu / gasstoring / gaslucht</p>
+        <h1 id="gas-hero-title">Gaslucht of gasstoring? <br />Snel en <span>veilig</span> geholpen.</h1>
+        <p class="gas-hero__lead">Snel ter plaatse in Helmond en omgeving.<br />24/7 spoedservice bij gaslucht of gasstoring.</p>
+
+        <div class="gas-actions">
+          <a
+            href={site.phoneHref}
+            class="gas-btn gas-btn--primary"
+            data-event="phone_click"
+            data-site={site.id}
+            data-page={pagePath}
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("phone")} /></svg>
+            <span><small>Bel direct</small>{site.phone}</span>
+          </a>
+          <a href="/contact/" class="gas-btn gas-btn--secondary">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("chat")} /></svg>
+            <span><small>Vraag hulp aan</small>Wij nemen snel contact op</span>
+          </a>
+        </div>
+
+        <p class="gas-availability">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("check")} /></svg>
+          24/7 bereikbaar bij spoed
+        </p>
+      </div>
+
+      <svg class="gas-flame-outline" aria-hidden="true" viewBox="0 0 260 420">
+        <path d="M128 18c48 62 49 105 34 147 18-12 29-32 39-52 44 68 43 148 1 197-19 23-45 38-79 48 25 10 45 22 61 38-67-27-121-67-134-123-13-55 8-103 50-151 16-18 27-42 28-104z" />
+        <path d="M129 357c-64 24-101 65-112 124" />
+      </svg>
+    </div>
+  </section>
+
+  <section class="gas-proof" aria-label="Voordelen spoedservice">
+    <div class="gas-shell gas-proof__panel">
+      {proofItems.map((item) => (
+        <article class="gas-proof__item">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath(item.icon)} /></svg>
+          <div>
+            <h2>{item.title}</h2>
+            <p>{item.text}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="gas-help" aria-labelledby="gas-help-title">
+    <div class="gas-shell">
+      <h2 id="gas-help-title">Waarmee helpen wij?</h2>
+      <div class="gas-help__grid">
+        {helpItems.map((item) => (
+          <article class="gas-help-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath(item.icon)} /></svg>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="gas-steps" aria-labelledby="gas-steps-title">
+    <div class="gas-shell">
+      <h2 id="gas-steps-title">Zo werken we bij spoed</h2>
+      <div class="gas-steps__panel">
+        {steps.map((step, index) => (
+          <>
+            <article class="gas-step">
+              <span class="gas-step__number">{index + 1}</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath(step.icon)} /></svg>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </article>
+            {index < steps.length - 1 && (
+              <svg class="gas-step__arrow" aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg>
+            )}
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="gas-emergency-cta" aria-labelledby="gas-cta-title">
+    <div class="gas-shell gas-emergency-cta__inner">
+      <svg class="gas-emergency-cta__flame" aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("flame")} /></svg>
+      <div>
+        <h2 id="gas-cta-title">Gaslucht of gasstoring?</h2>
+        <p>Bel direct. <strong>{site.phone}</strong></p>
+        <span>24/7 bereikbaar &nbsp;·&nbsp; Snelle hulp &nbsp;·&nbsp; Veilig gewerkt</span>
+      </div>
+      <a
+        href={site.phoneHref}
+        class="gas-emergency-cta__button"
+        data-event="phone_click"
+        data-site={site.id}
+        data-page={pagePath}
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("phone")} /></svg>
+        <span><small>Bel direct</small>{site.phone}</span>
+      </a>
+    </div>
+  </section>
+</div>

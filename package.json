@@ -1,39 +1,42 @@
 {
-  "name": "lbi-install-multisite",
-  "version": "0.1.0",
-  "private": true,
+  "name": "lbi-helmond-multisite",
+  "version": "1.0.0",
   "type": "module",
+  "private": true,
+  "description": "One codebase, four separately deployable static sites: LBI Installaties + three emergency microsites (Elektra, Lekkage, Gas) in Helmond.",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "cross-env SITE_ID=lbi astro dev",
     "dev:lbi": "cross-env SITE_ID=lbi astro dev",
     "dev:elektra": "cross-env SITE_ID=elektra astro dev",
     "dev:lekkage": "cross-env SITE_ID=lekkage astro dev",
     "dev:gas": "cross-env SITE_ID=gas astro dev",
-    "build": "astro check && astro build",
-    "build:lbi": "cross-env SITE_ID=lbi astro check && cross-env SITE_ID=lbi astro build && node scripts/generate-sitemap.mjs lbi && node scripts/generate-robots.mjs lbi",
-    "build:elektra": "cross-env SITE_ID=elektra astro check && cross-env SITE_ID=elektra astro build && node scripts/generate-sitemap.mjs elektra && node scripts/generate-robots.mjs elektra",
-    "build:lekkage": "cross-env SITE_ID=lekkage astro check && cross-env SITE_ID=lekkage astro build && node scripts/generate-sitemap.mjs lekkage && node scripts/generate-robots.mjs lekkage",
-    "build:gas": "cross-env SITE_ID=gas astro check && cross-env SITE_ID=gas astro build && node scripts/generate-sitemap.mjs gas && node scripts/generate-robots.mjs gas",
+    "build": "node scripts/build-all.mjs",
+    "build:lbi": "node scripts/build-site.mjs lbi",
+    "build:elektra": "node scripts/build-site.mjs elektra",
+    "build:lekkage": "node scripts/build-site.mjs lekkage",
+    "build:gas": "node scripts/build-site.mjs gas",
     "build:all": "node scripts/build-all.mjs",
-    "preview": "astro preview",
-    "check": "astro check",
-    "format": "prettier --write ."
+    "preview:lbi": "cross-env SITE_ID=lbi astro preview",
+    "preview:elektra": "cross-env SITE_ID=elektra astro preview",
+    "preview:lekkage": "cross-env SITE_ID=lekkage astro preview",
+    "preview:gas": "cross-env SITE_ID=gas astro preview",
+    "check": "cross-env SITE_ID=lbi astro check",
+    "check:all": "node scripts/check-all.mjs",
+    "typecheck": "cross-env SITE_ID=lbi astro check"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/tailwind": "^5.1.5",
-    "astro": "^5.9.2",
-    "autoprefixer": "^10.4.20",
-    "cross-env": "^7.0.3",
-    "gray-matter": "^4.0.3",
-    "postcss": "^8.4.49",
-    "sharp": "^0.33.5",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3"
+    "astro": "^5.7.0"
   },
   "devDependencies": {
-    "@types/node": "^25.9.2",
-    "prettier": "^3.5.3",
-    "prettier-plugin-astro": "^0.14.1"
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/tailwind": "^6.0.2",
+    "@types/node": "^20.17.0",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18.20.0"
   }
 }

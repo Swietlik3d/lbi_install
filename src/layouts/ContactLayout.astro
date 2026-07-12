@@ -1,31 +1,68 @@
 ---
-import PageLayout from "./PageLayout.astro";
+import BaseLayout from "./BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import SafetyAlert from "../components/SafetyAlert.astro";
+import ContactBlock from "../components/ContactBlock.astro";
+import ContactForm from "../components/ContactForm.astro";
+import SectionRenderer from "../components/SectionRenderer.astro";
+import FAQ from "../components/FAQ.astro";
+import { getCurrentSite } from "../config/sites";
 import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
-import type { NavItem } from "@/config/navigation";
 
-type PageEntry = CollectionEntry<"pages">;
-type ProjectEntry = CollectionEntry<"projects">;
-type ReviewEntry = CollectionEntry<"reviews">;
-type SettingsEntry = CollectionEntry<"settings">;
+type PageData = CollectionEntry<"pages">["data"];
 
-interface Props {
-  page: PageEntry;
-  site: SiteConfig;
-  nav: NavItem[];
-  projects: ProjectEntry[];
-  reviews: ReviewEntry[];
-  settings?: SettingsEntry;
+interface Crumb {
+  name: string;
+  href: string;
 }
 
-const { page, site, nav, projects, reviews, settings } = Astro.props;
+interface Props {
+  page: PageData;
+  schemaNodes?: Array<Record<string, unknown> | null>;
+  breadcrumbs?: Crumb[];
+}
+
+const { page, schemaNodes = [], breadcrumbs = [] } = Astro.props;
+const site = getCurrentSite();
+const hasBody = Astro.slots.has("default");
+const twoCol = site.enableContactForm;
 ---
 
-<PageLayout
-  page={page}
-  site={site}
-  nav={nav}
-  projects={projects}
-  reviews={reviews}
-  settings={settings}
-/>
+<BaseLayout
+  title={page.meta_title}
+  description={page.meta_description}
+  schemaNodes={schemaNodes}
+>
+  <Breadcrumbs items={breadcrumbs} />
+  <Hero h1={page.h1} hero={{ ...page.hero, showCallButtons: false }} />
+
+  {page.safety_alert && (
+    <div class="container-base pt-10">
+      <SafetyAlert />
+    </div>
+  )}
+
+  <section class="section">
+    <div class="container-base">
+      <div class:list={["grid gap-8", twoCol ? "lg:grid-cols-2" : "max-w-xl"]}>
+        <ContactBlock />
+        {twoCol && <ContactForm />}
+      </div>
+    </div>
+  </section>
+
+  <SectionRenderer sections={page.sections} />
+
+  {hasBody && (
+    <div class="section pt-0">
+      <div class="container-base">
+        <div class="rich-text">
+          <slot />
+        </div>
+      </div>
+    </div>
+  )}
+
+  <FAQ faqs={page.faqs} />
+</BaseLayout>

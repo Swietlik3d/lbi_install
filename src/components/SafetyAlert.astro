@@ -1,56 +1,31 @@
 ---
-import Icon from "./Icon.astro";
+interface Props {
+  title?: string;
+}
+
+const { title = "Ruikt u gas? Lees dit eerst" } = Astro.props;
 ---
 
-<section class="safety-alert" aria-labelledby="safety-alert-heading">
-  <div class="container safety-inner">
-    <Icon name="alert" size={28} />
+<aside
+  class="rounded-2xl border-2 border-accent bg-accent/5 p-5 sm:p-6"
+  role="note"
+  aria-label="Veiligheidsinstructies bij gaslucht"
+>
+  <div class="flex items-start gap-3">
+    <span class="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-white" aria-hidden="true">
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 2.4 18a1.8 1.8 0 0 0 1.6 2.7h16a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.1 0Z" />
+      </svg>
+    </span>
     <div>
-      <h2 id="safety-alert-heading">Ruikt u gas?</h2>
-      <p>
-        Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel
-        geen elektrische apparaten aan of uit. Sluit de hoofdkraan indien dit
-        veilig kan, ga naar buiten en bel het Nationaal Storingsnummer
-        0800-9009. Bij direct gevaar: bel 112.
+      <h2 class="text-lg font-extrabold text-ink">{title}</h2>
+      <p class="mt-2 leading-relaxed text-ink">
+        Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel geen
+        elektrische apparaten aan of uit. Sluit de hoofdkraan indien dit veilig kan, ga naar
+        buiten en bel het Nationaal Storingsnummer
+        <a href="tel:08009009" class="font-bold text-accent underline">0800-9009</a>.
+        Bij direct gevaar: bel <a href="tel:112" class="font-bold text-accent underline">112</a>.
       </p>
     </div>
   </div>
-</section>
-
-<style>
-  .safety-alert {
-    border-block: 1px solid color-mix(in srgb, var(--color-safety) 30%, white);
-    background: var(--color-safety-bg);
-    color: var(--color-safety);
-    padding: 22px 0;
-  }
-
-  .safety-inner {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-
-  svg {
-    margin-top: 2px;
-  }
-
-  h2 {
-    margin: 0 0 6px;
-    font-size: 1.18rem;
-  }
-
-  p {
-    max-width: 950px;
-    margin: 0;
-    font-weight: 750;
-    line-height: 1.65;
-  }
-
-  @media (max-width: 520px) {
-    .safety-inner {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
+</aside>

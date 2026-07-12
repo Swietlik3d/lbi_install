@@ -1,299 +1,193 @@
 ---
-import Icon from "./Icon.astro";
-import type { SiteConfig } from "@/config/sites";
-import type { NavItem } from "@/config/navigation";
+import { getCurrentSite } from "../config/sites";
+import { getNavigation } from "../config/navigation";
 
-interface Props {
-  site: SiteConfig;
-  nav: NavItem[];
-  currentPath: string;
+const site = getCurrentSite();
+const nav = getNavigation(site.id);
+const page = Astro.url.pathname;
+const lbi = site.id === "lbi";
+const gas = site.id === "gas";
+
+function isActive(href: string): boolean {
+  if (href === "/") return page === "/";
+  if (href.includes("#")) return false;
+  return page === href || page.startsWith(href);
 }
-
-const { site, nav, currentPath } = Astro.props;
-const isCurrent = (href: string) =>
-  href === "/" ? currentPath === "/" : currentPath.startsWith(href);
 ---
 
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="/" aria-label={`${site.brandName} home`}>
-      <span class="brand-mark" aria-hidden="true"
-        >{site.brandName.slice(0, 1)}</span
-      >
-      <span class="brand-copy">
-        <strong>{site.brandName}</strong>
-        {site.subtitle && <small>{site.subtitle}</small>}
-      </span>
+<header
+  class:list={[
+    "sticky top-0 z-40 backdrop-blur",
+    lbi
+      ? "lbi-site-header"
+      : gas
+        ? "gas-site-header"
+        : "border-b border-slate-200 bg-white/95",
+  ]}
+>
+  <div class:list={[lbi ? "lbi-header-shell" : gas ? "gas-header-shell" : "container-base", "flex items-center justify-between gap-4 py-3"]}>
+    <a href="/" class:list={[lbi ? "lbi-brand" : gas ? "gas-brand" : "flex items-center gap-3", "no-underline"]} aria-label={`${site.brandName} — home`}>
+      {lbi ? (
+        <>
+          <span class="lbi-brand__mark" aria-hidden="true">
+            <span>LBI</span>
+          </span>
+          <span class="lbi-brand__text">
+            <span>Installaties</span>
+            <strong>Helmond</strong>
+          </span>
+        </>
+      ) : gas ? (
+        <>
+          <span class="gas-brand__mark" aria-hidden="true">LBI</span>
+          <span class="gas-brand__divider" aria-hidden="true"></span>
+          <span class="gas-brand__text">Installaties<br />Helmond</span>
+        </>
+      ) : (
+        <>
+          <span
+            class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand text-base font-extrabold text-brand-ink"
+            aria-hidden="true"
+          >
+            {site.brandName.slice(0, 2).toUpperCase()}
+          </span>
+          <span class="leading-tight">
+            <span class="block text-base font-extrabold text-ink sm:text-lg">{site.brandName}</span>
+            {site.subtitle && <span class="block text-xs text-muted">{site.subtitle}</span>}
+          </span>
+        </>
+      )}
     </a>
 
-    <nav class="desktop-nav" aria-label="Hoofdnavigatie">
+    <!-- Desktop navigation -->
+    {!gas && (
+    <nav aria-label="Hoofdmenu" class:list={["hidden items-center md:flex", lbi ? "gap-7" : "gap-1"]}>
       {
         nav.map((item) => (
           <a
-            class:list={["nav-link", { "is-active": isCurrent(item.href) }]}
             href={item.href}
+            aria-current={isActive(item.href) ? "page" : undefined}
+            class:list={[
+              "no-underline transition",
+              lbi
+                ? "lbi-nav-link"
+                : "rounded-md px-3 py-2 text-sm font-medium",
+              isActive(item.href)
+                ? lbi
+                  ? "is-active"
+                  : "text-brand"
+                : lbi
+                  ? ""
+                  : "text-ink hover:bg-surface hover:text-brand",
+            ]}
           >
             {item.label}
           </a>
         ))
       }
     </nav>
+    )}
 
-    <div class="header-actions">
+    <div class:list={[gas ? "gas-header-actions" : "flex items-center gap-2"]}>
       <a
-        class="button button--primary header-phone"
         href={site.phoneHref}
+        class:list={[
+          "hidden sm:inline-flex",
+          lbi ? "lbi-header-phone" : gas ? "gas-header-phone" : "btn btn-primary px-4 py-2 text-sm",
+        ]}
         data-event="phone_click"
         data-site={site.id}
-        data-page={currentPath}
+        data-page={page}
       >
-        <Icon name="phone" size={18} />
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor">
+          <path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z"/>
+        </svg>
         <span>{site.phone}</span>
       </a>
-      <button
-        class="menu-toggle"
-        type="button"
-        aria-label="Menu openen"
-        aria-expanded="false"
-        data-menu-toggle
-      >
-        <Icon name="menu" size={23} />
-      </button>
-    </div>
-  </div>
 
-  <div class="mobile-menu" data-menu hidden>
-    <div class="container mobile-menu-inner">
-      <div class="mobile-menu-head">
-        <strong>{site.brandName}</strong>
-        <button
-          class="menu-close"
-          type="button"
-          aria-label="Menu sluiten"
-          data-menu-close
-        >
-          <Icon name="x" size={22} />
-        </button>
-      </div>
-      <nav aria-label="Mobiele navigatie">
-        {
-          nav.map((item) => (
-            <a
-              class:list={[
-                "mobile-link",
-                { "is-active": isCurrent(item.href) },
-              ]}
-              href={item.href}
-            >
-              {item.label}
-            </a>
-          ))
-        }
-      </nav>
-      <div class="mobile-actions">
+      {gas && (
         <a
-          class="button button--primary"
           href={site.phoneHref}
+          class="gas-header-button hidden sm:inline-flex"
           data-event="phone_click"
           data-site={site.id}
-          data-page={currentPath}
+          data-page={page}
         >
-          <Icon name="phone" size={18} />
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z" />
+          </svg>
           Bel direct
         </a>
-        <a
-          class="button button--secondary"
-          href={site.whatsappHref}
-          data-event="whatsapp_click"
-          data-site={site.id}
-          data-page={currentPath}
+      )}
+
+      <!-- Mobile menu: JS-free disclosure -->
+      <details class="relative md:hidden">
+        <summary
+          class:list={[
+            "cursor-pointer list-none",
+            lbi ? "lbi-mobile-summary" : gas ? "gas-mobile-summary" : "btn btn-ghost px-3 py-2",
+          ]}
+          aria-label="Menu openen of sluiten"
         >
-          <Icon name="message" size={18} />
-          WhatsApp
-        </a>
-      </div>
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <span class="sr-only">Menu</span>
+        </summary>
+        <nav
+          aria-label="Mobiel menu"
+          class:list={[
+            "absolute right-0 top-full mt-2 w-64 rounded-xl p-2 shadow-card",
+            lbi ? "border border-white/15 bg-[#151515]" : "border border-slate-200 bg-white",
+          ]}
+        >
+          {gas ? (
+            <>
+              <a
+                href={site.phoneHref}
+                class="btn btn-primary w-full text-sm"
+                data-event="phone_click"
+                data-site={site.id}
+                data-page={page}
+              >
+                Bel direct {site.phone}
+              </a>
+              <a href="/contact/" class="mt-2 block rounded-md px-3 py-2 text-sm font-medium no-underline text-ink hover:bg-surface">
+                Vraag hulp aan
+              </a>
+            </>
+          ) : (
+            nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
+                class:list={[
+                  "block rounded-md px-3 py-2 text-sm font-medium no-underline",
+                  isActive(item.href)
+                    ? lbi ? "bg-white/10 text-brand" : "bg-surface text-brand"
+                    : lbi ? "text-white hover:bg-white/10" : "text-ink hover:bg-surface",
+                ]}
+              >
+                {item.label}
+              </a>
+            ))
+          )}
+          {!gas && (
+          <a
+            href={site.phoneHref}
+            class:list={[
+              "mt-2 w-full",
+              lbi ? "lbi-header-phone justify-center" : "btn btn-primary text-sm",
+            ]}
+            data-event="phone_click"
+            data-site={site.id}
+            data-page={page}
+          >
+            Bel {site.phone}
+          </a>
+          )}
+        </nav>
+      </details>
     </div>
   </div>
 </header>
-
-<script>
-  const toggle = document.querySelector("[data-menu-toggle]");
-  const close = document.querySelector("[data-menu-close]");
-  const menu = document.querySelector("[data-menu]");
-
-  function setMenu(open: boolean) {
-    if (
-      !(menu instanceof HTMLElement) ||
-      !(toggle instanceof HTMLButtonElement)
-    )
-      return;
-    menu.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-  }
-
-  toggle?.addEventListener("click", () =>
-    setMenu(menu?.hasAttribute("hidden") ?? true),
-  );
-  close?.addEventListener("click", () => setMenu(false));
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setMenu(false);
-  });
-</script>
-
-<style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    height: var(--header-height);
-    border-bottom: 1px solid rgb(22 32 28 / 0.08);
-    background: color-mix(in srgb, var(--color-bg) 92%, white);
-    backdrop-filter: blur(16px);
-  }
-
-  .header-inner {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-
-  .brand {
-    display: inline-flex;
-    min-width: 0;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .brand-mark {
-    display: grid;
-    width: 42px;
-    height: 42px;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 8px;
-    background: var(--color-accent-dark);
-    color: white;
-    font-weight: 900;
-  }
-
-  .brand-copy {
-    display: grid;
-    min-width: 0;
-    gap: 2px;
-  }
-
-  .brand-copy strong {
-    overflow: hidden;
-    font-size: 1rem;
-    line-height: 1.1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .brand-copy small {
-    color: var(--color-muted);
-    font-size: 0.78rem;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  .desktop-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-  }
-
-  .nav-link {
-    border-radius: 6px;
-    padding: 10px 12px;
-    color: var(--color-muted);
-    font-size: 0.92rem;
-    font-weight: 800;
-  }
-
-  .nav-link:hover,
-  .nav-link.is-active {
-    background: rgb(255 255 255 / 0.76);
-    color: var(--color-ink);
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .menu-toggle,
-  .menu-close {
-    display: none;
-    width: 44px;
-    height: 44px;
-    place-items: center;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    background: var(--color-surface);
-    color: var(--color-ink);
-    cursor: pointer;
-  }
-
-  .mobile-menu {
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-bg);
-    box-shadow: var(--shadow-soft);
-  }
-
-  .mobile-menu-inner {
-    padding: 18px 0 22px;
-  }
-
-  .mobile-menu-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-
-  .mobile-link {
-    display: block;
-    border-top: 1px solid rgb(22 32 28 / 0.08);
-    padding: 15px 0;
-    color: var(--color-ink);
-    font-weight: 850;
-  }
-
-  .mobile-link.is-active {
-    color: var(--color-accent-dark);
-  }
-
-  .mobile-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 14px;
-  }
-
-  @media (max-width: 960px) {
-    .desktop-nav,
-    .header-phone {
-      display: none;
-    }
-
-    .menu-toggle,
-    .menu-close {
-      display: grid;
-    }
-  }
-
-  @media (max-width: 430px) {
-    .brand-copy strong {
-      max-width: 210px;
-    }
-
-    .mobile-actions {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

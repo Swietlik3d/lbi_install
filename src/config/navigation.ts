@@ -1,17 +1,22 @@
 import type { SiteId } from "./sites";
 
-export type NavItem = {
+export interface NavItem {
   label: string;
   href: string;
-};
+}
 
-export const navigation: Record<SiteId, NavItem[]> = {
+/**
+ * Primary navigation per site. Hrefs are root-relative and always use a
+ * trailing slash to match `trailingSlash: "always"` in astro.config.ts.
+ */
+export const NAVIGATION: Record<SiteId, NavItem[]> = {
   lbi: [
     { label: "Home", href: "/" },
     { label: "Diensten", href: "/diensten/" },
     { label: "Projecten", href: "/projecten/" },
+    { label: "Over LBI", href: "/over-lbi/" },
+    { label: "Werkwijze", href: "/#werkwijze" },
     { label: "Reviews", href: "/reviews/" },
-    { label: "Werkgebied", href: "/werkgebied/" },
     { label: "Contact", href: "/contact/" },
   ],
   elektra: [
@@ -37,6 +42,6 @@ export const navigation: Record<SiteId, NavItem[]> = {
   ],
 };
 
-export function getNavigation(siteId: SiteId) {
-  return navigation[siteId];
+export function getNavigation(siteId: SiteId): NavItem[] {
+  return NAVIGATION[siteId];
 }

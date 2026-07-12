@@ -1,48 +1,51 @@
 ---
 site: "elektra"
 path: "/kortsluiting-groep-valt-uit/"
-page_type: "service"
-meta_title: "Kortsluiting of groep valt uit | Elektra Storing Helmond"
-meta_description: "Informatie voor kortsluiting of een groep die uitvalt in Helmond. Bel of stuur WhatsApp naar LBI Installaties."
-focus_keyword: "kortsluiting groep valt uit Helmond"
-h1: "Kortsluiting of groep valt uit"
+page_type: "emergency"
+meta_title: "Kortsluiting of groep valt uit in Helmond | Elektra Storing Helmond"
+meta_description: "Groep valt steeds uit of kortsluiting in Helmond? Lees wat u kunt doen en bel direct voor een monteur. Onderdeel van LBI Installaties."
+focus_keyword: "groep valt uit Helmond"
+secondary_keywords:
+  - "kortsluiting Helmond"
+  - "aardlekschakelaar slaat door"
+h1: "Kortsluiting of groep die uitvalt in Helmond"
 hero:
-  heading: "Als dezelfde groep blijft uitvallen, is duidelijke informatie belangrijk"
-  text: "Schakel niet eindeloos opnieuw in wanneer de storing terugkomt. Noteer wat er gebeurde en neem contact op voor overleg."
-  highlights:
-    - "Groep valt uit"
-    - "Aardlekschakelaar"
-    - "Veilig contact"
-cta_primary:
-  label: "Bel over storing"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "WhatsApp foto's"
-  href: "https://wa.me/31653229349"
+  kicker: "Storing?"
+  subtitle: "Valt er steeds een groep uit of heeft u kortsluiting? Bel of app direct, dan helpen we u snel verder."
+  showCallButtons: true
 sections:
-  - heading: "Wat u alvast kunt doorgeven"
-    variant: "cards"
-    items:
-      - title: "Welke groep?"
-        text: "Noem welke groep of schakelaar uitvalt."
-      - title: "Wanneer gebeurt het?"
-        text: "Bij inschakelen van een apparaat, na regen, of zonder duidelijke oorzaak?"
-      - title: "Foto van de meterkast"
-        text: "Een duidelijke foto kan helpen bij het eerste gesprek."
-  - heading: "Veiligheid eerst"
-    body: "TODO: voeg definitieve veiligheidsinstructies toe die passen bij de werkzaamheden van LBI."
-    variant: "text"
+  - heading: "Wat u zelf kunt controleren"
+    layout: "steps"
+    body: "Voordat u belt, kunt u dit veilig nagaan:"
+    bullets:
+      - "Kijk welke groep is uitgeschakeld in de meterkast"
+      - "Haal de stekkers uit die groep en zet de groep weer aan"
+      - "Blijft het mis of ruikt u een brandlucht? Laat de groep uit en bel ons"
+  - heading: "Hoe wij het oplossen"
+    body: >-
+      We sporen de oorzaak op — een defect apparaat, een beschadigde leiding of een probleem in de
+      groepenkast — en verhelpen het waar mogelijk direct. TODO: beschrijf uw concrete werkwijze.
+    layout: "text"
 faqs:
-  - question: "Moet ik de groep opnieuw inschakelen?"
-    answer: "Als de groep meteen weer uitvalt, blijf dan niet proberen. Neem contact op en beschrijf wat er gebeurt."
+  - question: "De aardlekschakelaar slaat door, wat nu?"
+    answer: "Vaak veroorzaakt één apparaat dit. Koppel apparaten los en test per groep. Komt u er niet uit, bel ons dan."
+  - question: "Is dit gevaarlijk?"
+    answer: "Een doorslaande beveiliging beschermt u juist. Ruikt u brand of ziet u schade aan bedrading? Raak het niet aan en bel direct."
 internal_links:
-  - label: "Meterkast en groepen"
+  - label: "Meterkast & groepen"
     href: "/meterkast-groepen/"
+    description: "Groepenkast vervangen of uitbreiden."
   - label: "Werkwijze & FAQ"
     href: "/werkwijze-faq/"
-image_plan:
-  - alt: "Groepenkast bij elektra storing"
+    description: "Hoe we werken."
+  - label: "Contact"
+    href: "/contact/"
+    description: "Bel of app direct."
+image_plan: []
 schema_type: "Service"
 safety_alert: false
 draft: false
+order: 2
 ---
+
+Hulp bij kortsluiting en uitvallende groepen in Helmond. TODO: vul aan met details.

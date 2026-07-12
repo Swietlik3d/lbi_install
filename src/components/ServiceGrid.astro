@@ -1,23 +1,45 @@
 ---
 import ServiceCard from "./ServiceCard.astro";
 
-interface Item {
+interface ServiceItem {
   title: string;
-  text?: string;
-  href?: string;
+  href: string;
+  description?: string;
+  icon?: string;
 }
 
 interface Props {
-  items: Item[];
+  title?: string;
+  intro?: string;
+  items: ServiceItem[];
+  columns?: 2 | 3 | 4;
 }
 
-const { items } = Astro.props;
+const { title, intro, items, columns = 3 } = Astro.props;
+const colClass: Record<number, string> = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-2 lg:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+};
 ---
 
-<div class="card-grid">
-  {
-    items.map((item) => (
-      <ServiceCard title={item.title} text={item.text} href={item.href} />
-    ))
-  }
-</div>
+<section class="section">
+  <div class="container-base">
+    {(title || intro) && (
+      <div class="mb-8 max-w-prose">
+        {title && <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">{title}</h2>}
+        {intro && <p class="mt-3 lede">{intro}</p>}
+      </div>
+    )}
+    <div class:list={["grid grid-cols-1 gap-5", colClass[columns]]}>
+      {items.map((item) => (
+        <ServiceCard
+          title={item.title}
+          href={item.href}
+          description={item.description}
+          icon={item.icon}
+        />
+      ))}
+    </div>
+  </div>
+</section>

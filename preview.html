@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preview · LBI multi-site</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: "rgb(var(--brand)/<alpha-value>)",
+              dark: "rgb(var(--brand-dark)/<alpha-value>)",
+              light: "rgb(var(--brand-light)/<alpha-value>)",
+              ink: "rgb(var(--brand-ink)/<alpha-value>)",
+            },
+            accent: {
+              DEFAULT: "rgb(var(--accent)/<alpha-value>)",
+              ink: "rgb(var(--accent-ink)/<alpha-value>)",
+            },
+            ink: "rgb(var(--ink)/<alpha-value>)",
+            muted: "rgb(var(--muted)/<alpha-value>)",
+            surface: "rgb(var(--surface)/<alpha-value>)",
+          },
+          maxWidth: { container: "1140px" },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root { --brand-ink: 255 255 255; --accent-ink: 255 255 255; --ink: 15 23 42; --muted: 71 85 105; --surface: 248 250 252; }
+    [data-site="lbi"]     { --brand: 29 78 216;  --brand-dark: 30 58 138;  --brand-light: 219 234 254; --accent: 234 88 12; }
+    [data-site="elektra"] { --brand: 180 83 9;   --brand-dark: 120 53 15;  --brand-light: 254 243 199; --accent: 15 23 42; }
+    [data-site="lekkage"] { --brand: 14 116 144; --brand-dark: 22 78 99;   --brand-light: 207 250 254; --accent: 2 132 199; }
+    [data-site="gas"]     { --brand: 194 65 12;  --brand-dark: 124 45 18;  --brand-light: 255 237 213; --accent: 220 38 38; }
+    body { font-family: Inter, system-ui, "Segoe UI", Roboto, Arial, sans-serif; }
+    .container-base { margin-inline: auto; width: 100%; max-width: 1140px; padding-inline: 1rem; }
+    @media (min-width: 640px) { .container-base { padding-inline: 1.5rem; } }
+  </style>
+</head>
+<body class="bg-slate-100">
+  <!-- Preview toolbar (NOT part of the real site) -->
+  <div class="sticky top-0 z-50 border-b border-slate-800 bg-slate-900 text-white">
+    <div class="container-base flex flex-wrap items-center gap-3 py-2.5">
+      <span class="text-xs font-bold uppercase tracking-wide text-amber-400">● Preview</span>
+      <span class="hidden text-xs text-slate-400 sm:inline">statische voorbeeldweergave — niet de echte Astro-build</span>
+      <div class="ml-auto flex flex-wrap gap-1" id="switcher"></div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-[1280px] p-3 sm:p-6">
+    <div class="overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl">
+      <div id="app" data-site="lbi"></div>
+    </div>
+    <p class="mt-3 text-center text-xs text-slate-500">
+      Tip: maak het venster smal (&lt; 768px) om de mobiele <strong>Bel direct / WhatsApp</strong>-balk te zien.
+    </p>
+  </div>
+
+  <script>
+    const PHONE = "06 532 29 349";
+    const ICONS = {
+      kitchen: "M4 3h16v4H4zM6 7v14M18 7v14M4 11h16",
+      bath: "M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM7 12V6a2 2 0 0 1 4 0",
+      bolt: "M13 2 4 14h6l-1 8 9-12h-6z",
+      water: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z",
+      gas: "M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3.5 2-4 0 2 1.5 2.5 2.5 2 .5-2-1.5-3-1.5-5 0-1.5 2-2 2-2z",
+      wrench: "M21 4a5 5 0 0 1-6.7 6.7L5 20l-1-1 9.3-9.3A5 5 0 0 1 20 3z",
+      check: "M5 13l4 4L19 7",
+    };
+
+    const TRUST = [
+      ["Vaste contactpersoon", "U weet met wie u te maken heeft."],
+      ["Duidelijke prijsafspraak vooraf", "Geen verrassingen achteraf."],
+      ["Lokaal in Helmond e.o.", "Snel ter plaatse in de regio."],
+      ["Net en opgeruimd werk", "We laten het schoon achter."],
+    ];
+
+    const SITES = {
+      lbi: {
+        brand: "LBI Installaties", sub: "", emergency: false, safety: false,
+        nav: ["Home", "Diensten", "Projecten", "Reviews", "Werkgebied", "Contact"],
+        kicker: "Vakwerk in Helmond e.o.",
+        h1: "Installatiebedrijf in Helmond voor keuken, badkamer, elektra en leidingwerk",
+        subtitle: "Van complete keuken- en badkamerverbouwing tot elektra, water, gas en riolering. Eén vast aanspreekpunt, netjes opgeleverd.",
+        servicesTitle: "Onze diensten",
+        services: [
+          ["Keukenverbouwing", "Complete keukeninstallatie: water, elektra en afvoer.", "kitchen"],
+          ["Badkamerverbouwing", "Van sloop tot tegelklaar en sanitair aansluiten.", "bath"],
+          ["Elektra & meterkast", "Groepenkast, extra groepen en storingen.", "bolt"],
+          ["Water, gas & riolering", "Leidingwerk, kranen, gasleiding en afvoer.", "water"],
+        ],
+        cta: "Direct een vakman nodig in Helmond?",
+      },
+      elektra: {
+        brand: "Elektra Storing Helmond", sub: "Onderdeel van LBI Installaties", emergency: true, safety: false,
+        nav: ["Home", "Storingen", "Meterkast", "Werkwijze & FAQ", "Contact"],
+        kicker: "Snel een vakman nodig?",
+        h1: "Elektra storing in Helmond? Bel direct voor snelle hulp",
+        subtitle: "Geen stroom, een groep die uitvalt of kortsluiting? Bel of app direct. Onderdeel van LBI Installaties.",
+        servicesTitle: "Waarmee we u helpen",
+        services: [
+          ["Kortsluiting of groep valt uit", "Wat te doen en hoe wij het oplossen.", "bolt"],
+          ["Meterkast & groepen", "Groepenkast, extra groepen en aansluitingen.", "bolt"],
+          ["Werkwijze & FAQ", "Hoe we werken en veelgestelde vragen.", "wrench"],
+        ],
+        cta: "Storing? Bel of app direct.",
+      },
+      lekkage: {
+        brand: "Lekkage Reparatie Helmond", sub: "Onderdeel van LBI Installaties", emergency: true, safety: false,
+        nav: ["Home", "Lekkage", "Water & afvoer", "Werkwijze & FAQ", "Contact"],
+        kicker: "Snel een vakman nodig?",
+        h1: "Lekkage in Helmond? Snel opsporen en repareren",
+        subtitle: "Een lekkende leiding, kraan of afvoer? Bel of app direct. Onderdeel van LBI Installaties.",
+        servicesTitle: "Waarmee we u helpen",
+        services: [
+          ["Lekkage badkamer & keuken", "Lekkages opsporen en repareren in natte ruimtes.", "water"],
+          ["Waterleiding, afvoer & riolering", "Leidingwerk, afvoer en verstoppingen.", "water"],
+          ["Werkwijze & FAQ", "Hoe we werken en veelgestelde vragen.", "wrench"],
+        ],
+        cta: "Lekkage? Bel of app direct.",
+      },
+      gas: {
+        brand: "Gasleiding Service Helmond", sub: "Onderdeel van LBI Installaties", emergency: true, safety: true,
+        nav: ["Home", "Gasleiding", "Controle & herstel", "Veiligheid", "Contact"],
+        kicker: "Veilig en vakkundig",
+        h1: "Gasleiding service in Helmond",
+        subtitle: "Gasleiding aanleggen, verleggen, controleren of herstellen? Bel of app. Onderdeel van LBI Installaties.",
+        servicesTitle: "Waarmee we u helpen",
+        services: [
+          ["Gasleiding aansluiten & verleggen", "Aanleg en aanpassing van gasleidingen.", "gas"],
+          ["Controle & herstel", "Controle, lekcontrole en herstel.", "gas"],
+          ["Veiligheid bij gaslucht", "Wat te doen als u gas ruikt.", "gas"],
+        ],
+        cta: "Gasleidingwerk nodig?",
+      },
+    };
+
+    function icon(path, cls) {
+      return `<svg viewBox="0 0 24 24" class="${cls}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>`;
+    }
+    function phoneBtn(cls) {
+      return `<a href="#" class="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold ${cls}">${icon("M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z", "h-5 w-5")}<span>Bel direct ${PHONE}</span></a>`;
+    }
+    function waBtn() {
+      return `<a href="#" class="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[#25D366] px-5 py-3 font-semibold text-white">${icon("M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Z", "h-5 w-5")}<span>WhatsApp</span></a>`;
+    }
+
+    function render(id) {
+      const s = SITES[id];
+      const initials = s.brand.slice(0, 2).toUpperCase();
+      const heroLight = !s.emergency;
+
+      const nav = s.nav.map((n, i) => `<a href="#" class="rounded-md px-3 py-2 text-sm font-medium ${i === 0 ? "text-brand" : "text-ink hover:text-brand"}">${n}</a>`).join("");
+
+      const trust = TRUST.map(([t, d]) => `
+        <li class="flex items-start gap-3">
+          <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-light text-brand">${icon(ICONS.check, "h-5 w-5")}</span>
+          <span><span class="block font-semibold text-ink">${t}</span><span class="block text-sm text-muted">${d}</span></span>
+        </li>`).join("");
+
+      const services = s.services.map(([t, d, ic]) => `
+        <a href="#" class="group flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-lg">
+          <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-light text-brand">${icon(ICONS[ic], "h-6 w-6")}</span>
+          <h3 class="mt-4 text-lg font-bold text-ink group-hover:text-brand">${t}</h3>
+          <p class="mt-2 text-sm text-muted">${d}</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand">Meer informatie →</span>
+        </a>`).join("");
+
+      const safety = s.safety ? `
+        <div class="container-base pt-10">
+          <aside class="rounded-2xl border-2 border-accent bg-accent/5 p-5 sm:p-6">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-white">${icon("M12 9v4m0 4h.01M10.3 3.9 2.4 18a1.8 1.8 0 0 0 1.6 2.7h16a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.1 0Z", "h-5 w-5")}</span>
+              <div>
+                <h2 class="text-lg font-extrabold text-ink">Ruikt u gas? Lees dit eerst</h2>
+                <p class="mt-2 leading-relaxed text-ink">Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel geen elektrische apparaten aan of uit. Sluit de hoofdkraan indien dit veilig kan, ga naar buiten en bel het Nationaal Storingsnummer <a class="font-bold text-accent underline" href="#">0800-9009</a>. Bij direct gevaar: bel <a class="font-bold text-accent underline" href="#">112</a>.</p>
+              </div>
+            </div>
+          </aside>
+        </div>` : "";
+
+      return `
+      <div class="bg-white pb-16 text-ink">
+        <!-- Header -->
+        <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+          <div class="container-base flex items-center justify-between gap-4 py-3">
+            <a href="#" class="flex items-center gap-3">
+              <span class="grid h-10 w-10 place-items-center rounded-lg bg-brand text-base font-extrabold text-brand-ink">${initials}</span>
+              <span class="leading-tight">
+                <span class="block text-base font-extrabold sm:text-lg">${s.brand}</span>
+                ${s.sub ? `<span class="block text-xs text-muted">${s.sub}</span>` : ""}
+              </span>
+            </a>
+            <nav class="hidden items-center gap-1 md:flex">${nav}</nav>
+            <a href="#" class="hidden rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-ink sm:inline-flex">${PHONE}</a>
+          </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="${heroLight ? "bg-surface" : "bg-brand text-brand-ink"}">
+          <div class="container-base grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-2">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-wide ${heroLight ? "text-brand" : "text-brand-ink/80"}">${s.kicker}</p>
+              <h1 class="mt-3 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">${s.h1}</h1>
+              <p class="mt-4 max-w-prose text-lg leading-relaxed ${heroLight ? "text-muted" : "text-brand-ink/90"}">${s.subtitle}</p>
+              <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+                ${phoneBtn(heroLight ? "bg-brand text-brand-ink hover:bg-brand-dark" : "bg-white text-brand hover:bg-white/90")}
+                ${waBtn()}
+              </div>
+            </div>
+            <div class="hidden overflow-hidden rounded-2xl bg-slate-200/60 lg:block">
+              <div class="grid aspect-[4/3] place-items-center text-slate-400">
+                ${icon("M3 16l5-5 4 4 3-3 6 6M3 5h18v14H3z", "h-12 w-12")}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        ${safety}
+
+        <!-- Trust -->
+        <section class="border-y border-slate-200 bg-surface">
+          <div class="container-base py-8">
+            <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">${trust}</ul>
+          </div>
+        </section>
+
+        <!-- Services -->
+        <section class="py-12 sm:py-16">
+          <div class="container-base">
+            <h2 class="mb-8 text-2xl font-extrabold sm:text-3xl">${s.servicesTitle}</h2>
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 ${s.services.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}">${services}</div>
+          </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-4">
+          <div class="container-base">
+            <div class="flex flex-col items-start justify-between gap-6 rounded-2xl bg-brand px-6 py-10 text-brand-ink sm:px-10 lg:flex-row lg:items-center">
+              <div>
+                <h2 class="text-2xl font-extrabold sm:text-3xl">${s.cta}</h2>
+                <p class="mt-2 text-brand-ink/90">Bel of app ons. We denken meteen met u mee en plannen snel een afspraak.</p>
+              </div>
+              <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                <a href="#" class="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 font-semibold text-brand">Bel ${PHONE}</a>
+                <a href="#" class="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-5 py-3 font-semibold text-white">WhatsApp</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-12 border-t border-slate-200 bg-surface">
+          <div class="container-base grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p class="text-lg font-extrabold">${s.brand}</p>
+              ${s.sub ? `<p class="mt-1 text-sm font-medium text-brand">${s.sub}</p>` : ""}
+              <p class="mt-3 text-sm text-muted">Werkgebied: Helmond en omgeving</p>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold uppercase tracking-wide">Contact</h3>
+              <ul class="mt-3 space-y-2 text-sm text-muted">
+                <li><a href="#" class="font-medium text-brand">${PHONE}</a></li>
+                <li><a href="#" class="font-medium text-brand">WhatsApp</a></li>
+                <li>lbi.helmond@protonmail.com</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold uppercase tracking-wide">Menu</h3>
+              <ul class="mt-3 space-y-2 text-sm text-muted">${s.nav.map((n) => `<li><a href="#" class="hover:text-brand">${n}</a></li>`).join("")}</ul>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold uppercase tracking-wide">${s.sub ? "LBI Installaties" : "Bedrijf"}</h3>
+              <ul class="mt-3 space-y-2 text-sm text-muted">
+                ${s.sub ? `<li><a href="#" class="hover:text-brand">Meer over LBI Installaties</a></li>` : `<li><a href="#" class="hover:text-brand">Over ons</a></li>`}
+                <li><a href="#" class="hover:text-brand">Privacy &amp; cookies</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="border-t border-slate-200">
+            <div class="container-base flex flex-col gap-2 py-5 text-xs text-muted sm:flex-row sm:justify-between">
+              <p>© ${new Date().getFullYear()} LBI Installaties. Alle rechten voorbehouden.</p>
+              <p class="flex gap-4"><span>KVK: [KVK-NUMMER]</span><span>BTW: [BTW-ID]</span></p>
+            </div>
+          </div>
+        </footer>
+
+        <!-- Mobile sticky call bar -->
+        <div class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 gap-px border-t border-slate-200 bg-white md:hidden">
+          <a href="#" class="flex items-center justify-center gap-2 bg-brand py-3 text-sm font-bold text-brand-ink">${icon("M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z", "h-5 w-5")} Bel direct</a>
+          <a href="#" class="flex items-center justify-center gap-2 bg-[#25D366] py-3 text-sm font-bold text-white">${icon("M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Z", "h-5 w-5")} WhatsApp</a>
+        </div>
+      </div>`;
+    }
+
+    const app = document.getElementById("app");
+    const switcher = document.getElementById("switcher");
+    const LABELS = { lbi: "LBI", elektra: "Elektra", lekkage: "Lekkage", gas: "Gas" };
+
+    function setSite(id) {
+      app.dataset.site = id;
+      app.innerHTML = render(id);
+      [...switcher.children].forEach((b) => {
+        const active = b.dataset.id === id;
+        b.className = "rounded-md px-3 py-1.5 text-sm font-semibold " + (active ? "bg-white text-slate-900" : "bg-slate-700 text-slate-200 hover:bg-slate-600");
+      });
+      window.scrollTo({ top: 0 });
+    }
+
+    Object.keys(SITES).forEach((id) => {
+      const b = document.createElement("button");
+      b.dataset.id = id;
+      b.textContent = LABELS[id];
+      b.onclick = () => setSite(id);
+      switcher.appendChild(b);
+    });
+    setSite("lbi");
+  </script>
+</body>
+</html>

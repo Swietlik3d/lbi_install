@@ -3,37 +3,35 @@ site: "elektra"
 path: "/contact/"
 page_type: "contact"
 meta_title: "Contact | Elektra Storing Helmond"
-meta_description: "Neem contact op over elektra-storingen, groepen en meterkastvragen in Helmond."
+meta_description: "Elektra storing in Helmond? Bel of app direct met Elektra Storing Helmond, onderdeel van LBI Installaties."
 focus_keyword: "contact elektra storing Helmond"
-h1: "Contact over elektra"
+secondary_keywords: []
+h1: "Contact bij een elektrastoring"
 hero:
-  heading: "Bel of WhatsApp bij elektra-vragen"
-  text: "Gebruik telefoon of WhatsApp voor de snelste route. Deze microsite gebruikt dezelfde contactgegevens als LBI Installaties."
-  highlights:
-    - "Telefoon"
-    - "WhatsApp"
-    - "Onderdeel van LBI"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "Open WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Contact"
+  subtitle: "Bellen of appen is het snelst bij een storing. We laten direct weten wat we kunnen."
+  showCallButtons: false
 sections:
-  - heading: "Contactgegevens"
-    body: "De gegevens komen uit de gedeelde siteconfig. KVK, BTW en adres blijven placeholders tot ze definitief zijn."
-    variant: "contact"
-  - heading: "Meer over LBI Installaties"
-    body: "Deze microsite verwijst zichtbaar naar de hoofddomeinwebsite van LBI Installaties."
-    variant: "text"
-faqs: []
+  - heading: "Wat handig is om door te geven"
+    body: >-
+      Vertel kort wat er speelt: welke groep valt uit, sinds wanneer, en of er een brandlucht of
+      schade is. Foto's via WhatsApp helpen ons inschatten. Bij gevaar: blijf van de installatie af.
+    layout: "text"
+faqs:
+  - question: "Reageren jullie snel?"
+    answer: "We doen ons best om snel te reageren. TODO: vermeld realistische reactietijden."
 internal_links:
+  - label: "Kortsluiting of groep valt uit"
+    href: "/kortsluiting-groep-valt-uit/"
+    description: "Hulp bij storingen."
   - label: "Werkwijze & FAQ"
     href: "/werkwijze-faq/"
-  - label: "Home"
-    href: "/"
+    description: "Hoe we werken."
 image_plan: []
-schema_type: "WebPage"
+schema_type: "ContactPage"
 safety_alert: false
 draft: false
+order: 5
 ---
+
+Neem contact op met Elektra Storing Helmond. Onderdeel van LBI Installaties.

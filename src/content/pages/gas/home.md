@@ -2,54 +2,52 @@
 site: "gas"
 path: "/"
 page_type: "home"
-meta_title: "Gasleiding Service Helmond | Onderdeel van LBI Installaties"
-meta_description: "Gasleiding Service Helmond is een microsite van LBI Installaties voor gasleiding aansluiten, verleggen, controle en herstel in Helmond."
-focus_keyword: "gasleiding service Helmond"
+meta_title: "Gaslucht of gasstoring Helmond | 24/7 veilig geholpen | LBI"
+meta_description: "Gaslucht of gasstoring in Helmond? Bel direct LBI Installaties. 24/7 bereikbaar bij spoed, snel ter plaatse en veilig gewerkt."
+focus_keyword: "gasstoring Helmond"
 secondary_keywords:
-  - "gasleiding aansluiten Helmond"
-  - "gasleiding verleggen"
-  - "gaslucht veiligheid"
-h1: "Gasleiding service in Helmond"
+  - "gaslucht Helmond"
+  - "gaslek Helmond"
+h1: "Gaslucht of gasstoring? Snel en veilig geholpen."
 hero:
-  heading: "Gerichte informatie over gasleidingwerk en veiligheid"
-  text: "Deze microsite is onderdeel van LBI Installaties en geeft overzicht voor gasleidingvragen. Veiligheidsinformatie krijgt voorrang op commerciële CTA's."
-  highlights:
-    - "Aansluiten en verleggen"
-    - "Controle en herstel"
-    - "Gaslucht veiligheid"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Awaria gazu / gasstoring / gaslucht"
+  subtitle: "Snel ter plaatse in Helmond en omgeving. 24/7 spoedservice bij gaslucht of gasstoring."
+  showCallButtons: true
 sections:
-  - heading: "Kies uw situatie"
-    variant: "cards"
-    items:
-      - title: "Gasleiding aansluiten of verleggen"
-        text: "Voor geplande vragen rond gasleidingwerk."
-        href: "/gasleiding-aansluiten-verleggen/"
-      - title: "Controle en herstel"
-        text: "Voor vragen over controle, aanpassing of herstel."
-        href: "/controle-herstel/"
-      - title: "Veiligheid bij gaslucht"
-        text: "Lees eerst wat u moet doen wanneer u gas ruikt."
-        href: "/veiligheid-bij-gaslucht/"
-  - heading: "Onderdeel van LBI Installaties"
-    body: "De microsite heeft eigen metadata, sitemap en canonical URL's, met zichtbare verwijzing naar LBI Installaties."
-    variant: "text"
+  - heading: "Waarmee we u helpen"
+    body: >-
+      Werk aan gasleidingen moet veilig en volgens de regels gebeuren. We helpen bij gaslucht,
+      gasstoring, controle en het veiligstellen van installaties in Helmond en omgeving.
+    layout: "text"
+    bullets:
+      - "Gaslucht opsporen"
+      - "Gasstoring oplossen"
+      - "Controle van gasleiding"
+      - "Afsluiten en veiligstellen"
 faqs:
-  - question: "Wat moet ik doen als ik gas ruik?"
-    answer: "Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel geen elektrische apparaten aan of uit. Ga naar buiten en bel het Nationaal Storingsnummer 0800-9009. Bij direct gevaar: bel 112."
+  - question: "Ik ruik gas, wat moet ik doen?"
+    answer: "Volg eerst de veiligheidsinstructies bovenaan deze pagina. Bij direct gevaar belt u 112. Bel daarna pas voor herstel."
+  - question: "Mogen jullie aan gasleidingen werken?"
+    answer: "Werk aan gasleidingen voeren we vakkundig uit. TODO: vermeld hier relevante, kloppende kwalificaties zodra bevestigd — niets verzinnen."
 internal_links:
+  - label: "Gasleiding aansluiten & verleggen"
+    href: "/gasleiding-aansluiten-verleggen/"
+    description: "Aanleg en aanpassing van gasleidingen."
+  - label: "Controle & herstel"
+    href: "/controle-herstel/"
+    description: "Controle, lekcontrole en herstel."
   - label: "Veiligheid bij gaslucht"
     href: "/veiligheid-bij-gaslucht/"
-  - label: "Contact"
-    href: "/contact/"
+    description: "Wat te doen als u gas ruikt."
 image_plan:
-  - alt: "Gasleiding en afsluitkraan"
-schema_type: "LocalBusiness"
+  - slot: "hero"
+    filename: "hero.jpg"
+    alt: "TODO: alt-tekst"
+    note: "Optioneel."
+schema_type: "WebPage"
 safety_alert: true
 draft: false
+order: 1
 ---
+
+Gasleiding Service Helmond is onderdeel van LBI Installaties.

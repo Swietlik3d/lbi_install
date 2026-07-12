@@ -1,110 +1,95 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
+import { getCurrentSite } from "../config/sites";
 
-type SettingsEntry = CollectionEntry<"settings">;
+const site = getCurrentSite();
+const page = Astro.url.pathname;
 
-interface Props {
-  site: SiteConfig;
-  currentPath: string;
-  settings?: SettingsEntry;
-}
+// Static-friendly. The form is OFF by default (enableContactForm: false in
+// sites.json) so phone + WhatsApp stay the primary conversion paths.
+// When enabled, pick a provider in sites.json: "netlify" | "formspree" | "custom".
+const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT ?? "";
+const provider = site.formProvider;
 
-const { site, currentPath, settings } = Astro.props;
-const enabled = settings?.data.contact_form_enabled ?? false;
-const provider = settings?.data.contact_form_provider ?? "disabled";
-const action = settings?.data.contact_form_action || undefined;
+const action =
+  provider === "formspree" || provider === "custom" ? endpoint || undefined : undefined;
+const method = provider === "none" ? undefined : "POST";
 const isNetlify = provider === "netlify";
 ---
 
 {
-  enabled && (
+  site.enableContactForm && (
     <form
-      class="contact-form"
-      name={`${site.id}-contact`}
-      method="post"
+      class="card space-y-4 p-6 sm:p-8"
+      name="contact"
+      method={method}
       action={action}
       data-netlify={isNetlify ? "true" : undefined}
+      netlify-honeypot={isNetlify ? "bot-field" : undefined}
     >
-      {isNetlify && (
-        <input type="hidden" name="form-name" value={`${site.id}-contact`} />
-      )}
-      <div class="form-grid">
-        <label>
-          Naam
-          <input name="name" autocomplete="name" required />
-        </label>
-        <label>
-          Telefoon of e-mail
-          <input name="contact" autocomplete="tel email" required />
-        </label>
+      {isNetlify && <input type="hidden" name="form-name" value="contact" />}
+      <p class="hidden">
+        <label>Laat dit veld leeg: <input name="bot-field" /></label>
+      </p>
+
+      <div>
+        <label for="cf-name" class="block text-sm font-semibold text-ink">Naam</label>
+        <input
+          id="cf-name"
+          name="naam"
+          type="text"
+          required
+          autocomplete="name"
+          class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:border-brand"
+        />
       </div>
-      <label>
-        Bericht
-        <textarea name="message" rows="5" required />
-      </label>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="cf-phone" class="block text-sm font-semibold text-ink">Telefoon</label>
+          <input
+            id="cf-phone"
+            name="telefoon"
+            type="tel"
+            autocomplete="tel"
+            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:border-brand"
+          />
+        </div>
+        <div>
+          <label for="cf-email" class="block text-sm font-semibold text-ink">E-mail</label>
+          <input
+            id="cf-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:border-brand"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="cf-message" class="block text-sm font-semibold text-ink">Uw vraag</label>
+        <textarea
+          id="cf-message"
+          name="bericht"
+          rows="5"
+          required
+          class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:border-brand"
+        />
+      </div>
+
       <button
-        class="button button--primary"
         type="submit"
+        class="btn btn-primary w-full sm:w-auto"
         data-event="contact_submit"
         data-site={site.id}
-        data-page={currentPath}
+        data-page={page}
       >
-        Versturen
+        Verstuur bericht
       </button>
+      <p class="text-xs text-muted">
+        Liever direct contact? Bel <a href={site.phoneHref} class="text-brand">{site.phone}</a> of
+        stuur een <a href={site.whatsappHref} class="text-brand" rel="noopener">WhatsApp</a>.
+      </p>
     </form>
   )
 }
-
-<style>
-  .contact-form {
-    display: grid;
-    gap: 16px;
-    margin-top: 28px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-surface);
-    padding: 22px;
-  }
-
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  label {
-    display: grid;
-    gap: 7px;
-    color: var(--color-ink);
-    font-size: 0.9rem;
-    font-weight: 850;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    background: white;
-    color: var(--color-ink);
-    font: inherit;
-    font-size: 1rem;
-    padding: 12px 13px;
-  }
-
-  textarea {
-    resize: vertical;
-  }
-
-  button {
-    justify-self: start;
-    cursor: pointer;
-  }
-
-  @media (max-width: 680px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

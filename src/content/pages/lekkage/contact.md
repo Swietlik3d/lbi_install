@@ -3,37 +3,35 @@ site: "lekkage"
 path: "/contact/"
 page_type: "contact"
 meta_title: "Contact | Lekkage Reparatie Helmond"
-meta_description: "Neem contact op over lekkage, waterleiding, afvoer of riolering in Helmond."
-focus_keyword: "contact lekkage reparatie Helmond"
-h1: "Contact over lekkage"
+meta_description: "Lekkage in Helmond? Bel of app direct met Lekkage Reparatie Helmond, onderdeel van LBI Installaties."
+focus_keyword: "contact lekkage Helmond"
+secondary_keywords: []
+h1: "Contact bij een lekkage"
 hero:
-  heading: "Bel of stuur foto's via WhatsApp"
-  text: "Telefoon en WhatsApp zijn de primaire routes. Deze microsite gebruikt dezelfde contactgegevens als LBI Installaties."
-  highlights:
-    - "Telefoon"
-    - "WhatsApp"
-    - "Onderdeel van LBI"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "Open WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Contact"
+  subtitle: "Bellen of appen is het snelst bij een lekkage. We laten direct weten wat we kunnen."
+  showCallButtons: false
 sections:
-  - heading: "Contactgegevens"
-    body: "Contactgegevens komen uit de gedeelde siteconfig. Juridische gegevens blijven placeholders totdat ze definitief zijn."
-    variant: "contact"
-  - heading: "Meer over LBI Installaties"
-    body: "Deze microsite verwijst zichtbaar naar de hoofddomeinwebsite van LBI Installaties."
-    variant: "text"
-faqs: []
+  - heading: "Wat handig is om door te geven"
+    body: >-
+      Vertel kort waar het water vandaan komt, sinds wanneer, en of u de hoofdkraan al heeft
+      afgesloten. Foto's via WhatsApp helpen ons inschatten.
+    layout: "text"
+faqs:
+  - question: "Reageren jullie snel?"
+    answer: "We doen ons best om snel te reageren. TODO: vermeld realistische reactietijden."
 internal_links:
+  - label: "Lekkage badkamer & keuken"
+    href: "/lekkage-badkamer-keuken/"
+    description: "Lekkage in natte ruimtes."
   - label: "Werkwijze & FAQ"
     href: "/werkwijze-faq/"
-  - label: "Home"
-    href: "/"
+    description: "Hoe we werken."
 image_plan: []
-schema_type: "WebPage"
+schema_type: "ContactPage"
 safety_alert: false
 draft: false
+order: 5
 ---
+
+Neem contact op met Lekkage Reparatie Helmond. Onderdeel van LBI Installaties.

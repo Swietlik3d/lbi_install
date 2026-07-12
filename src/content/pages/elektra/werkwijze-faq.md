@@ -2,45 +2,49 @@
 site: "elektra"
 path: "/werkwijze-faq/"
 page_type: "overview"
-meta_title: "Werkwijze en FAQ | Elektra Storing Helmond"
-meta_description: "Werkwijze en veelgestelde vragen voor elektra-storingen en meterkastvragen in Helmond."
-focus_keyword: "werkwijze elektra storing Helmond"
-h1: "Werkwijze en FAQ"
+meta_title: "Werkwijze & FAQ | Elektra Storing Helmond"
+meta_description: "Hoe werkt Elektra Storing Helmond en wat kunt u verwachten? Bekijk onze werkwijze en veelgestelde vragen. Onderdeel van LBI Installaties."
+focus_keyword: "elektra storing werkwijze Helmond"
+secondary_keywords:
+  - "elektricien Helmond vragen"
+h1: "Werkwijze & veelgestelde vragen"
 hero:
-  heading: "Zo bereidt u een elektra-aanvraag voor"
-  text: "Een paar concrete gegevens helpen om sneller te begrijpen wat er speelt."
-  highlights:
-    - "Foto's"
-    - "Locatie"
-    - "Situatie"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Werkwijze"
+  subtitle: "Duidelijkheid vooraf. Zo werken we en dit zijn de vragen die we vaak krijgen."
+  showCallButtons: true
 sections:
-  - heading: "Stappen"
-    variant: "steps"
-    items:
-      - title: "1. Beschrijf de storing"
-        text: "Wat valt uit, wanneer gebeurt het en is er een apparaat betrokken?"
-      - title: "2. Stuur foto's"
-        text: "Een foto van de meterkast en situatie kan helpen."
-      - title: "3. Maak een afspraak"
-        text: "Bespreek wat nodig is en wanneer dit kan worden ingepland."
+  - heading: "Zo werken we"
+    layout: "steps"
+    body: "In een paar stappen geregeld:"
+    bullets:
+      - "U belt of appt met uw storing of vraag"
+      - "We stellen een paar vragen om de situatie in te schatten"
+      - "We plannen een afspraak of komen, indien mogelijk, met spoed"
+      - "We verhelpen de storing of geven een duidelijk vervolgadvies"
 faqs:
-  - question: "Welke informatie is nuttig?"
-    answer: "Foto's, de locatie, welke groep uitvalt en wanneer de storing optreedt."
-  - question: "Is er 24/7 spoedservice?"
-    answer: "Dit is niet ingevuld omdat er geen definitieve informatie is aangeleverd. Voeg dit alleen toe als het klopt."
+  - question: "Werken jullie ook 's avonds of in het weekend?"
+    answer: "TODO: bevestig uw beschikbaarheid. Beloof geen 24/7 als dat niet zo is."
+  - question: "Wat kost een storingsbezoek?"
+    answer: "TODO: geef aan hoe u prijzen/voorrijkosten communiceert. Geen bedragen verzinnen."
+  - question: "Geven jullie garantie op het werk?"
+    answer: "TODO: vermeld alleen garantie als u die daadwerkelijk biedt en onder welke voorwaarden."
+  - question: "Zijn jullie onderdeel van LBI Installaties?"
+    answer: "Ja. Elektra Storing Helmond is de spoed- en storingssite van LBI Installaties."
 internal_links:
   - label: "Kortsluiting of groep valt uit"
     href: "/kortsluiting-groep-valt-uit/"
+    description: "Veelvoorkomende storingen."
+  - label: "Meterkast & groepen"
+    href: "/meterkast-groepen/"
+    description: "Groepenkast en aansluitingen."
   - label: "Contact"
     href: "/contact/"
+    description: "Bel of app direct."
 image_plan: []
 schema_type: "FAQPage"
 safety_alert: false
 draft: false
+order: 4
 ---
+
+Werkwijze en veelgestelde vragen van Elektra Storing Helmond. TODO: vul de antwoorden met echte informatie in.

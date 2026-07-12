@@ -2,48 +2,50 @@
 site: "elektra"
 path: "/meterkast-groepen/"
 page_type: "service"
-meta_title: "Meterkast en groepen | Elektra Storing Helmond"
-meta_description: "Vragen over meterkast, groepen en elektrische verdeling in Helmond. Onderdeel van LBI Installaties."
-focus_keyword: "meterkast groepen Helmond"
-h1: "Meterkast en groepen"
+meta_title: "Meterkast & groepen in Helmond | Elektra Storing Helmond"
+meta_description: "Meterkast vol of een groep erbij nodig in Helmond? We vervangen en breiden groepenkasten uit. Onderdeel van LBI Installaties. Bel of app."
+focus_keyword: "meterkast Helmond"
+secondary_keywords:
+  - "groepenkast vervangen Helmond"
+  - "extra groep Helmond"
+h1: "Meterkast en groepen in Helmond"
 hero:
-  heading: "Vragen over groepen, verdeling of uitbreiding"
-  text: "Gebruik deze starterpagina voor meterkastvragen. Vul later aan met definitieve diensten, beperkingen en foto's."
-  highlights:
-    - "Groepen"
-    - "Verdeling"
-    - "Aansluitingen"
-cta_primary:
-  label: "Bel over meterkast"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "Stuur WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Meterkast"
+  subtitle: "Groepenkast vervangen, een groep erbij of een nieuwe aansluiting? Dat regelen we voor u."
+  showCallButtons: true
 sections:
-  - heading: "Mogelijke onderwerpen"
-    variant: "cards"
-    items:
-      - title: "Groep valt uit"
-        text: "Wanneer een groep steeds uitvalt, is storinganalyse nodig."
-        href: "/kortsluiting-groep-valt-uit/"
-      - title: "Nieuwe aansluitpunten"
-        text: "Bij keuken, badkamer of andere aanpassingen kan de verdeling relevant zijn."
-      - title: "Foto's helpen"
-        text: "Stuur een foto van de meterkast mee via WhatsApp."
-  - heading: "Geen verzonnen certificaten"
-    body: "TODO: voeg alleen certificering of erkenning toe als LBI dit expliciet aanlevert."
-    variant: "text"
+  - heading: "Wat we doen aan uw meterkast"
+    body: >-
+      Een verouderde of volle meterkast geeft storingen en is minder veilig. We brengen uw
+      groepenkast op orde, veilig en volgens de regels.
+    layout: "text"
+    bullets:
+      - "Groepenkast vervangen of moderniseren"
+      - "Extra groepen bijplaatsen"
+      - "Aardlekbeveiliging controleren en aanpassen"
+      - "Aansluitingen voor nieuwe apparaten of een verbouwing"
 faqs:
-  - question: "Kan ik een foto van mijn meterkast sturen?"
-    answer: "Ja, dat helpt vaak bij het eerste contact."
+  - question: "Wanneer is een nieuwe groepenkast nodig?"
+    answer: "Bij regelmatig uitvallende groepen, te weinig groepen of een sterk verouderde kast. We bekijken uw situatie en adviseren. TODO: vul aan."
 internal_links:
+  - label: "Kortsluiting of groep valt uit"
+    href: "/kortsluiting-groep-valt-uit/"
+    description: "Hulp bij storingen."
+  - label: "Meer over elektra bij LBI"
+    href: "https://www.lbi-helmond.nl/elektra-meterkast-helmond/"
+    description: "Elektrawerk bij verbouwingen."
   - label: "Contact"
     href: "/contact/"
-  - label: "Werkwijze & FAQ"
-    href: "/werkwijze-faq/"
+    description: "Bel of app voor een afspraak."
 image_plan:
-  - alt: "Meterkast met groepen"
+  - slot: "hero"
+    filename: "meterkast.jpg"
+    alt: "TODO: alt-tekst"
+    note: "Nette meterkast."
 schema_type: "Service"
 safety_alert: false
 draft: false
+order: 3
 ---
+
+Meterkast- en groepenwerk in Helmond. TODO: vul aan met details.

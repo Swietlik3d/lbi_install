@@ -2,54 +2,52 @@
 site: "elektra"
 path: "/"
 page_type: "home"
-meta_title: "Elektra Storing Helmond | Onderdeel van LBI Installaties"
-meta_description: "Elektra Storing Helmond is een microsite van LBI Installaties voor kortsluiting, groepen die uitvallen en meterkastvragen in Helmond."
+meta_title: "Elektra Storing Helmond | Snel een monteur | Onderdeel van LBI"
+meta_description: "Elektra storing in Helmond? Groep valt uit of geen stroom? Bel direct voor snelle hulp. Elektra Storing Helmond, onderdeel van LBI Installaties."
 focus_keyword: "elektra storing Helmond"
 secondary_keywords:
-  - "kortsluiting Helmond"
-  - "groep valt uit"
-  - "meterkast Helmond"
-h1: "Elektra storing in Helmond"
+  - "stroomstoring Helmond"
+  - "groep valt uit Helmond"
+h1: "Elektra storing in Helmond? Bel direct voor snelle hulp"
 hero:
-  heading: "Gerichte hulp bij elektra-storingen en meterkastvragen"
-  text: "Deze microsite is onderdeel van LBI Installaties en bundelt informatie rond veelvoorkomende elektra-aanvragen. Vul definitieve spoed- en beschikbaarheidsinformatie later aan."
-  highlights:
-    - "Kortsluiting"
-    - "Groep valt uit"
-    - "Meterkast"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Snel een vakman nodig?"
+  subtitle: "Geen stroom, een groep die uitvalt of kortsluiting? Bel of app direct. Onderdeel van LBI Installaties."
+  showCallButtons: true
 sections:
-  - heading: "Waar gaat het om?"
-    variant: "cards"
-    items:
-      - title: "Kortsluiting of groep valt uit"
-        text: "Informatie voor situaties waarin een groep steeds uitvalt."
-        href: "/kortsluiting-groep-valt-uit/"
-      - title: "Meterkast en groepen"
-        text: "Voor vragen over groepen, verdeling en meterkastwerk."
-        href: "/meterkast-groepen/"
-      - title: "Werkwijze en FAQ"
-        text: "Wat u kunt meesturen en welke informatie helpt bij contact."
-        href: "/werkwijze-faq/"
-  - heading: "Onderdeel van LBI Installaties"
-    body: "Deze microsite gebruikt eigen metadata, sitemap en canonical URL's, maar verwijst zichtbaar naar LBI Installaties."
-    variant: "text"
+  - heading: "Waarmee we u snel helpen"
+    body: >-
+      Een elektrastoring is vervelend en soms onveilig. We helpen u snel verder met veelvoorkomende
+      storingen in en rond de woning in Helmond.
+    layout: "text"
+    bullets:
+      - "Groep die steeds uitvalt of niet meer terug wil"
+      - "Kortsluiting opsporen en verhelpen"
+      - "Geen stroom in (een deel van) de woning"
+      - "Problemen met de meterkast of groepenkast"
 faqs:
-  - question: "Is deze site hetzelfde als LBI Installaties?"
-    answer: "Deze microsite is onderdeel van LBI Installaties, maar heeft eigen pagina's en canonical URL's."
+  - question: "Kunnen jullie met spoed komen?"
+    answer: "Bel of app uw situatie, dan laten we direct weten wat we kunnen. TODO: bevestig uw spoed-werkwijze en realistische reactietijden. Geen 24/7 beloven als dat niet klopt."
+  - question: "Wat kan ik zelf alvast doen?"
+    answer: "Kijk of er één groep is uitgeschakeld en of het aan één apparaat ligt. Twijfelt u over de veiligheid? Blijf van de installatie af en bel ons."
 internal_links:
   - label: "Kortsluiting of groep valt uit"
     href: "/kortsluiting-groep-valt-uit/"
-  - label: "Contact"
-    href: "/contact/"
+    description: "Wat te doen en hoe wij het oplossen."
+  - label: "Meterkast & groepen"
+    href: "/meterkast-groepen/"
+    description: "Groepenkast, extra groepen en aansluitingen."
+  - label: "Werkwijze & FAQ"
+    href: "/werkwijze-faq/"
+    description: "Hoe we werken en veelgestelde vragen."
 image_plan:
-  - alt: "Meterkast met elektrische groepen"
-schema_type: "LocalBusiness"
+  - slot: "hero"
+    filename: "hero.jpg"
+    alt: "TODO: alt-tekst"
+    note: "Optioneel."
+schema_type: "WebPage"
 safety_alert: false
 draft: false
+order: 1
 ---
+
+Elektra Storing Helmond is onderdeel van LBI Installaties. TODO: vul aan met uw definitieve teksten.

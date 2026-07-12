@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "Webdesign": {
+      "source": "danielmiessler/Personal_AI_Infrastructure",
+      "sourceType": "github",
+      "skillPath": "Packs/Webdesign/src/SKILL.md",
+      "computedHash": "fc1d0ca2e65954cd6823a8807cbc9d818695ee0737f5d6d2d9a6acbad93a71e0"
+    }
+  }
+}

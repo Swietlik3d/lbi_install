@@ -1,31 +1,60 @@
 ---
-import PageLayout from "./PageLayout.astro";
+import BaseLayout from "./BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import TrustBadges from "../components/TrustBadges.astro";
+import SectionRenderer from "../components/SectionRenderer.astro";
+import FAQ from "../components/FAQ.astro";
+import InternalLinks from "../components/InternalLinks.astro";
+import CTASection from "../components/CTASection.astro";
+import { getCurrentSite } from "../config/sites";
 import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
-import type { NavItem } from "@/config/navigation";
 
-type PageEntry = CollectionEntry<"pages">;
-type ProjectEntry = CollectionEntry<"projects">;
-type ReviewEntry = CollectionEntry<"reviews">;
-type SettingsEntry = CollectionEntry<"settings">;
+type PageData = CollectionEntry<"pages">["data"];
 
-interface Props {
-  page: PageEntry;
-  site: SiteConfig;
-  nav: NavItem[];
-  projects: ProjectEntry[];
-  reviews: ReviewEntry[];
-  settings?: SettingsEntry;
+interface Crumb {
+  name: string;
+  href: string;
 }
 
-const { page, site, nav, projects, reviews, settings } = Astro.props;
+interface Props {
+  page: PageData;
+  schemaNodes?: Array<Record<string, unknown> | null>;
+  breadcrumbs?: Crumb[];
+}
+
+const { page, schemaNodes = [], breadcrumbs = [] } = Astro.props;
+const hasBody = Astro.slots.has("default");
+const site = getCurrentSite();
+const lbiTrustBadges = [
+  { label: "Vaste contactpersoon", note: "U bespreekt uw vraag rechtstreeks met Luc." },
+  { label: "Duidelijk overleg", note: "Werkzaamheden en vervolgstappen worden vooraf besproken." },
+  { label: "Helmond en omgeving", note: "Beschikbaarheid en locatie altijd in overleg." },
+  { label: "Praktische aanpak", note: "Een oplossing passend bij de situatie in uw woning." },
+];
 ---
 
-<PageLayout
-  page={page}
-  site={site}
-  nav={nav}
-  projects={projects}
-  reviews={reviews}
-  settings={settings}
-/>
+<BaseLayout
+  title={page.meta_title}
+  description={page.meta_description}
+  schemaNodes={schemaNodes}
+>
+  <Breadcrumbs items={breadcrumbs} />
+  <Hero h1={page.h1} hero={page.hero} />
+  <TrustBadges items={site.id === "lbi" ? lbiTrustBadges : undefined} />
+  <SectionRenderer sections={page.sections} />
+
+  {hasBody && (
+    <div class="section">
+      <div class="container-base">
+        <div class="rich-text">
+          <slot />
+        </div>
+      </div>
+    </div>
+  )}
+
+  <FAQ faqs={page.faqs} />
+  <InternalLinks links={page.internal_links} />
+  <CTASection ctaPrimary={page.cta_primary} ctaSecondary={page.cta_secondary} />
+</BaseLayout>

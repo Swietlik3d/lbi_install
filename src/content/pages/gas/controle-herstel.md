@@ -2,47 +2,53 @@
 site: "gas"
 path: "/controle-herstel/"
 page_type: "service"
-meta_title: "Controle en herstel gasleiding | Gasleiding Service Helmond"
-meta_description: "Controle en herstel van gasleidingvragen in Helmond. Microsite van LBI Installaties met veiligheid eerst."
-focus_keyword: "gasleiding controle herstel Helmond"
-h1: "Controle en herstel"
+meta_title: "Gasleiding controle & herstel in Helmond | Gasleiding Service Helmond"
+meta_description: "Gasleiding laten controleren of herstellen in Helmond? Lekcontrole en herstel van gasleidingen, veilig en vakkundig. Onderdeel van LBI Installaties."
+focus_keyword: "gasleiding controle Helmond"
+secondary_keywords:
+  - "gasleiding herstel Helmond"
+  - "lekcontrole gas Helmond"
+h1: "Gasleiding controle en herstel in Helmond"
 hero:
-  heading: "Controle en herstel rond gasleidingvragen"
-  text: "Deze starterpagina is bedoeld voor niet-acute vragen. Bij gaslucht volgt u direct de veiligheidsinstructies."
-  highlights:
-    - "Controle"
-    - "Herstel"
-    - "Veiligheid"
-cta_primary:
-  label: "Bel over controle"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Controle & herstel"
+  subtitle: "Twijfelt u over uw gasleiding of is er schade? We controleren en herstellen waar nodig."
+  showCallButtons: true
 sections:
-  - heading: "Niet-acute vragen"
-    body: "TODO: beschrijf welke controles of herstelwerkzaamheden LBI aanbiedt zodra dit definitief bekend is."
-    variant: "text"
-  - heading: "Voorbereiding"
-    variant: "cards"
-    items:
-      - title: "Foto's"
-        text: "Stuur foto's van de leiding, aansluiting of ruimte."
-      - title: "Aanleiding"
-        text: "Leg uit waarom controle of herstel nodig lijkt."
-      - title: "Toegang"
-        text: "Zorg dat leidingen of aansluitpunten veilig bereikbaar zijn."
+  - heading: "Controle en herstel"
+    body: >-
+      Een gasleiding moet dicht en in goede staat zijn. We controleren bestaande leidingen en
+      herstellen beschadigingen of verouderde delen.
+    layout: "text"
+    bullets:
+      - "Visuele controle en lekcontrole van gasleidingen"
+      - "Herstel van beschadigde of lekkende leidingen"
+      - "Vervangen van verouderde leidingdelen en koppelingen"
+      - "Advies over de staat van uw installatie"
+  - heading: "Ruikt u nu gas?"
+    body: >-
+      Ga dan eerst naar de veiligheidsinstructies bovenaan deze pagina. Bel bij direct gevaar 112
+      en het Nationaal Storingsnummer 0800-9009. Bel ons pas daarna voor herstel.
+    layout: "text"
 faqs:
-  - question: "Wat als ik direct gevaar vermoed?"
-    answer: "Ga naar buiten en bel 112 bij direct gevaar. Gebruik deze website niet als vervanging voor noodhulp."
+  - question: "Hoe vaak moet ik mijn gasleiding laten controleren?"
+    answer: "TODO: geef een feitelijk juist advies. Verzin geen wettelijke termijnen die niet bestaan."
+  - question: "Herstellen jullie ook acute problemen?"
+    answer: "Bij gaslucht of een vermoeden van een lek gaat veiligheid voor. Volg eerst de instructies en bel bij gevaar 112. TODO: bevestig uw spoed-werkwijze."
 internal_links:
-  - label: "Gasleiding aansluiten of verleggen"
+  - label: "Gasleiding aansluiten & verleggen"
     href: "/gasleiding-aansluiten-verleggen/"
+    description: "Aanleg en aanpassing."
   - label: "Veiligheid bij gaslucht"
     href: "/veiligheid-bij-gaslucht/"
-image_plan:
-  - alt: "Controle van gasleiding"
+    description: "Wat te doen als u gas ruikt."
+  - label: "Contact"
+    href: "/contact/"
+    description: "Bel of app voor een afspraak."
+image_plan: []
 schema_type: "Service"
 safety_alert: true
 draft: false
+order: 3
 ---
+
+Controle en herstel van gasleidingen in Helmond. TODO: vul aan met uw werkwijze.

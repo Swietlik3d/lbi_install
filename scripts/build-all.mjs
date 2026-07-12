@@ -1,25 +1,24 @@
-import { spawnSync } from "node:child_process";
-import { getSiteIds } from "../src/config/site-data.mjs";
+import { execSync } from "node:child_process";
+import { ROOT, SITE_IDS } from "./_sites.mjs";
 
-for (const siteId of getSiteIds()) {
-  console.log(`\nBuilding ${siteId}...\n`);
-  const result = spawnSync("npm", ["run", `build:${siteId}`], {
-    stdio: "inherit",
-    shell: process.platform === "win32",
-    env: {
-      ...process.env,
-      SITE_ID: siteId,
-    },
-  });
+/**
+ * Builds all four sites sequentially into dist/lbi, dist/elektra,
+ * dist/lekkage and dist/gas. Each site is a separate, fully static build.
+ */
+console.log(`\n■  Building all sites: ${SITE_IDS.join(", ")}`);
 
-  if (result.error) {
-    console.error(result.error);
-    process.exit(1);
-  }
-
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+let failed = 0;
+for (const id of SITE_IDS) {
+  try {
+    execSync(`node scripts/build-site.mjs ${id}`, { stdio: "inherit", cwd: ROOT });
+  } catch (err) {
+    failed++;
+    console.error(`✗  Build failed for "${id}": ${err.message}`);
   }
 }
 
-console.log("\nAll sites built successfully.");
+if (failed > 0) {
+  console.error(`\n■  Done with ${failed} failed build(s).`);
+  process.exit(1);
+}
+console.log("\n■  All sites built successfully.");

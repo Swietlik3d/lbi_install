@@ -1,216 +1,170 @@
 ---
-import Icon from "./Icon.astro";
-import type { SiteConfig } from "@/config/sites";
-import type { NavItem } from "@/config/navigation";
+import { getCurrentSite, isMicrosite, isPlaceholder, LBI_MAIN_URL } from "../config/sites";
+import { getNavigation } from "../config/navigation";
+import { getGlobalSettings } from "../lib/settings";
 
 interface Props {
-  site: SiteConfig;
-  nav: NavItem[];
-  currentPath: string;
+  footerNote?: string;
 }
 
-const { site, nav, currentPath } = Astro.props;
-const privacyHref =
-  site.id === "lbi"
-    ? "/privacy-cookies/"
-    : "https://www.lbi-helmond.nl/privacy-cookies/";
+const { footerNote } = Astro.props;
+const settings = await getGlobalSettings();
+const note = footerNote ?? settings?.footer_note;
+const site = getCurrentSite();
+const micro = isMicrosite(site);
+const nav = getNavigation(site.id);
+const page = Astro.url.pathname;
+const year = new Date().getFullYear();
+const lbi = site.id === "lbi";
+const gas = site.id === "gas";
+const showKvk = !lbi || !isPlaceholder(site.kvk);
+const showBtw = !lbi || !isPlaceholder(site.btw);
+
+// Privacy lives on the main LBI site; microsites link out to it.
+const privacyHref = micro ? `${LBI_MAIN_URL}/privacy-cookies/` : "/privacy-cookies/";
 ---
 
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div class="footer-brand">
-      <span class="brand-mark" aria-hidden="true"
-        >{site.brandName.slice(0, 1)}</span
-      >
-      <div>
-        <strong>{site.brandName}</strong>
-        {site.subtitle && <p>{site.subtitle}</p>}
-        {
-          site.parentBrand && (
-            <p>
-              <a href="https://www.lbi-helmond.nl/">
-                Meer over LBI Installaties
-              </a>
-            </p>
-          )
-        }
+<footer
+  class:list={[
+    lbi
+      ? "border-t border-white/10 bg-[#070707] text-white"
+      : gas
+        ? "gas-footer"
+      : "mt-16 border-t border-slate-200 bg-surface",
+  ]}
+>
+  {gas ? (
+    <>
+      <div class="gas-shell gas-footer__grid">
+        <div>
+          <a href="/" class="gas-brand gas-footer__brand" aria-label={`${site.parentBrand} — home`}>
+            <span class="gas-brand__mark" aria-hidden="true">LBI</span>
+            <span class="gas-brand__divider" aria-hidden="true"></span>
+            <span class="gas-brand__text">Installaties<br />Helmond</span>
+          </a>
+          <p>Uw specialist in installatiewerk en spoedservice in Helmond en omgeving.</p>
+        </div>
+        <div>
+          <h2>Contact</h2>
+          <ul>
+            <li><a href={site.phoneHref} data-event="phone_click" data-site={site.id} data-page={page}>{site.phone}</a></li>
+            <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+            <li>{site.area}</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Spoedservice</h2>
+          <p>24/7 bereikbaar</p>
+          <p>Bij gaslucht of gasstoring meteen bellen.</p>
+        </div>
+        <div>
+          <h2>Over LBI</h2>
+          <p>Persoonlijke service, vakkundig werk en jarenlange ervaring.</p>
+        </div>
       </div>
+      <div class="gas-footer__bottom">
+        <p>&copy; {year} LBI Installaties Helmond</p>
+        <span>|</span>
+        <p>KVK 00000000</p>
+        <span>|</span>
+        <p>BTW NL000000000B00</p>
+      </div>
+    </>
+  ) : (
+  <>
+  <div class="container-base grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <p class:list={["text-lg font-extrabold", lbi ? "text-white" : "text-ink"]}>{site.brandName}</p>
+      {micro && (
+        <p class="mt-1 text-sm text-muted">
+          <a href={`${LBI_MAIN_URL}/`} class="font-medium text-brand">Onderdeel van {site.parentBrand}</a>
+        </p>
+      )}
+      <p class:list={["mt-3 max-w-prose text-sm", lbi ? "text-white/65" : "text-muted"]}>{site.tagline}</p>
+      <p class:list={["mt-3 text-sm", lbi ? "text-white/65" : "text-muted"]}>Werkgebied: {site.area}</p>
     </div>
 
     <div>
-      <h2>Navigatie</h2>
-      <ul>
-        {
-          nav.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))
-        }
-        <li><a href={privacyHref}>Privacy en cookies</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <h2>Contact</h2>
-      <ul class="contact-list">
+      <h2 class:list={["text-sm font-bold uppercase tracking-wide", lbi ? "text-white" : "text-ink"]}>Contact</h2>
+      <ul class="mt-3 space-y-2 text-sm">
         <li>
-          <Icon name="phone" size={17} />
           <a
             href={site.phoneHref}
+            class="font-medium text-brand"
             data-event="phone_click"
             data-site={site.id}
-            data-page={currentPath}
+            data-page={page}
           >
             {site.phone}
           </a>
         </li>
         <li>
-          <Icon name="message" size={17} />
           <a
             href={site.whatsappHref}
+            class="font-medium text-brand"
             data-event="whatsapp_click"
             data-site={site.id}
-            data-page={currentPath}
+            data-page={page}
+            rel="noopener"
           >
             WhatsApp
           </a>
         </li>
         <li>
-          <Icon name="mail" size={17} />
-          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <a href={`mailto:${site.email}`} class:list={[lbi ? "text-white/65" : "text-muted", "hover:text-brand"]}>{site.email}</a>
         </li>
       </ul>
     </div>
 
     <div>
-      <h2>Gegevens</h2>
-      <dl>
-        <div>
-          <dt>Werkgebied</dt>
-          <dd>{site.area}</dd>
-        </div>
-        <div>
-          <dt>KVK</dt>
-          <dd>{site.kvk}</dd>
-        </div>
-        <div>
-          <dt>BTW</dt>
-          <dd>{site.btw}</dd>
-        </div>
-      </dl>
+      <h2 class:list={["text-sm font-bold uppercase tracking-wide", lbi ? "text-white" : "text-ink"]}>Menu</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class:list={[lbi ? "text-white/65" : "text-muted", "hover:text-brand"]}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h2 class:list={["text-sm font-bold uppercase tracking-wide", lbi ? "text-white" : "text-ink"]}>
+        {micro ? site.parentBrand : "Bedrijf"}
+      </h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {micro ? (
+          <>
+            <li><a href={`${LBI_MAIN_URL}/`} class="text-muted hover:text-brand">Meer over {site.parentBrand}</a></li>
+            <li><a href={`${LBI_MAIN_URL}/diensten/`} class="text-muted hover:text-brand">Alle diensten</a></li>
+            <li><a href={privacyHref} class="text-muted hover:text-brand">Privacy &amp; cookies</a></li>
+          </>
+        ) : (
+          <>
+            <li><a href="/over-lbi/" class:list={[lbi ? "text-white/65" : "text-muted", "hover:text-brand"]}>Over ons</a></li>
+            <li><a href="/werkgebied/" class:list={[lbi ? "text-white/65" : "text-muted", "hover:text-brand"]}>Werkgebied</a></li>
+            <li><a href={privacyHref} class:list={[lbi ? "text-white/65" : "text-muted", "hover:text-brand"]}>Privacy &amp; cookies</a></li>
+          </>
+        )}
+      </ul>
     </div>
   </div>
+
+  {note && (
+    <div class="container-base pb-6">
+      <p class:list={["max-w-prose text-xs", lbi ? "text-white/55" : "text-muted"]}>{note}</p>
+    </div>
+  )}
+
+  <div class:list={[lbi ? "border-t border-white/10" : "border-t border-slate-200"]}>
+    <div class:list={["container-base flex flex-col gap-2 py-5 text-xs sm:flex-row sm:items-center sm:justify-between", lbi ? "text-white/55" : "text-muted"]}>
+      <p>&copy; {year} {site.legalName}. Alle rechten voorbehouden.</p>
+      <p class="flex flex-wrap gap-x-4 gap-y-1">
+        {showKvk && <span>KVK: {site.kvk}</span>}
+        {showBtw && <span>BTW: {site.btw}</span>}
+        <a href={privacyHref} class="hover:text-brand">Privacy &amp; cookies</a>
+      </p>
+    </div>
+  </div>
+  </>
+  )}
 </footer>
-
-<style>
-  .site-footer {
-    border-top: 1px solid rgb(22 32 28 / 0.1);
-    background: #18201d;
-    color: white;
-    padding: 54px 0 84px;
-  }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr 1fr 0.9fr;
-    gap: 34px;
-  }
-
-  .footer-brand {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-  }
-
-  .brand-mark {
-    display: grid;
-    width: 44px;
-    height: 44px;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 8px;
-    background: var(--color-accent);
-    color: #111;
-    font-weight: 900;
-  }
-
-  strong {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 1.18rem;
-  }
-
-  h2 {
-    margin: 0 0 14px;
-    font-size: 0.9rem;
-    letter-spacing: 0;
-    text-transform: uppercase;
-  }
-
-  p,
-  li,
-  dt,
-  dd {
-    color: rgb(255 255 255 / 0.72);
-  }
-
-  p {
-    margin: 0 0 9px;
-    line-height: 1.6;
-  }
-
-  a:hover {
-    color: white;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  ul,
-  dl {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  li {
-    margin: 0 0 10px;
-  }
-
-  .contact-list li {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-  }
-
-  dl {
-    display: grid;
-    gap: 12px;
-  }
-
-  dt {
-    font-size: 0.76rem;
-    font-weight: 850;
-    text-transform: uppercase;
-  }
-
-  dd {
-    margin: 3px 0 0;
-  }
-
-  @media (max-width: 860px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  @media (max-width: 620px) {
-    .site-footer {
-      padding-bottom: 112px;
-    }
-
-    .footer-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

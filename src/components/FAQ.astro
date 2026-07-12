@@ -1,31 +1,39 @@
 ---
-interface FAQItem {
+interface FaqItem {
   question: string;
   answer: string;
 }
 
 interface Props {
-  items: FAQItem[];
+  faqs: FaqItem[];
+  title?: string;
 }
 
-const { items } = Astro.props;
+const { faqs, title = "Veelgestelde vragen" } = Astro.props;
 ---
 
 {
-  items.length > 0 && (
-    <section
-      class="section section-band faq-section"
-      aria-labelledby="faq-heading"
-    >
-      <div class="container">
-        <div class="section-heading">
-          <h2 id="faq-heading">Veelgestelde vragen</h2>
-        </div>
-        <div class="faq-list">
-          {items.map((item) => (
-            <details>
-              <summary>{item.question}</summary>
-              <p>{item.answer}</p>
+  faqs.length > 0 && (
+    <section class="section">
+      <div class="container-base max-w-prose">
+        <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">{title}</h2>
+        <div class="mt-6 divide-y divide-slate-200 border-t border-slate-200">
+          {faqs.map((item) => (
+            <details class="group py-2">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-3 text-left font-semibold text-ink">
+                <span>{item.question}</span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  class="h-5 w-5 shrink-0 text-brand transition group-open:rotate-45"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" d="M12 5v14M5 12h14" />
+                </svg>
+              </summary>
+              <div class="pb-4 pr-9 leading-relaxed text-muted">{item.answer}</div>
             </details>
           ))}
         </div>
@@ -33,31 +41,3 @@ const { items } = Astro.props;
     </section>
   )
 }
-
-<style>
-  .faq-list {
-    display: grid;
-    gap: 10px;
-    margin-top: 28px;
-  }
-
-  details {
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-surface);
-  }
-
-  summary {
-    cursor: pointer;
-    padding: 18px 20px;
-    color: var(--color-ink);
-    font-weight: 850;
-  }
-
-  p {
-    margin: 0;
-    padding: 0 20px 20px;
-    color: var(--color-muted);
-    line-height: 1.7;
-  }
-</style>
