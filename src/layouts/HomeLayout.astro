@@ -1,0 +1,147 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import SafetyAlert from "../components/SafetyAlert.astro";
+import TrustBadges from "../components/TrustBadges.astro";
+import ServiceGrid from "../components/ServiceGrid.astro";
+import SectionRenderer from "../components/SectionRenderer.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import ReviewCard from "../components/ReviewCard.astro";
+import FAQ from "../components/FAQ.astro";
+import CTASection from "../components/CTASection.astro";
+import LBIHomeRedesign from "../components/LBIHomeRedesign.astro";
+import GasEmergencyLanding from "../components/GasEmergencyLanding.astro";
+import { getCurrentSite, isMicrosite } from "../config/sites";
+import type { CollectionEntry } from "astro:content";
+
+type PageData = CollectionEntry<"pages">["data"];
+
+interface ProjectItem {
+  title: string;
+  summary?: string;
+  cover?: string;
+  coverAlt?: string;
+  category?: string;
+  location?: string;
+}
+interface ReviewItem {
+  author: string;
+  quote: string;
+  rating?: number;
+  service?: string;
+  source?: string;
+}
+
+interface Props {
+  page: PageData;
+  schemaNodes?: Array<Record<string, unknown> | null>;
+  projectItems?: ProjectItem[];
+  reviewItems?: ReviewItem[];
+}
+
+const { page, schemaNodes = [], projectItems = [], reviewItems = [] } = Astro.props;
+const site = getCurrentSite();
+const micro = isMicrosite(site);
+const hasBody = Astro.slots.has("default");
+const useLbiRedesign = site.id === "lbi" && page.page_type === "home";
+const useGasEmergencyLanding = site.id === "gas" && page.page_type === "home";
+
+// Derive a sensible icon from the link label so the home service grid looks intentional.
+function iconFor(label: string): string {
+  const l = label.toLowerCase();
+  if (l.includes("keuken")) return "kitchen";
+  if (l.includes("badkamer")) return "bath";
+  if (l.includes("elektra") || l.includes("meterkast") || l.includes("groep") || l.includes("storing")) return "bolt";
+  if (l.includes("riolering") || l.includes("afvoer") || l.includes("water") || l.includes("lekkage")) return "water";
+  if (l.includes("gas") || l.includes("veilig")) return "gas";
+  return "wrench";
+}
+
+const serviceItems = page.internal_links.map((link) => ({
+  title: link.label,
+  href: link.href,
+  description: link.description,
+  icon: iconFor(link.label),
+}));
+---
+
+<BaseLayout
+  title={page.meta_title}
+  description={page.meta_description}
+  schemaNodes={schemaNodes}
+>
+  {useLbiRedesign ? (
+    <LBIHomeRedesign page={page} projectItems={projectItems} />
+  ) : useGasEmergencyLanding ? (
+    <GasEmergencyLanding page={page} />
+  ) : (
+    <>
+  <Hero h1={page.h1} hero={page.hero} variant={micro ? "emergency" : "default"} />
+
+  {page.safety_alert && (
+    <div class="container-base pt-10">
+      <SafetyAlert />
+    </div>
+  )}
+
+  <TrustBadges />
+
+  {serviceItems.length > 0 && (
+    <ServiceGrid
+      title={micro ? "Waarmee we u helpen" : "Onze diensten"}
+      items={serviceItems}
+      columns={serviceItems.length >= 4 ? 4 : 3}
+    />
+  )}
+
+  <SectionRenderer sections={page.sections} />
+
+  {hasBody && (
+    <div class="section">
+      <div class="container-base">
+        <div class="rich-text"><slot /></div>
+      </div>
+    </div>
+  )}
+
+  {projectItems.length > 0 && (
+    <section class="section">
+      <div class="container-base">
+        <div class="mb-8 flex items-end justify-between gap-4">
+          <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">Recente projecten</h2>
+          <a href="/projecten/" class="text-sm font-semibold text-brand">Alle projecten</a>
+        </div>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projectItems.slice(0, 3).map((p) => (
+            <ProjectCard
+              title={p.title}
+              summary={p.summary}
+              cover={p.cover}
+              coverAlt={p.coverAlt}
+              category={p.category}
+              location={p.location}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {reviewItems.length > 0 && (
+    <section class="section">
+      <div class="container-base">
+        <h2 class="mb-8 text-2xl font-extrabold text-ink sm:text-3xl">Wat klanten zeggen</h2>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {reviewItems.slice(0, 3).map((r) => (
+            <ReviewCard author={r.author} quote={r.quote} rating={r.rating} service={r.service} source={r.source} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <FAQ faqs={page.faqs} />
+  <CTASection ctaPrimary={page.cta_primary} ctaSecondary={page.cta_secondary} />
+    </>
+  )}
+</BaseLayout>

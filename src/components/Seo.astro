@@ -1,39 +1,40 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
-
-type PageEntry = CollectionEntry<"pages">;
+import { getCurrentSite } from "../config/sites";
 
 interface Props {
-  page: PageEntry;
-  site: SiteConfig;
+  title: string;
+  description: string;
+  canonical: string;
+  robots?: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
 }
 
-const { page, site } = Astro.props;
-const canonical = new URL(page.data.path, site.domain).toString();
-const title = page.data.meta_title;
-const description = page.data.meta_description;
-const image = new URL(
-  `/images/${site.id}/hero-${site.id === "lbi" ? "installaties" : site.id}.png`,
-  site.domain,
-).toString();
+const { title, description, canonical, robots = "index,follow", ogImage, ogType = "website" } =
+  Astro.props;
+
+const site = getCurrentSite();
+const ogLocale = site.language.replace("-", "_"); // nl-NL -> nl_NL
+const imageUrl = new URL(ogImage ?? site.ogImage, site.domain).toString();
 ---
 
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta
-  name="robots"
-  content={page.data.draft ? "noindex,nofollow" : "index,follow"}
-/>
-<meta property="og:type" content="website" />
-<meta property="og:locale" content={site.language} />
+<meta name="robots" content={robots} />
+<meta name="theme-color" content={site.themeColor} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={site.brandName} />
+<meta property="og:locale" content={ogLocale} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
-<meta property="og:image" content={image} />
+<meta property="og:image" content={imageUrl} />
+
+<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={image} />
+<meta name="twitter:image" content={imageUrl} />

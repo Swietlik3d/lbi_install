@@ -1,111 +1,83 @@
 ---
-import Icon from "./Icon.astro";
-import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
+import { getCurrentSite } from "../config/sites";
 
-type PageEntry = CollectionEntry<"pages">;
-
-interface Props {
-  page: PageEntry;
-  site: SiteConfig;
+interface Cta {
+  label: string;
+  href: string;
+  style?: "primary" | "ghost" | "whatsapp" | "accent";
+  event?: string;
 }
 
-const { page, site } = Astro.props;
+interface Props {
+  title?: string;
+  text?: string;
+  ctaPrimary?: Cta;
+  ctaSecondary?: Cta;
+}
+
+const { title, text, ctaPrimary, ctaSecondary } = Astro.props;
+const site = getCurrentSite();
+const page = Astro.url.pathname;
+const isLbi = site.id === "lbi";
+
+const primary: Cta = ctaPrimary ?? {
+  label: `Bel ${site.phone}`,
+  href: site.phoneHref,
+  style: "primary",
+  event: "phone_click",
+};
+const secondary: Cta = ctaSecondary ?? {
+  label: "WhatsApp",
+  href: site.whatsappHref,
+  style: "whatsapp",
+  event: "whatsapp_click",
+};
+
+const styleClass: Record<string, string> = {
+  primary: "btn-primary",
+  ghost: "btn-ghost",
+  whatsapp: "btn-wa",
+  accent: "btn-accent",
+};
 ---
 
-<section class="cta-section">
-  <div class="container cta-inner">
-    <div>
-      <h2>Bespreek uw situatie met {site.brandName}</h2>
-      <p>
-        Bel of stuur een WhatsApp. De site gebruikt placeholders waar
-        definitieve bedrijfsgegevens nog ontbreken.
-      </p>
-    </div>
-    <div class="cta-actions">
-      <a
-        class="button button--primary"
-        href={page.data.cta_primary.href}
-        data-event={page.data.cta_primary.href.startsWith("tel:")
-          ? "phone_click"
-          : undefined}
-        data-site={site.id}
-        data-page={page.data.path}
-      >
-        <Icon name="phone" size={18} />
-        {page.data.cta_primary.label}
-      </a>
-      {
-        page.data.cta_secondary && (
+<section class="section">
+  <div class="container-base">
+    <div class="rounded-2xl bg-brand px-6 py-10 text-brand-ink sm:px-10 sm:py-12">
+      <div class="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+        <div>
+          <h2 class="text-2xl font-extrabold sm:text-3xl">
+            {title ?? (isLbi ? "Uw klus bespreken?" : `Direct een vakman nodig in ${site.area.split(" ")[0]}?`)}
+          </h2>
+          <p class="mt-2 max-w-prose text-brand-ink/90">
+            {text ?? (isLbi
+              ? "Bel of stuur een bericht. We bespreken uw vraag en bepalen samen een passende vervolgstap."
+              : "Bel of app ons. We denken meteen met u mee en plannen snel een afspraak.")}
+          </p>
+        </div>
+        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <a
-            class="button button--secondary"
-            href={page.data.cta_secondary.href}
-            data-event={
-              page.data.cta_secondary.href.includes("wa.me")
-                ? "whatsapp_click"
-                : undefined
-            }
+            href={primary.href}
+            class:list={["btn bg-white text-brand hover:bg-white/90", primary.style === "whatsapp" && styleClass.whatsapp]}
+            data-event={primary.event}
             data-site={site.id}
-            data-page={page.data.path}
+            data-page={page}
+            rel={primary.href.startsWith("http") ? "noopener" : undefined}
           >
-            <Icon name="message" size={18} />
-            {page.data.cta_secondary.label}
+            {primary.label}
           </a>
-        )
-      }
+          <a
+            href={secondary.href}
+            class:list={["btn", secondary.style === "whatsapp" ? "btn-wa" : "bg-brand-dark text-brand-ink hover:brightness-110"]}
+            data-event={secondary.event}
+            data-site={site.id}
+            data-page={page}
+            rel={secondary.href.startsWith("http") ? "noopener" : undefined}
+          >
+            {secondary.label}
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
-
-<style>
-  .cta-section {
-    padding: 58px 0;
-    background: var(--color-ink);
-    color: white;
-  }
-
-  .cta-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 28px;
-  }
-
-  h2 {
-    max-width: 650px;
-    margin: 0;
-    font-size: clamp(1.85rem, 4vw, 3rem);
-    line-height: 1.08;
-  }
-
-  p {
-    max-width: 620px;
-    margin: 14px 0 0;
-    color: rgb(255 255 255 / 0.76);
-    line-height: 1.7;
-  }
-
-  .cta-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-
-  .button--secondary {
-    color: var(--color-ink);
-  }
-
-  @media (max-width: 760px) {
-    .cta-inner {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .cta-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      justify-content: stretch;
-    }
-  }
-</style>

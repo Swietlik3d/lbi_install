@@ -1,0 +1,353 @@
+---
+import FAQ from "./FAQ.astro";
+import { getCurrentSite } from "../config/sites";
+import type { CollectionEntry } from "astro:content";
+
+type PageData = CollectionEntry<"pages">["data"];
+
+interface ProjectItem {
+  title: string;
+  summary?: string;
+  cover?: string;
+  coverAlt?: string;
+  category?: string;
+  location?: string;
+}
+
+interface Props {
+  page: PageData;
+  projectItems?: ProjectItem[];
+}
+
+const { page, projectItems = [] } = Astro.props;
+const site = getCurrentSite();
+const pagePath = Astro.url.pathname;
+const introSection = page.sections.find((section) => section.id === "intro");
+const whySection = page.sections.find((section) => section.id === "why");
+
+const helmondSuffix = "in Helmond";
+const hasHelmondSuffix = page.h1.endsWith(helmondSuffix);
+const heroTitle = hasHelmondSuffix
+  ? page.h1.slice(0, -helmondSuffix.length).trim()
+  : page.h1;
+const heroEmphasis = hasHelmondSuffix ? helmondSuffix : "";
+
+function iconFor(label: string): string {
+  const value = label.toLowerCase();
+  if (value.includes("keuken")) return "kitchen";
+  if (value.includes("badkamer")) return "bath";
+  if (value.includes("elektra") || value.includes("meterkast")) return "bolt";
+  if (value.includes("water") || value.includes("riolering")) return "drop";
+  if (value.includes("gas")) return "flame";
+  if (value.includes("vloer")) return "floor";
+  if (value.includes("aanbouw") || value.includes("werkgebied")) return "home";
+  return "wrench";
+}
+
+const serviceCards = page.internal_links.slice(0, 8).map((link) => ({
+  title: link.label,
+  href: link.href,
+  description: link.description ?? "",
+  icon: iconFor(link.label),
+}));
+
+const whyBullets = whySection?.bullets ?? [];
+const whyItems = [
+  {
+    title: introSection?.heading ?? "Alles onder één dak",
+    text: introSection?.body ?? "Renovatie- en installatiewerk praktisch gecombineerd.",
+    icon: "home",
+  },
+  {
+    title: "Persoonlijk contact",
+    text: whySection?.body ?? "U bespreekt uw klus rechtstreeks met Luc Bleckmann.",
+    icon: "person",
+  },
+  {
+    title: "Duidelijke afspraken",
+    text: whyBullets[1] ?? "Vooraf duidelijk maken welke werkzaamheden worden besproken.",
+    icon: "chat",
+  },
+  {
+    title: "Praktische uitvoering",
+    text: whyBullets[2] ?? "Een oplossing die past bij de situatie in uw woning.",
+    icon: "shield",
+  },
+];
+
+const temporaryVisuals = [
+  {
+    title: "Keukenrenovatie",
+    cover: "/images/lbi/lbi-hero-kitchen.webp",
+    href: "/keukenverbouwing-helmond/",
+    coverAlt: "Sfeerbeeld van een moderne keuken",
+  },
+  {
+    title: "Badkamerrenovatie",
+    cover: "/images/lbi/lbi-bathroom.webp",
+    href: "/badkamerverbouwing-helmond/",
+    coverAlt: "Sfeerbeeld van een moderne badkamer",
+  },
+  {
+    title: "Aanbouw en verbouw",
+    cover: "/images/lbi/lbi-aanbouw.webp",
+    href: "/diensten/#vloeren-verbouw",
+    coverAlt: "Sfeerbeeld van een moderne woninguitbreiding",
+  },
+  {
+    title: "Vloerafwerking",
+    cover: "/images/lbi/lbi-floor.webp",
+    href: "/diensten/#vloeren-verbouw",
+    coverAlt: "Sfeerbeeld van een afgewerkte vloer",
+  },
+  {
+    title: "Renovatie van woonruimte",
+    cover: "/images/lbi/lbi-attic.webp",
+    href: "/diensten/",
+    coverAlt: "Sfeerbeeld van een gerenoveerde zolderruimte",
+  },
+  {
+    title: "Installatiewerk aan huis",
+    cover: "/images/lbi/lbi-van.webp",
+    href: "/contact/",
+    coverAlt: "Sfeerbeeld van een werkbus",
+  },
+];
+
+const visualStrip = projectItems.length > 0
+  ? projectItems.slice(0, 6).map((project) => ({
+      title: project.title,
+      cover: project.cover ?? "/images/lbi/lbi-van.webp",
+      href: "/projecten/",
+      coverAlt: project.coverAlt ?? project.title,
+    }))
+  : temporaryVisuals;
+
+const primaryCta = page.cta_primary ?? {
+  label: "Bel voor overleg",
+  href: site.phoneHref,
+  event: "phone_click",
+};
+const secondaryCta = page.cta_secondary ?? {
+  label: "Stuur foto's via WhatsApp",
+  href: site.whatsappHref,
+  event: "whatsapp_click",
+};
+
+function iconPath(icon: string) {
+  const paths: Record<string, string> = {
+    kitchen: "M5 5h14v14H5z M8 5v14 M16 5v14 M5 11h14 M10 14h2 M14 14h2",
+    bath: "M5 11h14v3a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5v-3z M8 11V6a2 2 0 0 1 4 0 M11 6h4 M7 19l-1 2 M17 19l1 2",
+    bolt: "M13 2 4 14h7l-1 8 10-13h-7l0-7z",
+    flame: "M12 22c4 0 7-3 7-7 0-4-4-7-5-12-1 4-5 5-5 9-2-1-3-3-3-5-2 3-3 5-3 8 0 4 3 7 9 7z",
+    drop: "M12 2s7 8 7 13a7 7 0 0 1-14 0c0-5 7-13 7-13z",
+    floor: "M3 16 9 7l6 9 6-9 M3 16h18 M7 16l4 5 M17 16l-4 5",
+    home: "M3 11 12 3l9 8v10h-6v-6H9v6H3V11z",
+    wrench: "M21 7a6 6 0 0 1-8 6L6 20a2 2 0 0 1-3-3l7-7a6 6 0 0 1 7-8l-3 3 2 2 3-3z",
+    person: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21a8 8 0 0 1 16 0",
+    shield: "M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z M9 12l2 2 4-5",
+    chat: "M4 5h16v11H8l-4 4V5z",
+  };
+  return paths[icon] ?? paths.wrench;
+}
+---
+
+<div class="lbi-home">
+  <section class="lbi-hero" aria-labelledby="lbi-hero-title">
+    <img
+      src={page.hero?.image ?? "/images/lbi/lbi-hero-kitchen.webp"}
+      alt={page.hero?.imageAlt ?? "Sfeerbeeld van een moderne keuken"}
+      class="lbi-hero__image"
+      width="1792"
+      height="1024"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="lbi-hero__shade" aria-hidden="true"></div>
+    <div class="lbi-shell lbi-hero__inner">
+      <div class="lbi-hero__copy">
+        <p class="lbi-kicker">{page.hero?.kicker ?? "LBI Installaties - Helmond"}</p>
+        <h1 id="lbi-hero-title">
+          <span>{heroTitle}</span>
+          {heroEmphasis && <strong>{heroEmphasis}</strong>}
+        </h1>
+        <p class="lbi-hero__lead">{introSection?.heading ?? "Alles onder één dak"}</p>
+        <p class="lbi-hero__text">{page.hero?.subtitle}</p>
+        <div class="lbi-actions">
+          <a
+            href={primaryCta.href}
+            class="lbi-btn lbi-btn--primary"
+            data-event={primaryCta.event}
+            data-site={site.id}
+            data-page={pagePath}
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z"/></svg>
+            <span><small>Direct contact</small>{site.phone}</span>
+          </a>
+          <a
+            href={secondaryCta.href}
+            class="lbi-btn lbi-btn--outline"
+            data-event={secondaryCta.event}
+            data-site={site.id}
+            data-page={pagePath}
+            rel="noopener"
+          >
+            {secondaryCta.label}
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <ul class="lbi-trust" aria-label="Kenmerken van LBI Installaties">
+          <li>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("person")} /></svg>
+            Persoonlijk contact
+          </li>
+          <li>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("home")} /></svg>
+            Helmond en omgeving
+          </li>
+          <li>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("chat")} /></svg>
+            Duidelijke afspraken
+          </li>
+        </ul>
+      </div>
+
+      <aside class="lbi-contact-card" aria-label="Contactpersoon">
+        <p>Uw aanspreekpunt</p>
+        <strong>Luc Bleckmann</strong>
+        <span>Voor overleg en planning</span>
+      </aside>
+    </div>
+  </section>
+
+  <section class="lbi-intro" aria-labelledby="lbi-intro-title">
+    <div class="lbi-shell lbi-intro__inner">
+      <div>
+        <p class="lbi-kicker">Renovatie en installatie</p>
+        <h2 id="lbi-intro-title">{introSection?.heading ?? "Alles onder één dak"}</h2>
+      </div>
+      <p>{introSection?.body}</p>
+      <a href="/diensten/" class="lbi-text-link">
+        Bekijk alle diensten
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <section class="lbi-services" aria-labelledby="lbi-services-title">
+    <div class="lbi-shell">
+      <p class="lbi-kicker lbi-kicker--center">Onze diensten</p>
+      <h2 id="lbi-services-title">Werkzaamheden voor uw woning</h2>
+      <div class="lbi-service-grid">
+        {serviceCards.map((service) => (
+          <a href={service.href} class="lbi-service-card">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath(service.icon)} /></svg>
+            <strong>{service.title}</strong>
+            <span>{service.description}</span>
+          </a>
+        ))}
+      </div>
+      <p class="lbi-small-note">Ook een kleinere installatieklus begint met een kort overleg.</p>
+    </div>
+  </section>
+
+  <section class="lbi-why" id="werkwijze" aria-labelledby="lbi-why-title">
+    <div class="lbi-why__media">
+      <img
+        src="/images/lbi/lbi-bathroom.webp"
+        alt="Sfeerbeeld van een moderne badkamer"
+        width="1792"
+        height="1024"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="lbi-why__content">
+      <p class="lbi-kicker">Onze werkwijze</p>
+      <h2 id="lbi-why-title">{whySection?.heading ?? "Duidelijk van overleg tot uitvoering"}</h2>
+      <div class="lbi-reason-grid">
+        {whyItems.map((item) => (
+          <article class="lbi-reason">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath(item.icon)} /></svg>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="lbi-projects" aria-labelledby="lbi-projects-title">
+    <div class="lbi-shell">
+      <div class="lbi-section-row">
+        <div>
+          <p class="lbi-kicker">Diensten in beeld</p>
+          <h2 id="lbi-projects-title">Mogelijkheden voor uw woning</h2>
+        </div>
+        <a href="/diensten/" class="lbi-text-link">
+          Bekijk alle diensten
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="lbi-project-strip">
+        {visualStrip.map((visual, index) => (
+          <a href={visual.href} class="lbi-project-tile">
+            <img
+              src={visual.cover}
+              alt={visual.coverAlt}
+              width="420"
+              height="236"
+              loading={index < 2 ? "eager" : "lazy"}
+              decoding="async"
+            />
+            <span>{visual.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="lbi-faq">
+    <FAQ faqs={page.faqs} title="Veelgestelde vragen over LBI" />
+  </div>
+
+  <section class="lbi-cta" aria-labelledby="lbi-cta-title">
+    <div class="lbi-shell lbi-cta__inner">
+      <div class="lbi-cta__copy">
+        <p class="lbi-kicker">Uw klus bespreken?</p>
+        <h2 id="lbi-cta-title">Neem contact op met Luc</h2>
+        <p>
+          Bel of stuur via WhatsApp een korte omschrijving en enkele foto's. Zo kan de
+          passende vervolgstap gericht worden besproken.
+        </p>
+      </div>
+      <address class="lbi-contact-list">
+        <a href={site.phoneHref} data-event="phone_click" data-site={site.id} data-page={pagePath}>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1Z"/></svg>
+          {site.phone}
+        </a>
+        <a href={"mailto:" + site.email}>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16v12H4z M4 7l8 6 8-6"/></svg>
+          {site.email}
+        </a>
+        <span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d={iconPath("person")} /></svg>
+          Luc Bleckmann
+        </span>
+        <span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s7-6 7-12a7 7 0 1 0-14 0c0 6 7 12 7 12z M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+          {site.area}
+        </span>
+      </address>
+      <div class="lbi-van-card" aria-hidden="true">
+        <div class="lbi-van-logo">
+          <span>LBI</span>
+          <small>Installaties<br />Helmond</small>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

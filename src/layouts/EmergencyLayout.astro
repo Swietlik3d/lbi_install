@@ -1,31 +1,61 @@
 ---
-import PageLayout from "./PageLayout.astro";
+import BaseLayout from "./BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import SafetyAlert from "../components/SafetyAlert.astro";
+import TrustBadges from "../components/TrustBadges.astro";
+import SectionRenderer from "../components/SectionRenderer.astro";
+import FAQ from "../components/FAQ.astro";
+import InternalLinks from "../components/InternalLinks.astro";
+import CTASection from "../components/CTASection.astro";
 import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
-import type { NavItem } from "@/config/navigation";
 
-type PageEntry = CollectionEntry<"pages">;
-type ProjectEntry = CollectionEntry<"projects">;
-type ReviewEntry = CollectionEntry<"reviews">;
-type SettingsEntry = CollectionEntry<"settings">;
+type PageData = CollectionEntry<"pages">["data"];
 
-interface Props {
-  page: PageEntry;
-  site: SiteConfig;
-  nav: NavItem[];
-  projects: ProjectEntry[];
-  reviews: ReviewEntry[];
-  settings?: SettingsEntry;
+interface Crumb {
+  name: string;
+  href: string;
 }
 
-const { page, site, nav, projects, reviews, settings } = Astro.props;
+interface Props {
+  page: PageData;
+  schemaNodes?: Array<Record<string, unknown> | null>;
+  breadcrumbs?: Crumb[];
+}
+
+const { page, schemaNodes = [], breadcrumbs = [] } = Astro.props;
+const hasBody = Astro.slots.has("default");
 ---
 
-<PageLayout
-  page={page}
-  site={site}
-  nav={nav}
-  projects={projects}
-  reviews={reviews}
-  settings={settings}
-/>
+<BaseLayout
+  title={page.meta_title}
+  description={page.meta_description}
+  schemaNodes={schemaNodes}
+>
+  <Breadcrumbs items={breadcrumbs} />
+  <Hero h1={page.h1} hero={page.hero} variant="emergency" />
+
+  {/* Safety block sits ABOVE all commercial content when enabled (gas pages). */}
+  {page.safety_alert && (
+    <div class="container-base pt-10">
+      <SafetyAlert />
+    </div>
+  )}
+
+  <TrustBadges />
+  <SectionRenderer sections={page.sections} />
+
+  {hasBody && (
+    <div class="section">
+      <div class="container-base">
+        <div class="rich-text">
+          <slot />
+        </div>
+      </div>
+    </div>
+  )}
+
+  <FAQ faqs={page.faqs} />
+  <InternalLinks links={page.internal_links} />
+  <CTASection ctaPrimary={page.cta_primary} ctaSecondary={page.cta_secondary} />
+</BaseLayout>

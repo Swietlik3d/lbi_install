@@ -1,242 +1,130 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import BaseLayout from "./BaseLayout.astro";
-import Layout from "@/components/Layout.astro";
-import Hero from "@/components/Hero.astro";
-import TrustBadges from "@/components/TrustBadges.astro";
-import Breadcrumbs from "@/components/Breadcrumbs.astro";
-import ServiceGrid from "@/components/ServiceGrid.astro";
-import ProjectCard from "@/components/ProjectCard.astro";
-import ReviewCard from "@/components/ReviewCard.astro";
-import FAQ from "@/components/FAQ.astro";
-import SafetyAlert from "@/components/SafetyAlert.astro";
-import ContactBlock from "@/components/ContactBlock.astro";
-import ContactForm from "@/components/ContactForm.astro";
-import InternalLinks from "@/components/InternalLinks.astro";
-import CTASection from "@/components/CTASection.astro";
-import {
-  breadcrumbSchema,
-  faqSchema,
-  localBusinessSchema,
-  serviceSchema,
-} from "@/config/schema";
-import type { SiteConfig } from "@/config/sites";
-import type { NavItem } from "@/config/navigation";
+import Hero from "../components/Hero.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import SectionRenderer from "../components/SectionRenderer.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import ReviewCard from "../components/ReviewCard.astro";
+import FAQ from "../components/FAQ.astro";
+import InternalLinks from "../components/InternalLinks.astro";
+import CTASection from "../components/CTASection.astro";
+import type { CollectionEntry } from "astro:content";
 
-type PageEntry = CollectionEntry<"pages">;
-type ProjectEntry = CollectionEntry<"projects">;
-type ReviewEntry = CollectionEntry<"reviews">;
-type SettingsEntry = CollectionEntry<"settings">;
+type PageData = CollectionEntry<"pages">["data"];
 
-interface Props {
-  page: PageEntry;
-  site: SiteConfig;
-  nav: NavItem[];
-  projects: ProjectEntry[];
-  reviews: ReviewEntry[];
-  settings?: SettingsEntry;
+interface Crumb {
+  name: string;
+  href: string;
 }
 
-const { page, site, nav, projects, reviews, settings } = Astro.props;
-const breadcrumbs =
-  page.data.path === "/"
-    ? [{ label: "Home", href: "/" }]
-    : [
-        { label: "Home", href: "/" },
-        { label: page.data.h1, href: page.data.path },
-      ];
+interface ProjectItem {
+  title: string;
+  summary?: string;
+  cover?: string;
+  coverAlt?: string;
+  category?: string;
+  location?: string;
+}
 
-const schemaItems = [
-  page.data.schema_type === "LocalBusiness" ? localBusinessSchema(site) : null,
-  page.data.schema_type === "Service" ? serviceSchema(site, page) : null,
-  faqSchema(page),
-  breadcrumbSchema(site, breadcrumbs),
-];
+interface ReviewItem {
+  author: string;
+  quote: string;
+  rating?: number;
+  service?: string;
+  source?: string;
+}
+
+interface Props {
+  page: PageData;
+  schemaNodes?: Array<Record<string, unknown> | null>;
+  breadcrumbs?: Crumb[];
+  /** When provided (projects page), renders a grid or an empty state. */
+  projectItems?: ProjectItem[];
+  /** When provided (reviews page), renders a grid or an empty state. */
+  reviewItems?: ReviewItem[];
+}
+
+const { page, schemaNodes = [], breadcrumbs = [], projectItems, reviewItems } = Astro.props;
+const hasBody = Astro.slots.has("default");
 ---
 
-<BaseLayout page={page} site={site} schemaItems={schemaItems}>
-  <Layout site={site} nav={nav} currentPath={page.data.path}>
-    <Breadcrumbs items={breadcrumbs} />
-    {page.data.safety_alert && <SafetyAlert />}
-    <Hero page={page} site={site} />
-    <TrustBadges site={site} />
+<BaseLayout
+  title={page.meta_title}
+  description={page.meta_description}
+  schemaNodes={schemaNodes}
+>
+  <Breadcrumbs items={breadcrumbs} />
+  <Hero h1={page.h1} hero={page.hero} />
+  <SectionRenderer sections={page.sections} />
 
-    {
-      page.data.sections.map((section, index) => (
-        <section
-          class:list={["section", { "section-band": index % 2 === 1 }]}
-          id={section.id}
-        >
-          <div class="container section-stack">
-            <div class="section-heading">
-              {section.eyebrow && <p class="eyebrow">{section.eyebrow}</p>}
-              <h2>{section.heading}</h2>
-              {section.body && <p>{section.body}</p>}
-            </div>
+  {hasBody && (
+    <div class="section">
+      <div class="container-base">
+        <div class="rich-text">
+          <slot />
+        </div>
+      </div>
+    </div>
+  )}
 
-            {section.variant === "cards" && (
-              <ServiceGrid items={section.items} />
-            )}
-
-            {section.variant === "steps" && (
-              <div class="steps">
-                {section.items.map((item) => (
-                  <article>
-                    <h3>{item.title}</h3>
-                    {item.text && <p>{item.text}</p>}
-                  </article>
-                ))}
-              </div>
-            )}
-
-            {section.variant === "text" && section.items.length > 0 && (
-              <ServiceGrid items={section.items} />
-            )}
-
-            {section.variant === "split" && (
-              <div class="split-block">
-                <div class="prose-lite">
-                  {section.body && <p>{section.body}</p>}
-                </div>
-                {section.image?.src && (
-                  <img
-                    src={section.image.src}
-                    alt={section.image.alt || section.heading}
-                    loading="lazy"
-                  />
-                )}
-              </div>
-            )}
-
-            {section.variant === "contact" && (
-              <>
-                <ContactBlock site={site} currentPath={page.data.path} />
-                <ContactForm
-                  site={site}
-                  currentPath={page.data.path}
-                  settings={settings}
-                />
-              </>
-            )}
-
-            {section.variant === "projects" && (
-              <>
-                {projects.length > 0 ? (
-                  <div class="card-grid">
-                    {projects.map((project) => (
-                      <ProjectCard
-                        title={project.data.title}
-                        summary={project.data.summary}
-                        location={project.data.location}
-                        image={project.data.image}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p class="empty-state">
-                    Er zijn nog geen echte projecten toegevoegd. Voeg alleen
-                    projecten toe met echte foto's en toestemming.
-                  </p>
-                )}
-              </>
-            )}
-
-            {section.variant === "reviews" && (
-              <>
-                {reviews.length > 0 ? (
-                  <div class="card-grid">
-                    {reviews.map((review) => (
-                      <ReviewCard
-                        name={review.data.name}
-                        quote={review.data.quote}
-                        source={review.data.source}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p class="empty-state">
-                    Er zijn nog geen echte reviews toegevoegd. Deze site toont
-                    geen fictieve klantreacties.
-                  </p>
-                )}
-              </>
-            )}
+  {projectItems && (
+    <section class="section">
+      <div class="container-base">
+        {projectItems.length > 0 ? (
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {projectItems.map((p) => (
+              <ProjectCard
+                title={p.title}
+                summary={p.summary}
+                cover={p.cover}
+                coverAlt={p.coverAlt}
+                category={p.category}
+                location={p.location}
+              />
+            ))}
           </div>
-        </section>
-      ))
-    }
-
-    <FAQ items={page.data.faqs} />
-
-    <section class="section section--tight">
-      <div class="container">
-        <InternalLinks links={page.data.internal_links} />
+        ) : (
+          <div class="card p-8 text-center text-muted">
+            <p class="font-semibold text-ink">Projecten worden binnenkort toegevoegd.</p>
+            <p class="mt-2 text-sm">
+              {/* TODO: voeg echte projecten toe via de CMS-collectie "Projecten". */}
+              Wilt u voorbeelden van eerder werk? Vraag ze gerust op via de telefoon of WhatsApp.
+            </p>
+          </div>
+        )}
       </div>
     </section>
+  )}
 
-    <CTASection page={page} site={site} />
-  </Layout>
+  {reviewItems && (
+    <section class="section">
+      <div class="container-base">
+        {reviewItems.length > 0 ? (
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {reviewItems.map((r) => (
+              <ReviewCard
+                author={r.author}
+                quote={r.quote}
+                rating={r.rating}
+                service={r.service}
+                source={r.source}
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="card p-8 text-center text-muted">
+            <p class="font-semibold text-ink">Er zijn nog geen reviews gepubliceerd.</p>
+            <p class="mt-2 text-sm">
+              {/* TODO: voeg alleen ECHTE, verifieerbare reviews toe via de CMS-collectie "Reviews". */}
+              We plaatsen hier uitsluitend echte ervaringen van klanten.
+            </p>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <FAQ faqs={page.faqs} />
+  <InternalLinks links={page.internal_links} />
+  <CTASection ctaPrimary={page.cta_primary} ctaSecondary={page.cta_secondary} />
 </BaseLayout>
-
-<style>
-  .section-stack {
-    display: grid;
-    gap: 28px;
-  }
-
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
-    gap: 1px;
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-border);
-  }
-
-  .steps article {
-    min-height: 178px;
-    background: var(--color-surface);
-    padding: 24px;
-  }
-
-  .steps h3 {
-    margin: 0 0 10px;
-    font-size: 1.15rem;
-  }
-
-  .steps p,
-  .empty-state {
-    margin: 0;
-    color: var(--color-muted);
-    line-height: 1.7;
-  }
-
-  .split-block {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
-    gap: 28px;
-    align-items: center;
-  }
-
-  .split-block img {
-    width: 100%;
-    border-radius: 8px;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-  }
-
-  .empty-state {
-    border: 1px dashed var(--color-border);
-    border-radius: 8px;
-    background: rgb(255 255 255 / 0.58);
-    padding: 20px;
-    font-weight: 750;
-  }
-
-  @media (max-width: 760px) {
-    .split-block {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

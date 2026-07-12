@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Foto volgt">
+  <rect width="1200" height="900" fill="#eef2f7" />
+  <rect x="1" y="1" width="1198" height="898" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="10 10" />
+  <g fill="none" stroke="#94a3b8" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="470" y="360" width="260" height="180" rx="16" />
+    <circle cx="600" cy="450" r="48" />
+    <path d="M520 360l24-34h112l24 34" />
+  </g>
+  <text x="600" y="620" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="40" fill="#64748b" font-weight="700">Foto volgt</text>
+  <text x="600" y="668" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#94a3b8">Voeg een afbeelding toe via de CMS of map /public/images</text>
+</svg>

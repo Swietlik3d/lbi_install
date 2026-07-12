@@ -3,39 +3,35 @@ site: "gas"
 path: "/contact/"
 page_type: "contact"
 meta_title: "Contact | Gasleiding Service Helmond"
-meta_description: "Neem contact op over niet-acute gasleidingvragen in Helmond. Bij gaslucht belt u 0800-9009 of 112 bij direct gevaar."
-focus_keyword: "contact gasleiding service Helmond"
-h1: "Contact over gasleidingvragen"
+meta_description: "Gasleiding aanleggen, controleren of herstellen in Helmond? Bel of app Gasleiding Service Helmond, onderdeel van LBI Installaties. Bij gaslucht eerst 112/0800-9009."
+focus_keyword: "contact gasleiding Helmond"
+secondary_keywords: []
+h1: "Contact voor gasleidingwerk"
 hero:
-  heading: "Bel of WhatsApp voor niet-acute vragen"
-  text: "Bij gaslucht of direct gevaar volgt u eerst de veiligheidsinstructies. Voor geplande vragen kunt u LBI benaderen."
-  highlights:
-    - "Niet-acuut"
-    - "Telefoon"
-    - "WhatsApp"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "Open WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Contact"
+  subtitle: "Voor aanleg, controle en herstel van gasleidingen. Bij gaslucht: volg eerst de veiligheidsinstructies."
+  showCallButtons: false
 sections:
-  - heading: "Contactgegevens"
-    body: "Contactgegevens komen uit de gedeelde siteconfig. Juridische gegevens blijven placeholders totdat ze definitief zijn."
-    variant: "contact"
-  - heading: "Gaslucht of gevaar"
-    body: "Gebruik bij gaslucht het Nationaal Storingsnummer 0800-9009. Bij direct gevaar belt u 112."
-    variant: "text"
+  - heading: "Wat handig is om door te geven"
+    body: >-
+      Vertel kort wat u nodig heeft: aanleg, verleggen, controle of herstel. Bij een vermoeden van
+      een lek gaat veiligheid voor — volg eerst de instructies hierboven en bel bij gevaar 112.
+    layout: "text"
 faqs:
-  - question: "Kan ik LBI bellen bij gaslucht?"
-    answer: "Bij gaslucht volgt u eerst de veiligheidsinstructies en belt u 0800-9009. Bij direct gevaar: bel 112."
+  - question: "Wat doe ik bij gaslucht?"
+    answer: "Volg de veiligheidsinstructies bovenaan deze pagina. Bij direct gevaar 112, voor een gaslek 0800-9009. Bel ons daarna voor herstel."
 internal_links:
   - label: "Veiligheid bij gaslucht"
     href: "/veiligheid-bij-gaslucht/"
-  - label: "Home"
-    href: "/"
+    description: "Wat te doen als u gas ruikt."
+  - label: "Controle & herstel"
+    href: "/controle-herstel/"
+    description: "Controle en herstel van gasleidingen."
 image_plan: []
-schema_type: "WebPage"
+schema_type: "ContactPage"
 safety_alert: true
 draft: false
+order: 5
 ---
+
+Neem contact op met Gasleiding Service Helmond. Onderdeel van LBI Installaties.

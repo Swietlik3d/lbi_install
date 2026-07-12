@@ -2,47 +2,53 @@
 site: "gas"
 path: "/gasleiding-aansluiten-verleggen/"
 page_type: "service"
-meta_title: "Gasleiding aansluiten of verleggen | Gasleiding Service Helmond"
-meta_description: "Informatie over gasleiding aansluiten of verleggen in Helmond. Onderdeel van LBI Installaties, met veiligheid eerst."
-focus_keyword: "gasleiding aansluiten verleggen Helmond"
-h1: "Gasleiding aansluiten of verleggen"
+meta_title: "Gasleiding aansluiten of verleggen in Helmond | Gasleiding Service"
+meta_description: "Gasleiding aanleggen, aansluiten of verleggen in Helmond? Veilig en volgens de regels. Onderdeel van LBI Installaties. Bel of app voor een afspraak."
+focus_keyword: "gasleiding aansluiten Helmond"
+secondary_keywords:
+  - "gasleiding verleggen Helmond"
+  - "gasleiding aanleggen Helmond"
+h1: "Gasleiding aansluiten of verleggen in Helmond"
 hero:
-  heading: "Gepland gasleidingwerk vraagt om duidelijke voorbereiding"
-  text: "Gebruik deze pagina voor geplande aanvragen rond aansluiten of verleggen. Veiligheidsinformatie blijft zichtbaar boven commerciële contactblokken."
-  highlights:
-    - "Aansluiten"
-    - "Verleggen"
-    - "Voorbereiding"
-cta_primary:
-  label: "Bel over gasleiding"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "Stuur WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Aanleg & aanpassing"
+  subtitle: "Een nieuwe gasaansluiting of een leiding die verlegd moet worden? Dat verzorgen we veilig en netjes."
+  showCallButtons: true
 sections:
-  - heading: "Voor geplande werkzaamheden"
-    body: "TODO: vul definitief aan welke gasleidingwerkzaamheden LBI uitvoert, inclusief voorwaarden en veiligheidsgrenzen."
-    variant: "text"
-  - heading: "Wat u kunt doorgeven"
-    variant: "cards"
-    items:
-      - title: "Situatie"
-        text: "Gaat het om nieuw aansluiten, verleggen of verwijderen?"
-      - title: "Locatie"
-        text: "Noem de ruimte en stuur waar mogelijk foto's mee."
-      - title: "Planning"
-        text: "Geef aan of het onderdeel is van een verbouwing."
+  - heading: "Wat we doen"
+    body: >-
+      Bij een verbouwing of nieuwe opstelling moet de gasleiding soms worden aangelegd of verlegd.
+      We werken volgens de geldende regels en controleren het werk op dichtheid.
+    layout: "text"
+    bullets:
+      - "Gasleiding aanleggen voor kooktoestel of cv"
+      - "Bestaande gasleiding verleggen bij een verbouwing"
+      - "Aansluiting gereedmaken en controleren"
+      - "Afdoppen van ongebruikte leidingen"
+  - heading: "Veiligheid staat voorop"
+    body: >-
+      Werk aan gas vraagt om zorgvuldigheid. We controleren altijd of de installatie dicht is voor
+      we afronden. TODO: beschrijf uw controlestappen.
+    layout: "text"
 faqs:
-  - question: "Kan ik gaslucht via deze pagina melden?"
-    answer: "Bij gaslucht volgt u direct de veiligheidsinstructies en belt u het Nationaal Storingsnummer 0800-9009. Bij direct gevaar: bel 112."
+  - question: "Kunnen jullie een gaskookplaat aansluiten?"
+    answer: "In overleg sluiten we gaskooktoestellen aan. TODO: bevestig onder welke voorwaarden u dit doet."
+  - question: "Wat als de leiding verlegd moet voor mijn nieuwe keuken?"
+    answer: "Dat kan vaak. We bekijken de situatie en verleggen de leiding veilig. Bel of app voor de mogelijkheden."
 internal_links:
+  - label: "Controle & herstel"
+    href: "/controle-herstel/"
+    description: "Controle en herstel van gasleidingen."
   - label: "Veiligheid bij gaslucht"
     href: "/veiligheid-bij-gaslucht/"
-  - label: "Controle en herstel"
-    href: "/controle-herstel/"
-image_plan:
-  - alt: "Gasleiding bij geplande werkzaamheden"
+    description: "Wat te doen als u gas ruikt."
+  - label: "Contact"
+    href: "/contact/"
+    description: "Bel of app voor een afspraak."
+image_plan: []
 schema_type: "Service"
 safety_alert: true
 draft: false
+order: 2
 ---
+
+Gasleiding aansluiten of verleggen in Helmond. TODO: vul aan met details over uw werkwijze en kwalificaties.

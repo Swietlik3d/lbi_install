@@ -1,321 +1,399 @@
+# Decap CMS configuration for the LBI multi-site repo.
+# Docs: https://decapcms.org/docs/
+#
+# BACKEND
+# Default is git-gateway (works with Netlify Identity). If you host elsewhere,
+# switch to the GitHub backend (see README "Editing content in Decap").
 backend:
   name: git-gateway
   branch: main
 
+# Local editing without auth:
+#   1) npm run dev    (any site)
+#   2) npx decap-server
+#   3) open http://localhost:4321/admin/
 local_backend: true
 
-media_folder: "public/images/uploads"
-public_folder: "/images/uploads"
+# Editorial workflow = draft / in review / ready, with PRs per change.
+publish_mode: editorial_workflow
 
-editor:
-  preview: false
+# Global media defaults (overridden per collection so each site keeps its own folder).
+media_folder: "public/images"
+public_folder: "/images"
 
 collections:
+  # ----------------------------------------------------------------------------
+  # SITE 1 — LBI Installaties
+  # ----------------------------------------------------------------------------
   - name: "lbi_pages"
-    label: "LBI pages"
+    label: "LBI · Pagina's"
+    label_singular: "LBI-pagina"
+    identifier_field: "h1"
     folder: "src/content/pages/lbi"
-    create: true
-    extension: "md"
-    format: "frontmatter"
-    media_folder: "../../../public/images/lbi"
+    media_folder: "/public/images/lbi"
     public_folder: "/images/lbi"
-    fields: &page_fields
+    create: true
+    fields:
+      - { label: "Site", name: "site", widget: "hidden", default: "lbi" }
       - {
-          label: "Site",
-          name: "site",
-          widget: "select",
-          options: ["lbi", "elektra", "lekkage", "gas"],
-        }
-      - { label: "Path", name: "path", widget: "string" }
-      - {
-          label: "Page type",
-          name: "page_type",
-          widget: "select",
-          options:
-            [
-              "home",
-              "service",
-              "overview",
-              "projects",
-              "reviews",
-              "area",
-              "about",
-              "contact",
-              "legal",
-            ],
-        }
-      - { label: "Meta title", name: "meta_title", widget: "string" }
-      - { label: "Meta description", name: "meta_description", widget: "text" }
-      - {
-          label: "Focus keyword",
-          name: "focus_keyword",
+          label: "Pad (URL)",
+          name: "path",
           widget: "string",
-          required: false,
+          hint: "Begin en eindig met een slash. Home = /, bijv. /diensten/",
         }
-      - {
-          label: "Secondary keywords",
-          name: "secondary_keywords",
-          widget: "list",
-          required: false,
-        }
-      - { label: "H1", name: "h1", widget: "string" }
-      - label: "Hero"
+      - label: "Paginatype"
+        name: "page_type"
+        widget: "select"
+        default: "overview"
+        options:
+          ["home", "service", "emergency", "contact", "overview", "legal", "about", "reviews", "area", "projects"]
+      - { label: "Meta titel", name: "meta_title", widget: "string" }
+      - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
+      - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
+      - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - &f_hero
+        label: "Hero"
         name: "hero"
         widget: "object"
+        required: false
+        collapsed: true
         fields:
-          - { label: "Heading", name: "heading", widget: "string" }
-          - { label: "Text", name: "text", widget: "text" }
-          - label: "Image"
-            name: "image"
-            widget: "object"
-            required: false
-            fields:
-              - {
-                  label: "Source",
-                  name: "src",
-                  widget: "image",
-                  required: false,
-                }
-              - {
-                  label: "Alt text",
-                  name: "alt",
-                  widget: "string",
-                  required: false,
-                }
-          - {
-              label: "Highlights",
-              name: "highlights",
-              widget: "list",
-              required: false,
-            }
-      - label: "Sections"
+          - { label: "Kicker", name: "kicker", widget: "string", required: false }
+          - { label: "Titel", name: "title", widget: "string", required: false }
+          - { label: "Subtitel", name: "subtitle", widget: "text", required: false }
+          - { label: "Afbeelding", name: "image", widget: "image", required: false }
+          - { label: "Alt-tekst afbeelding", name: "imageAlt", widget: "string", required: false }
+          - { label: "Toon belknoppen", name: "showCallButtons", widget: "boolean", default: true, required: false }
+      - &f_sections
+        label: "Secties"
         name: "sections"
         widget: "list"
         required: false
+        collapsed: true
+        summary: "{{fields.heading}}"
         fields:
-          - { label: "ID", name: "id", widget: "string", required: false }
-          - { label: "Heading", name: "heading", widget: "string" }
-          - { label: "Body", name: "body", widget: "text", required: false }
+          - { label: "Kop", name: "heading", widget: "string", required: false }
+          - { label: "Tekst", name: "body", widget: "text", required: false }
+          - { label: "Opsomming", name: "bullets", widget: "list", required: false }
+          - { label: "Afbeelding", name: "image", widget: "image", required: false }
+          - { label: "Alt-tekst", name: "imageAlt", widget: "string", required: false }
           - {
-              label: "Variant",
-              name: "variant",
+              label: "Layout",
+              name: "layout",
               widget: "select",
-              options:
-                [
-                  "text",
-                  "cards",
-                  "split",
-                  "steps",
-                  "contact",
-                  "projects",
-                  "reviews",
-                ],
               default: "text",
+              options: ["text", "cards", "split", "steps"],
+              required: false,
             }
-          - label: "Items"
-            name: "items"
-            widget: "list"
-            required: false
-            fields:
-              - { label: "Title", name: "title", widget: "string" }
-              - { label: "Text", name: "text", widget: "text", required: false }
-              - {
-                  label: "Href",
-                  name: "href",
-                  widget: "string",
-                  required: false,
-                }
-      - label: "Primary CTA"
+      - &f_cta_primary
+        label: "CTA primair"
         name: "cta_primary"
         widget: "object"
+        required: false
+        collapsed: true
         fields:
           - { label: "Label", name: "label", widget: "string" }
-          - { label: "Href", name: "href", widget: "string" }
-      - label: "Secondary CTA"
+          - { label: "Link", name: "href", widget: "string" }
+          - {
+              label: "Stijl",
+              name: "style",
+              widget: "select",
+              default: "primary",
+              options: ["primary", "ghost", "whatsapp", "accent"],
+            }
+      - &f_cta_secondary
+        label: "CTA secundair"
         name: "cta_secondary"
         widget: "object"
         required: false
+        collapsed: true
         fields:
           - { label: "Label", name: "label", widget: "string" }
-          - { label: "Href", name: "href", widget: "string" }
-      - label: "FAQ"
+          - { label: "Link", name: "href", widget: "string" }
+          - {
+              label: "Stijl",
+              name: "style",
+              widget: "select",
+              default: "whatsapp",
+              options: ["primary", "ghost", "whatsapp", "accent"],
+            }
+      - &f_faqs
+        label: "FAQ"
         name: "faqs"
         widget: "list"
         required: false
+        collapsed: true
+        summary: "{{fields.question}}"
         fields:
-          - { label: "Question", name: "question", widget: "string" }
-          - { label: "Answer", name: "answer", widget: "text" }
-      - label: "Internal links"
+          - { label: "Vraag", name: "question", widget: "string" }
+          - { label: "Antwoord", name: "answer", widget: "text" }
+      - &f_links
+        label: "Interne links"
         name: "internal_links"
         widget: "list"
         required: false
+        collapsed: true
+        summary: "{{fields.label}}"
         fields:
           - { label: "Label", name: "label", widget: "string" }
-          - { label: "Href", name: "href", widget: "string" }
-      - label: "Image plan"
+          - { label: "Link", name: "href", widget: "string" }
+          - { label: "Omschrijving", name: "description", widget: "string", required: false }
+      - &f_image_plan
+        label: "Beeldplan (planning, niet zichtbaar op site)"
         name: "image_plan"
         widget: "list"
         required: false
+        collapsed: true
+        summary: "{{fields.slot}} — {{fields.filename}}"
         fields:
-          - { label: "Source", name: "src", widget: "image", required: false }
-          - {
-              label: "Alt text",
-              name: "alt",
-              widget: "string",
-              required: false,
-            }
-      - {
-          label: "Schema type",
-          name: "schema_type",
-          widget: "select",
-          options: ["LocalBusiness", "Service", "FAQPage", "WebPage"],
-          default: "WebPage",
-        }
-      - {
-          label: "Safety alert",
-          name: "safety_alert",
-          widget: "boolean",
-          default: false,
-        }
-      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+          - { label: "Slot", name: "slot", widget: "string" }
+          - { label: "Bestandsnaam", name: "filename", widget: "string" }
+          - { label: "Alt-tekst", name: "alt", widget: "string" }
+          - { label: "Notitie", name: "note", widget: "string", required: false }
+      - &f_schema_type
+        label: "Schema type"
+        name: "schema_type"
+        widget: "select"
+        default: "WebPage"
+        options: ["WebPage", "Service", "FAQPage", "ContactPage", "AboutPage", "CollectionPage"]
+      - &f_safety
+        { label: "Veiligheidsmelding tonen (gas)", name: "safety_alert", widget: "boolean", default: false, required: false }
+      - &f_draft
+        { label: "Concept (niet publiceren)", name: "draft", widget: "boolean", default: false, required: false }
+      - &f_order
+        { label: "Volgorde", name: "order", widget: "number", default: 0, value_type: "int", required: false }
+      - &f_body
+        { label: "Inhoud (optioneel, markdown)", name: "body", widget: "markdown", required: false }
 
+  # ----------------------------------------------------------------------------
+  # SITE 2 — Elektra Storing Helmond
+  # ----------------------------------------------------------------------------
   - name: "elektra_pages"
-    label: "Elektra pages"
+    label: "Elektra · Pagina's"
+    label_singular: "Elektra-pagina"
+    identifier_field: "h1"
     folder: "src/content/pages/elektra"
-    create: true
-    extension: "md"
-    format: "frontmatter"
-    media_folder: "../../../public/images/elektra"
+    media_folder: "/public/images/elektra"
     public_folder: "/images/elektra"
-    fields: *page_fields
-
-  - name: "lekkage_pages"
-    label: "Lekkage pages"
-    folder: "src/content/pages/lekkage"
     create: true
-    extension: "md"
-    format: "frontmatter"
-    media_folder: "../../../public/images/lekkage"
-    public_folder: "/images/lekkage"
-    fields: *page_fields
-
-  - name: "gas_pages"
-    label: "Gas pages"
-    folder: "src/content/pages/gas"
-    create: true
-    extension: "md"
-    format: "frontmatter"
-    media_folder: "../../../public/images/gas"
-    public_folder: "/images/gas"
-    fields: *page_fields
-
-  - name: "projects"
-    label: "Projects"
-    folder: "src/content/projects"
-    create: true
-    extension: "md"
-    format: "frontmatter"
     fields:
-      - {
-          label: "Site",
-          name: "site",
-          widget: "select",
-          options: ["lbi", "elektra", "lekkage", "gas"],
-          default: "lbi",
-        }
-      - { label: "Title", name: "title", widget: "string" }
-      - {
-          label: "Location",
-          name: "location",
-          widget: "string",
-          default: "Helmond",
-        }
-      - { label: "Summary", name: "summary", widget: "text" }
-      - label: "Image"
-        name: "image"
-        widget: "object"
-        required: false
-        fields:
-          - { label: "Source", name: "src", widget: "image", required: false }
-          - {
-              label: "Alt text",
-              name: "alt",
-              widget: "string",
-              required: false,
-            }
-      - { label: "Services", name: "services", widget: "list", required: false }
-      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Site", name: "site", widget: "hidden", default: "elektra" }
+      - { label: "Pad (URL)", name: "path", widget: "string", hint: "Home = /, bijv. /meterkast-groepen/" }
+      - label: "Paginatype"
+        name: "page_type"
+        widget: "select"
+        default: "service"
+        options:
+          ["home", "service", "emergency", "contact", "overview", "legal", "about", "reviews", "area", "projects"]
+      - { label: "Meta titel", name: "meta_title", widget: "string" }
+      - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
+      - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
+      - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - *f_hero
+      - *f_sections
+      - *f_cta_primary
+      - *f_cta_secondary
+      - *f_faqs
+      - *f_links
+      - *f_image_plan
+      - *f_schema_type
+      - *f_safety
+      - *f_draft
+      - *f_order
+      - *f_body
 
+  # ----------------------------------------------------------------------------
+  # SITE 3 — Lekkage Reparatie Helmond
+  # ----------------------------------------------------------------------------
+  - name: "lekkage_pages"
+    label: "Lekkage · Pagina's"
+    label_singular: "Lekkage-pagina"
+    identifier_field: "h1"
+    folder: "src/content/pages/lekkage"
+    media_folder: "/public/images/lekkage"
+    public_folder: "/images/lekkage"
+    create: true
+    fields:
+      - { label: "Site", name: "site", widget: "hidden", default: "lekkage" }
+      - { label: "Pad (URL)", name: "path", widget: "string", hint: "Home = /, bijv. /lekkage-badkamer-keuken/" }
+      - label: "Paginatype"
+        name: "page_type"
+        widget: "select"
+        default: "service"
+        options:
+          ["home", "service", "emergency", "contact", "overview", "legal", "about", "reviews", "area", "projects"]
+      - { label: "Meta titel", name: "meta_title", widget: "string" }
+      - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
+      - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
+      - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - *f_hero
+      - *f_sections
+      - *f_cta_primary
+      - *f_cta_secondary
+      - *f_faqs
+      - *f_links
+      - *f_image_plan
+      - *f_schema_type
+      - *f_safety
+      - *f_draft
+      - *f_order
+      - *f_body
+
+  # ----------------------------------------------------------------------------
+  # SITE 4 — Gasleiding Service Helmond
+  # ----------------------------------------------------------------------------
+  - name: "gas_pages"
+    label: "Gas · Pagina's"
+    label_singular: "Gas-pagina"
+    identifier_field: "h1"
+    folder: "src/content/pages/gas"
+    media_folder: "/public/images/gas"
+    public_folder: "/images/gas"
+    create: true
+    fields:
+      - { label: "Site", name: "site", widget: "hidden", default: "gas" }
+      - { label: "Pad (URL)", name: "path", widget: "string", hint: "Home = /, bijv. /controle-herstel/" }
+      - label: "Paginatype"
+        name: "page_type"
+        widget: "select"
+        default: "service"
+        options:
+          ["home", "service", "emergency", "contact", "overview", "legal", "about", "reviews", "area", "projects"]
+      - { label: "Meta titel", name: "meta_title", widget: "string" }
+      - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
+      - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
+      - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - *f_hero
+      - *f_sections
+      - *f_cta_primary
+      - *f_cta_secondary
+      - *f_faqs
+      - *f_links
+      - *f_image_plan
+      - *f_schema_type
+      - *f_safety
+      - *f_draft
+      - *f_order
+      - *f_body
+
+  # ----------------------------------------------------------------------------
+  # Projects (shared; assign each to a site)
+  # ----------------------------------------------------------------------------
+  - name: "projects"
+    label: "Projecten"
+    label_singular: "Project"
+    identifier_field: "title"
+    folder: "src/content/projects"
+    media_folder: "/public/images/lbi"
+    public_folder: "/images/lbi"
+    create: true
+    fields:
+      - { label: "Titel", name: "title", widget: "string" }
+      - { label: "Site", name: "site", widget: "select", default: "lbi", options: ["lbi", "elektra", "lekkage", "gas"] }
+      - { label: "Categorie", name: "category", widget: "string", required: false }
+      - { label: "Locatie", name: "location", widget: "string", default: "Helmond" }
+      - { label: "Datum", name: "date", widget: "datetime", required: false }
+      - { label: "Samenvatting", name: "summary", widget: "text", required: false }
+      - { label: "Omslagfoto", name: "cover", widget: "image", required: false }
+      - { label: "Alt-tekst omslag", name: "coverAlt", widget: "string", required: false }
+      - { label: "Concept", name: "draft", widget: "boolean", default: true }
+      - { label: "Volgorde", name: "order", widget: "number", default: 0, value_type: "int", required: false }
+      - { label: "Beschrijving", name: "body", widget: "markdown", required: false }
+
+  # ----------------------------------------------------------------------------
+  # Reviews (shared; ONLY publish real, verifiable reviews)
+  # ----------------------------------------------------------------------------
   - name: "reviews"
     label: "Reviews"
+    label_singular: "Review"
+    identifier_field: "author"
     folder: "src/content/reviews"
     create: true
-    extension: "md"
-    format: "frontmatter"
     fields:
-      - {
-          label: "Site",
-          name: "site",
-          widget: "select",
-          options: ["lbi", "elektra", "lekkage", "gas"],
-          default: "lbi",
-        }
-      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Naam klant", name: "author", widget: "string" }
+      - { label: "Site", name: "site", widget: "select", default: "lbi", options: ["lbi", "elektra", "lekkage", "gas"] }
+      - { label: "Beoordeling (1-5)", name: "rating", widget: "number", required: false, value_type: "int", min: 1, max: 5 }
       - { label: "Quote", name: "quote", widget: "text" }
-      - { label: "Source", name: "source", widget: "string", required: false }
-      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Dienst", name: "service", widget: "string", required: false }
+      - { label: "Datum", name: "date", widget: "datetime", required: false }
+      - { label: "Bron (bijv. Google)", name: "source", widget: "string", required: false }
       - {
-          label: "Rating",
-          name: "rating",
-          widget: "number",
-          value_type: "float",
-          min: 1,
-          max: 5,
-          required: false,
+          label: "Concept (laat AAN tot de review echt en geverifieerd is)",
+          name: "draft",
+          widget: "boolean",
+          default: true,
         }
-      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Volgorde", name: "order", widget: "number", default: 0, value_type: "int", required: false }
 
-  - name: "global_settings"
-    label: "Global settings"
-    folder: "src/content/settings"
-    create: false
-    extension: "yml"
-    format: "yaml"
-    fields:
-      - {
-          label: "Site",
-          name: "site",
-          widget: "select",
-          options: ["lbi", "elektra", "lekkage", "gas"],
-        }
-      - {
-          label: "Contact form enabled",
-          name: "contact_form_enabled",
-          widget: "boolean",
-          default: false,
-        }
-      - {
-          label: "Contact form provider",
-          name: "contact_form_provider",
-          widget: "select",
-          options: ["netlify", "formspree", "custom", "disabled"],
-          default: "disabled",
-        }
-      - {
-          label: "Contact form action",
-          name: "contact_form_action",
-          widget: "string",
-          required: false,
-        }
-      - {
-          label: "Analytics enabled",
-          name: "analytics_enabled",
-          widget: "boolean",
-          default: false,
-        }
-      - {
-          label: "Analytics ID",
-          name: "analytics_id",
-          widget: "string",
-          required: false,
-        }
+  # ----------------------------------------------------------------------------
+  # Global settings (trust badges + footer note)
+  # ----------------------------------------------------------------------------
+  - name: "settings"
+    label: "Globale instellingen"
+    delete: false
+    files:
+      - name: "global"
+        label: "Algemeen"
+        file: "src/content/settings/global.json"
+        fields:
+          - { label: "Key", name: "key", widget: "hidden", default: "global" }
+          - label: "Trust badges"
+            name: "trust_badges"
+            widget: "list"
+            required: false
+            summary: "{{fields.label}}"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "Toelichting", name: "note", widget: "string", required: false }
+          - { label: "Footer notitie", name: "footer_note", widget: "text", required: false }
+          - { label: "Notitie openingstijden", name: "business_hours_note", widget: "string", required: false }
+
+  # ----------------------------------------------------------------------------
+  # Company / contact data (writes src/config/sites.json — keep ALL fields)
+  # ----------------------------------------------------------------------------
+  - name: "company"
+    label: "Bedrijfsgegevens"
+    delete: false
+    files:
+      - name: "all_sites"
+        label: "Contact & juridisch (alle sites)"
+        file: "src/config/sites.json"
+        fields:
+          - label: "LBI Installaties"
+            name: "lbi"
+            widget: "object"
+            collapsed: true
+            fields: &site_fields
+              - { label: "ID", name: "id", widget: "hidden" }
+              - { label: "Domein", name: "domain", widget: "hidden" }
+              - { label: "Merknaam", name: "brandName", widget: "hidden" }
+              - { label: "Parent merk", name: "parentBrand", widget: "hidden" }
+              - { label: "Subtitel", name: "subtitle", widget: "string", required: false }
+              - { label: "Tagline", name: "tagline", widget: "string" }
+              - { label: "Telefoon (weergave)", name: "phone", widget: "string" }
+              - { label: "Telefoon (tel:)", name: "phoneHref", widget: "string" }
+              - { label: "WhatsApp-link", name: "whatsappHref", widget: "string" }
+              - { label: "E-mail", name: "email", widget: "string" }
+              - { label: "Taal", name: "language", widget: "hidden" }
+              - { label: "Werkgebied", name: "area", widget: "string" }
+              - { label: "Juridische naam", name: "legalName", widget: "string" }
+              - { label: "KVK-nummer", name: "kvk", widget: "string" }
+              - { label: "BTW-ID", name: "btw", widget: "string" }
+              - { label: "Adres", name: "address", widget: "string" }
+              - { label: "Themakleur (hex)", name: "themeColor", widget: "hidden" }
+              - { label: "OG-afbeelding", name: "ogImage", widget: "string", required: false }
+              - { label: "Contactformulier aan", name: "enableContactForm", widget: "boolean", default: false }
+              - {
+                  label: "Formulier provider",
+                  name: "formProvider",
+                  widget: "select",
+                  options: ["none", "netlify", "formspree", "custom"],
+                  default: "none",
+                }
+          - { label: "Elektra Storing Helmond", name: "elektra", widget: "object", collapsed: true, fields: *site_fields }
+          - { label: "Lekkage Reparatie Helmond", name: "lekkage", widget: "object", collapsed: true, fields: *site_fields }
+          - { label: "Gasleiding Service Helmond", name: "gas", widget: "object", collapsed: true, fields: *site_fields }

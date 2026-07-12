@@ -2,54 +2,52 @@
 site: "lekkage"
 path: "/"
 page_type: "home"
-meta_title: "Lekkage Reparatie Helmond | Onderdeel van LBI Installaties"
-meta_description: "Lekkage Reparatie Helmond is een microsite van LBI Installaties voor lekkage, waterleiding, afvoer en riolering in Helmond."
+meta_title: "Lekkage Reparatie Helmond | Snel opsporen & repareren | LBI"
+meta_description: "Lekkage in Helmond? We sporen de lekkage op en repareren snel. Lekkage Reparatie Helmond, onderdeel van LBI Installaties. Bel of app direct."
 focus_keyword: "lekkage reparatie Helmond"
 secondary_keywords:
-  - "lekkage badkamer Helmond"
-  - "lekkage keuken"
-  - "waterleiding afvoer Helmond"
-h1: "Lekkage reparatie in Helmond"
+  - "lekkage opsporen Helmond"
+  - "loodgieter lekkage Helmond"
+h1: "Lekkage in Helmond? Snel opsporen en repareren"
 hero:
-  heading: "Gerichte informatie bij lekkage, waterleiding en afvoer"
-  text: "Deze microsite is onderdeel van LBI Installaties en richt zich op lekkagevragen in Helmond en omgeving."
-  highlights:
-    - "Badkamer"
-    - "Keuken"
-    - "Water en afvoer"
-cta_primary:
-  label: "Bel direct"
-  href: "tel:+31653229349"
-cta_secondary:
-  label: "WhatsApp"
-  href: "https://wa.me/31653229349"
+  kicker: "Snel een vakman nodig?"
+  subtitle: "Een lekkende leiding, kraan of afvoer? Bel of app direct. Onderdeel van LBI Installaties."
+  showCallButtons: true
 sections:
-  - heading: "Kies uw situatie"
-    variant: "cards"
-    items:
-      - title: "Lekkage in badkamer of keuken"
-        text: "Voor zichtbare lekkage rond badkamer, keuken of aansluitpunten."
-        href: "/lekkage-badkamer-keuken/"
-      - title: "Waterleiding, afvoer en riolering"
-        text: "Voor vragen over leidingen, afvoer en riool."
-        href: "/waterleiding-afvoer-riolering/"
-      - title: "Werkwijze en FAQ"
-        text: "Wat u kunt controleren en meesturen."
-        href: "/werkwijze-faq/"
-  - heading: "Onderdeel van LBI Installaties"
-    body: "De microsite heeft eigen SEO, sitemap en navigatie, maar gebruikt dezelfde contactgegevens als LBI."
-    variant: "text"
+  - heading: "Waarmee we u snel helpen"
+    body: >-
+      Water op een plek waar het niet hoort, kan snel schade geven. We sporen de oorzaak op en
+      repareren waar mogelijk meteen.
+    layout: "text"
+    bullets:
+      - "Lekkage in badkamer, keuken of toilet"
+      - "Lekkende kraan, leiding of koppeling"
+      - "Lekkage opsporen zonder onnodig hak- en breekwerk"
+      - "Verstopte of lekkende afvoer en riolering"
 faqs:
-  - question: "Moet ik foto's sturen?"
-    answer: "Ja, foto's van de lekkageplek en de omgeving kunnen helpen bij het eerste contact."
+  - question: "Kunnen jullie met spoed komen?"
+    answer: "Bel of app uw situatie, dan laten we direct weten wat we kunnen. TODO: bevestig uw spoed-werkwijze en realistische reactietijden."
+  - question: "Wat kan ik zelf doen bij een lekkage?"
+    answer: "Sluit indien mogelijk de hoofdkraan af en vang water op. Foto's via WhatsApp helpen ons inschatten."
 internal_links:
-  - label: "Lekkage badkamer of keuken"
+  - label: "Lekkage badkamer & keuken"
     href: "/lekkage-badkamer-keuken/"
-  - label: "Contact"
-    href: "/contact/"
+    description: "Lekkages opsporen en repareren in natte ruimtes."
+  - label: "Waterleiding, afvoer & riolering"
+    href: "/waterleiding-afvoer-riolering/"
+    description: "Leidingwerk, afvoer en verstoppingen."
+  - label: "Werkwijze & FAQ"
+    href: "/werkwijze-faq/"
+    description: "Hoe we werken en veelgestelde vragen."
 image_plan:
-  - alt: "Lekkage bij leiding of afvoer"
-schema_type: "LocalBusiness"
+  - slot: "hero"
+    filename: "hero.jpg"
+    alt: "TODO: alt-tekst"
+    note: "Optioneel."
+schema_type: "WebPage"
 safety_alert: false
 draft: false
+order: 1
 ---
+
+Lekkage Reparatie Helmond is onderdeel van LBI Installaties. TODO: vul aan met uw definitieve teksten.

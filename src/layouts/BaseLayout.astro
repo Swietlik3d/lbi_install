@@ -1,31 +1,85 @@
 ---
-import "@/styles/global.css";
-import Seo from "@/components/Seo.astro";
-import SchemaJsonLd from "@/components/SchemaJsonLd.astro";
-import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "@/config/sites";
-
-type PageEntry = CollectionEntry<"pages">;
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import StickyCallBar from "../components/StickyCallBar.astro";
+import Seo from "../components/Seo.astro";
+import SchemaJsonLd from "../components/SchemaJsonLd.astro";
+import { getCurrentSite } from "../config/sites";
 
 interface Props {
-  page: PageEntry;
-  site: SiteConfig;
-  schemaItems?: Array<Record<string, unknown> | null>;
+  title: string;
+  description: string;
+  canonical?: string;
+  robots?: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
+  schemaNodes?: Array<Record<string, unknown> | null>;
+  footerNote?: string;
 }
 
-const { page, site, schemaItems = [] } = Astro.props;
+const site = getCurrentSite();
+const {
+  title,
+  description,
+  canonical,
+  robots,
+  ogImage,
+  ogType,
+  schemaNodes = [],
+  footerNote,
+} = Astro.props;
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.domain).toString();
 ---
 
 <!doctype html>
-<html lang={site.language}>
+<html lang={site.language} data-site={site.id}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="generator" content={Astro.generator} />
-    <Seo page={page} site={site} />
-    <SchemaJsonLd items={schemaItems} />
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonicalUrl}
+      robots={robots}
+      ogImage={ogImage}
+      ogType={ogType}
+    />
+    <SchemaJsonLd nodes={schemaNodes} />
   </head>
   <body>
-    <slot />
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-brand focus:px-4 focus:py-2 focus:font-semibold focus:text-brand-ink"
+    >
+      Naar hoofdinhoud
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer footerNote={footerNote} />
+    <StickyCallBar />
+
+    <script is:inline>
+      // Lightweight, ID-free analytics delegation.
+      // Forwards [data-event] clicks to window.dataLayer if a tag manager is present.
+      document.addEventListener(
+        "click",
+        function (e) {
+          var el = e.target instanceof Element ? e.target.closest("[data-event]") : null;
+          if (!el) return;
+          (window.dataLayer = window.dataLayer || []).push({
+            event: el.getAttribute("data-event"),
+            site: el.getAttribute("data-site"),
+            page: el.getAttribute("data-page"),
+          });
+        },
+        { passive: true }
+      );
+    </script>
   </body>
 </html>

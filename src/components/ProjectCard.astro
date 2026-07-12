@@ -1,65 +1,49 @@
 ---
 interface Props {
   title: string;
-  summary: string;
+  summary?: string;
+  cover?: string;
+  coverAlt?: string;
+  category?: string;
   location?: string;
-  image?: {
-    src?: string;
-    alt?: string;
-  };
+  href?: string;
 }
 
-const { title, summary, location, image } = Astro.props;
+const { title, summary, cover, coverAlt, category, location, href } = Astro.props;
+const Wrapper = href ? "a" : "div";
+const wrapperProps = href ? { href, class: "no-underline" } : {};
 ---
 
-<article class="project-card content-card">
-  {
-    image?.src && (
+<article class="card group flex h-full flex-col overflow-hidden">
+  <div class="aspect-[4/3] w-full overflow-hidden bg-slate-100">
+    {cover ? (
       <img
-        src={image.src}
-        alt={image.alt || title}
+        src={cover}
+        alt={coverAlt ?? title}
+        width="600"
+        height="450"
         loading="lazy"
         decoding="async"
+        class="h-full w-full object-cover transition group-hover:scale-[1.02]"
       />
-    )
-  }
-  <div>
-    {location && <span>{location}</span>}
-    <h3>{title}</h3>
-    <p>{summary}</p>
+    ) : (
+      <div class="grid h-full w-full place-items-center bg-brand-light text-brand">
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-10 w-10" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16l5-5 4 4 3-3 6 6M3 5h18v14H3z" />
+        </svg>
+        <span class="sr-only">Projectfoto volgt</span>
+      </div>
+    )}
+  </div>
+  <div class="flex flex-1 flex-col p-5">
+    {(category || location) && (
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand">
+        {[category, location].filter(Boolean).join(" · ")}
+      </p>
+    )}
+    <Wrapper {...wrapperProps}>
+      <h3 class="mt-1 text-lg font-bold text-ink group-hover:text-brand">{title}</h3>
+    </Wrapper>
+    {summary && <p class="mt-2 text-sm leading-relaxed text-muted">{summary}</p>}
   </div>
 </article>
-
-<style>
-  .project-card {
-    overflow: hidden;
-  }
-
-  img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-  }
-
-  div {
-    padding: 20px;
-  }
-
-  span {
-    color: var(--color-accent-dark);
-    font-size: 0.78rem;
-    font-weight: 850;
-    text-transform: uppercase;
-  }
-
-  h3 {
-    margin: 8px 0;
-    font-size: 1.18rem;
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-muted);
-    line-height: 1.65;
-  }
-</style>

@@ -1,6 +1,6 @@
 ---
 interface Crumb {
-  label: string;
+  name: string;
   href: string;
 }
 
@@ -13,53 +13,30 @@ const { items } = Astro.props;
 
 {
   items.length > 1 && (
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <div class="container">
-        <ol>
-          {items.map((item, index) => (
-            <li>
-              {index + 1 === items.length ? (
-                <span aria-current="page">{item.label}</span>
+    <nav aria-label="Kruimelpad" class="border-b border-slate-100 bg-white">
+      <ol class="container-base flex flex-wrap items-center gap-1 py-3 text-sm text-muted">
+        {items.map((item, i) => {
+          const isLast = i === items.length - 1;
+          return (
+            <li class="flex items-center gap-1">
+              {isLast ? (
+                <span aria-current="page" class="font-medium text-ink">
+                  {item.name}
+                </span>
               ) : (
-                <a href={item.href}>{item.label}</a>
+                <a href={item.href} class="hover:text-brand">
+                  {item.name}
+                </a>
+              )}
+              {!isLast && (
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6" />
+                </svg>
               )}
             </li>
-          ))}
-        </ol>
-      </div>
+          );
+        })}
+      </ol>
     </nav>
   )
 }
-
-<style>
-  .breadcrumbs {
-    padding: 18px 0 0;
-  }
-
-  ol {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  li {
-    color: var(--color-muted);
-    font-size: 0.86rem;
-    font-weight: 750;
-  }
-
-  li + li::before {
-    margin-right: 8px;
-    color: color-mix(in srgb, var(--color-muted) 55%, white);
-    content: "/";
-  }
-
-  a:hover {
-    color: var(--color-ink);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-</style>

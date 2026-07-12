@@ -1,18 +1,14 @@
 ---
+import { jsonLdGraph } from "../config/schema";
+
 interface Props {
-  items: Array<Record<string, unknown> | null>;
+  nodes: Array<Record<string, unknown> | null>;
 }
 
-const { items } = Astro.props;
-const graph = items.filter(Boolean);
+const { nodes } = Astro.props;
+const json = jsonLdGraph(nodes);
+// Escape "<" so a stray sequence can never break out of the script element.
+const safe = json.replace(/</g, "\\u003c");
 ---
 
-{
-  graph.length > 0 && (
-    <script
-      is:inline
-      type="application/ld+json"
-      set:html={JSON.stringify(graph.length === 1 ? graph[0] : graph)}
-    />
-  )
-}
+{nodes.some(Boolean) && <script type="application/ld+json" set:html={safe} />}

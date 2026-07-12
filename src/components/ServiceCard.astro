@@ -1,81 +1,42 @@
 ---
-import Icon from "./Icon.astro";
-
 interface Props {
   title: string;
-  text?: string;
-  href?: string;
+  href: string;
+  description?: string;
+  icon?: string;
 }
 
-const { title, text, href } = Astro.props;
-const Tag = href ? "a" : "div";
+const { title, href, description, icon = "default" } = Astro.props;
+
+// Small inline icon set (no icon library -> zero extra JS/CSS weight).
+const ICONS: Record<string, string> = {
+  kitchen: "M4 3h16v4H4zM6 7v14M18 7v14M4 11h16",
+  bath: "M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM7 12V6a2 2 0 0 1 4 0",
+  bolt: "M13 2 4 14h6l-1 8 9-12h-6z",
+  water: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z",
+  gas: "M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3.5 2-4 0 2 1.5 2.5 2.5 2 .5-2-1.5-3-1.5-5 0-1.5 2-2 2-2z",
+  wrench: "M21 4a5 5 0 0 1-6.7 6.7L5 20l-1-1 9.3-9.3A5 5 0 0 1 20 3z",
+  shield: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z",
+  default: "M4 7h16M4 12h16M4 17h10",
+};
+const d = ICONS[icon] ?? ICONS.default;
 ---
 
-<Tag class="service-card content-card" href={href}>
-  <span class="service-icon" aria-hidden="true">
-    <Icon name="wrench" size={22} />
+<a
+  href={href}
+  class="card group flex h-full flex-col p-6 no-underline transition hover:-translate-y-0.5 hover:border-brand hover:shadow-lg"
+>
+  <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-light text-brand" aria-hidden="true">
+    <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d={d} />
+    </svg>
   </span>
-  <strong>{title}</strong>
-  {text && <p>{text}</p>}
-  {
-    href && (
-      <span class="service-link">
-        Bekijk
-        <Icon name="arrow" size={17} />
-      </span>
-    )
-  }
-</Tag>
-
-<style>
-  .service-card {
-    display: grid;
-    align-content: start;
-    gap: 14px;
-    padding: 22px;
-    transition:
-      transform 160ms ease,
-      border-color 160ms ease,
-      box-shadow 160ms ease;
-  }
-
-  a.service-card:hover {
-    transform: translateY(-2px);
-    border-color: color-mix(
-      in srgb,
-      var(--color-accent) 55%,
-      var(--color-border)
-    );
-    box-shadow: var(--shadow-soft);
-  }
-
-  .service-icon {
-    display: grid;
-    width: 42px;
-    height: 42px;
-    place-items: center;
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--color-accent) 20%, white);
-    color: var(--color-accent-dark);
-  }
-
-  strong {
-    font-size: 1.15rem;
-    line-height: 1.25;
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-muted);
-    line-height: 1.65;
-  }
-
-  .service-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 4px;
-    color: var(--color-accent-dark);
-    font-weight: 850;
-  }
-</style>
+  <h3 class="mt-4 text-lg font-bold text-ink group-hover:text-brand">{title}</h3>
+  {description && <p class="mt-2 text-sm leading-relaxed text-muted">{description}</p>}
+  <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand">
+    Meer informatie
+    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+    </svg>
+  </span>
+</a>

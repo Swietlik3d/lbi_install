@@ -1,73 +1,138 @@
-import type { CollectionEntry } from "astro:content";
-import type { SiteConfig } from "./sites";
+import { isPlaceholder, isMicrosite, LBI_MAIN_URL, type SiteConfig } from "./sites";
 
-type PageEntry = CollectionEntry<"pages">;
+/**
+ * Safe, generic JSON-LD builders. Important rules:
+ *  - Never emit aggregateRating / review schema unless real reviews exist.
+ *  - Never emit address / KVK / opening hours while they are placeholders.
+ *  - Microsites reference LBI Installaties as parentOrganization (honest).
+ */
 
-export function localBusinessSchema(site: SiteConfig) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
+type Json = Record<string, unknown>;
+
+function phoneFromHref(href: string): string {
+  return href.replace(/^tel:/, "");
+}
+
+/** Stable @id for the business node on a given site. */
+export function businessId(site: SiteConfig): string {
+  return `${site.domain}/#business`;
+}
+
+/**
+ * LocalBusiness node describing the company behind the active site.
+ * Microsites describe the same company under their own brand, with a
+ * parentOrganization pointer back to LBI Installaties.
+ */
+export function businessSchema(site: SiteConfig): Json {
+  const node: Json = {
+    "@type": "LocalBusiness",
+    "@id": businessId(site),
     name: site.brandName,
     legalName: site.legalName,
-    url: site.domain,
-    telephone: site.phone,
+    url: `${site.domain}/`,
+    telephone: phoneFromHref(site.phoneHref),
     email: site.email,
-    address: {
+    areaServed: site.area,
+    image: `${site.domain}${site.ogImage}`,
+    inLanguage: site.language,
+  };
+
+  if (isMicrosite(site)) {
+    node.parentOrganization = {
+      "@type": "Organization",
+      name: site.parentBrand,
+      url: `${LBI_MAIN_URL}/`,
+    };
+  }
+
+  // Only include a postal address once it is no longer a placeholder.
+  if (!isPlaceholder(site.address)) {
+    node.address = {
       "@type": "PostalAddress",
       streetAddress: site.address,
       addressLocality: "Helmond",
       addressCountry: "NL",
-    },
-    areaServed: site.area,
-  };
+    };
+  }
+
+  // KVK as identifier, only when filled in.
+  if (!isPlaceholder(site.kvk)) {
+    node.identifier = {
+      "@type": "PropertyValue",
+      propertyID: "KVK",
+      value: site.kvk,
+    };
+  }
+
+  return node;
 }
 
-export function serviceSchema(site: SiteConfig, page: PageEntry) {
-  return {
-    "@context": "https://schema.org",
+export interface ServiceInput {
+  name: string;
+  description?: string;
+  url: string;
+}
+
+export function serviceSchema(site: SiteConfig, service: ServiceInput): Json {
+  const node: Json = {
     "@type": "Service",
-    name: page.data.h1,
-    provider: {
-      "@type": "ProfessionalService",
-      name: site.legalName,
-      telephone: site.phone,
-      url: site.domain,
-    },
+    name: service.name,
+    serviceType: service.name,
     areaServed: site.area,
-    serviceType: page.data.focus_keyword || site.primaryService,
-    url: new URL(page.data.path, site.domain).toString(),
+    url: service.url,
+    provider: {
+      "@type": "LocalBusiness",
+      "@id": businessId(site),
+      name: site.brandName,
+    },
   };
+  if (service.description) node.description = service.description;
+  return node;
 }
 
-export function faqSchema(page: PageEntry) {
-  if (!page.data.faqs?.length) return null;
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
 
+export function faqPageSchema(faqs: FaqItem[]): Json | null {
+  if (!faqs || faqs.length === 0) return null;
   return {
-    "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: page.data.faqs.map((faq) => ({
+    mainEntity: faqs.map((f) => ({
       "@type": "Question",
-      name: faq.question,
+      name: f.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faq.answer,
+        text: f.answer,
       },
     })),
   };
 }
 
-export function breadcrumbSchema(
-  site: SiteConfig,
-  breadcrumbs: Array<{ label: string; href: string }>,
-) {
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export function breadcrumbSchema(items: BreadcrumbItem[]): Json | null {
+  if (!items || items.length === 0) return null;
   return {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: breadcrumbs.map((item, index) => ({
+    itemListElement: items.map((item, i) => ({
       "@type": "ListItem",
-      position: index + 1,
-      name: item.label,
-      item: new URL(item.href, site.domain).toString(),
+      position: i + 1,
+      name: item.name,
+      item: item.url,
     })),
   };
+}
+
+/** Wrap one or more nodes into a single @graph document. */
+export function jsonLdGraph(nodes: Array<Json | null>): string {
+  const graph = nodes.filter((n): n is Json => Boolean(n));
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": graph,
+  });
 }

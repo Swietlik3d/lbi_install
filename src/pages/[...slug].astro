@@ -1,71 +1,155 @@
 ---
-import { getCollection } from "astro:content";
-import PageLayout from "@/layouts/PageLayout.astro";
-import ServiceLayout from "@/layouts/ServiceLayout.astro";
-import EmergencyLayout from "@/layouts/EmergencyLayout.astro";
-import ContactLayout from "@/layouts/ContactLayout.astro";
-import { getNavigation } from "@/config/navigation";
-import { getSiteById, type SiteId } from "@/config/sites";
-import { readdirSync } from "node:fs";
+import { getCollection, render } from "astro:content";
+import HomeLayout from "../layouts/HomeLayout.astro";
+import ServiceLayout from "../layouts/ServiceLayout.astro";
+import EmergencyLayout from "../layouts/EmergencyLayout.astro";
+import ContactLayout from "../layouts/ContactLayout.astro";
+import PageLayout from "../layouts/PageLayout.astro";
+import { getCurrentSite, getCurrentSiteId } from "../config/sites";
+import { getNavigation } from "../config/navigation";
+import {
+  businessSchema,
+  serviceSchema,
+  faqPageSchema,
+  breadcrumbSchema,
+} from "../config/schema";
 
-function collectionHasMarkdown(name: "projects" | "reviews") {
-  try {
-    return readdirSync(new URL(`../content/${name}`, import.meta.url)).some(
-      (file) => file.endsWith(".md"),
-    );
-  } catch {
-    return false;
-  }
+interface ProjectItem {
+  title: string;
+  summary?: string;
+  cover?: string;
+  coverAlt?: string;
+  category?: string;
+  location: string;
+}
+interface ReviewItem {
+  author: string;
+  quote: string;
+  rating?: number;
+  service?: string;
+  source?: string;
 }
 
+// Generate one set of routes per active site (SITE_ID drives the filter).
 export async function getStaticPaths() {
-  const siteId = (process.env.SITE_ID || "lbi") as SiteId;
+  const siteId = getCurrentSiteId();
   const pages = await getCollection(
     "pages",
-    ({ data }) => data.site === siteId && !data.draft,
+    ({ data }) => data.site === siteId && data.draft !== true
   );
-
-  return pages.map((page) => ({
-    params: {
-      slug:
-        page.data.path === "/"
-          ? undefined
-          : page.data.path.replace(/^\/|\/$/g, ""),
-    },
-    props: { page },
-  }));
+  return pages.map((entry) => {
+    const slug = entry.data.path.replace(/^\/+|\/+$/g, "");
+    return {
+      params: { slug: slug === "" ? undefined : slug },
+      props: { entry },
+    };
+  });
 }
 
-const { page } = Astro.props;
-const site = getSiteById(page.data.site);
-const nav = getNavigation(site.id);
-const projects = collectionHasMarkdown("projects")
-  ? await getCollection(
-      "projects",
-      ({ data }) => data.site === site.id && !data.draft,
-    )
-  : [];
-const reviews = collectionHasMarkdown("reviews")
-  ? await getCollection(
-      "reviews",
-      ({ data }) => data.site === site.id && !data.draft,
-    )
-  : [];
-const settings = (
-  await getCollection("settings", ({ data }) => data.site === site.id)
-)[0];
+const { entry } = Astro.props;
+const page = entry.data;
+const site = getCurrentSite();
+const siteId = site.id;
+const nav = getNavigation(siteId);
+const { Content } = await render(entry);
 
-const layoutProps = { page, site, nav, projects, reviews, settings };
+const canonical = new URL(page.path, site.domain).toString();
+
+// Breadcrumbs: use the menu label when the path is a top-level nav item.
+const crumbs: { name: string; href: string }[] = [{ name: "Home", href: "/" }];
+if (page.path !== "/") {
+  const navMatch = nav.find((n) => n.href === page.path);
+  crumbs.push({ name: navMatch?.label ?? page.h1, href: page.path });
+}
+
+// JSON-LD graph: business + breadcrumbs (+ Service / FAQPage where relevant).
+const schemaNodes: Array<Record<string, unknown> | null> = [businessSchema(site)];
+schemaNodes.push(
+  breadcrumbSchema(
+    crumbs.map((c) => ({ name: c.name, url: new URL(c.href, site.domain).toString() }))
+  )
+);
+if (page.faqs.length > 0) {
+  schemaNodes.push(faqPageSchema(page.faqs));
+}
+if (page.page_type === "service" || page.schema_type === "Service") {
+  schemaNodes.push(
+    serviceSchema(site, {
+      name: page.h1,
+      description: page.meta_description,
+      url: canonical,
+    })
+  );
+}
+
+// Pull published collection items for home / projects / reviews pages.
+const needProjects = page.page_type === "projects" || page.page_type === "home";
+const needReviews = page.page_type === "reviews" || page.page_type === "home";
+
+let projectItems: ProjectItem[] | undefined;
+let reviewItems: ReviewItem[] | undefined;
+
+if (needProjects) {
+  const projects = await getCollection(
+    "projects",
+    ({ data }) => data.site === siteId && data.draft !== true
+  );
+  projectItems = projects
+    .sort((a, b) => a.data.order - b.data.order)
+    .map((p) => ({
+      title: p.data.title,
+      summary: p.data.summary,
+      cover: p.data.cover,
+      coverAlt: p.data.coverAlt,
+      category: p.data.category,
+      location: p.data.location,
+    }));
+}
+if (needReviews) {
+  const reviews = await getCollection(
+    "reviews",
+    ({ data }) => data.site === siteId && data.draft !== true
+  );
+  reviewItems = reviews
+    .sort((a, b) => a.data.order - b.data.order)
+    .map((r) => ({
+      author: r.data.author,
+      quote: r.data.quote,
+      rating: r.data.rating,
+      service: r.data.service,
+      source: r.data.source,
+    }));
+}
 ---
 
 {
-  page.data.page_type === "contact" ? (
-    <ContactLayout {...layoutProps} />
-  ) : site.id !== "lbi" ? (
-    <EmergencyLayout {...layoutProps} />
-  ) : page.data.page_type === "service" ? (
-    <ServiceLayout {...layoutProps} />
+  page.page_type === "home" ? (
+    <HomeLayout page={page} schemaNodes={schemaNodes} projectItems={projectItems} reviewItems={reviewItems}>
+      <Content />
+    </HomeLayout>
+  ) : page.page_type === "contact" ? (
+    <ContactLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs}>
+      <Content />
+    </ContactLayout>
+  ) : page.page_type === "emergency" ? (
+    <EmergencyLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs}>
+      <Content />
+    </EmergencyLayout>
+  ) : page.page_type === "service" ? (
+    <ServiceLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs}>
+      <Content />
+    </ServiceLayout>
+  ) : page.page_type === "projects" ? (
+    <PageLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs} projectItems={projectItems}>
+      <Content />
+    </PageLayout>
+  ) : page.page_type === "reviews" ? (
+    <PageLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs} reviewItems={reviewItems}>
+      <Content />
+    </PageLayout>
   ) : (
-    <PageLayout {...layoutProps} />
+    <PageLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs}>
+      <Content />
+    </PageLayout>
   )
 }
