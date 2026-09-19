@@ -39,7 +39,7 @@
     "btw": "[BTW-ID]",
     "address": "[ADRES]",
     "themeColor": "#b45309",
-    "ogImage": "/images/elektra/og-default.jpg",
+    "ogImage": "/images/elektra/og-home.jpg",
     "enableContactForm": false,
     "formProvider": "none"
   },
@@ -61,7 +61,7 @@
     "btw": "[BTW-ID]",
     "address": "[ADRES]",
     "themeColor": "#0e7490",
-    "ogImage": "/images/lekkage/og-default.jpg",
+    "ogImage": "/images/lekkage/og-home.jpg",
     "enableContactForm": false,
     "formProvider": "none"
   },
@@ -83,7 +83,7 @@
     "btw": "[BTW-ID]",
     "address": "[ADRES]",
     "themeColor": "#f4a900",
-    "ogImage": "/images/gas/og-default.jpg",
+    "ogImage": "/images/gas/og-home.jpg",
     "enableContactForm": false,
     "formProvider": "none"
   }

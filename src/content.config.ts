@@ -104,13 +104,25 @@ const projects = defineCollection({
     title: z.string(),
     site: siteEnum.default("lbi"),
     category: z.string().optional(),
-    location: z.string().default("Helmond"),
+    location: z.string().optional(),
     date: z.coerce.date().optional(),
+    exampleDetails: z.boolean().default(false),
     summary: z.string().optional(),
     cover: z.string().optional(),
     coverAlt: z.string().optional(),
     draft: z.boolean().default(true),
     order: z.number().default(0),
+  }).superRefine((project, context) => {
+    // Incomplete drafts are allowed; published timeline entries must be complete.
+    if (project.draft) return;
+    for (const field of ["title", "summary", "cover", "coverAlt", "location"] as const) {
+      if (!project[field]?.trim()) {
+        context.addIssue({ code: z.ZodIssueCode.custom, path: [field], message: "Required for a published project." });
+      }
+    }
+    if (!project.date) {
+      context.addIssue({ code: z.ZodIssueCode.custom, path: ["date"], message: "Required for a published project." });
+    }
   }),
 });
 

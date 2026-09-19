@@ -1,0 +1,14 @@
+---
+import WaterEmergencyConcept from "../../components/WaterEmergencyConcept.astro";
+import EmergencyConcept from "../../components/EmergencyConcept.astro";
+import type { EmergencyKind } from "../../config/emergency-concepts";
+
+// Design previews are opt-in and are never part of a normal production build.
+export function getStaticPaths() {
+  return import.meta.env.DEV || process.env.INCLUDE_DESIGN_PREVIEWS === "1"
+    ? ["water", "elektra", "gas"].map(concept => ({ params: { concept } }))
+    : [];
+}
+---
+
+{Astro.params.concept === "water" ? <WaterEmergencyConcept /> : <EmergencyConcept kind={Astro.params.concept as EmergencyKind} />}

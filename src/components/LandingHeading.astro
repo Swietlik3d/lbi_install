@@ -1,0 +1,9 @@
+---
+interface Props { title: string; id: string }
+const { title, id } = Astro.props;
+const lines = title.trim().split(/\n+/);
+const lastLine = lines.pop() ?? "";
+const words = lastLine.trim().split(/\s+/);
+const emphasis = words.pop();
+---
+<h1 id={id}>{lines.map(line => <>{line}<br /></>)}{words.length > 0 && `${words.join(" ")} `}<em>{emphasis}</em></h1>

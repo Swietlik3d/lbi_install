@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import Hero from "../components/Hero.astro";
+import SafetyAlert from "../components/SafetyAlert.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
 import SectionRenderer from "../components/SectionRenderer.astro";
 import FAQ from "../components/FAQ.astro";
 import InternalLinks from "../components/InternalLinks.astro";
 import CTASection from "../components/CTASection.astro";
-import { getCurrentSite } from "../config/sites";
 import type { CollectionEntry } from "astro:content";
 
 type PageData = CollectionEntry<"pages">["data"];
@@ -25,8 +25,7 @@ interface Props {
 
 const { page, schemaNodes = [], breadcrumbs = [] } = Astro.props;
 const hasBody = Astro.slots.has("default");
-const site = getCurrentSite();
-const lbiTrustBadges = [
+const confirmedTrustBadges = [
   { label: "Vaste contactpersoon", note: "U bespreekt uw vraag rechtstreeks met Luc." },
   { label: "Duidelijk overleg", note: "Werkzaamheden en vervolgstappen worden vooraf besproken." },
   { label: "Helmond en omgeving", note: "Beschikbaarheid en locatie altijd in overleg." },
@@ -40,8 +39,9 @@ const lbiTrustBadges = [
   schemaNodes={schemaNodes}
 >
   <Breadcrumbs items={breadcrumbs} />
+  {page.safety_alert && <div class="container-base pt-10"><SafetyAlert /></div>}
   <Hero h1={page.h1} hero={page.hero} />
-  <TrustBadges items={site.id === "lbi" ? lbiTrustBadges : undefined} />
+  <TrustBadges items={confirmedTrustBadges} />
   <SectionRenderer sections={page.sections} />
 
   {hasBody && (

@@ -1,0 +1,22 @@
+---
+import { getNavigation } from "../config/navigation";
+import { SITES, isPlaceholder, type SiteConfig } from "../config/sites";
+import { landingHref } from "../lib/landing-content";
+
+interface Props { site: SiteConfig; preview: boolean }
+const { site, preview } = Astro.props;
+const navigation = getNavigation(site.id);
+---
+<footer class="water-footer landing-footer">
+  <div class="water-shell landing-footer__main">
+    <div class="landing-footer__brand">
+      <a class="water-brand" href={SITES.lbi.domain}><span class="water-brand__mark">LBI<span>.</span></span><span class="water-brand__division">INSTALLATIES<br />HELMOND</span></a>
+      <p>{site.brandName}</p>
+      <a class="landing-parent" href={SITES.lbi.domain}>Onderdeel van LBI Installaties ↗</a>
+    </div>
+    <nav aria-label="Pagina's"><span class="water-eyebrow">VERDER LEZEN</span>{navigation.filter(item => item.href !== "/").map(item => <a href={landingHref(site.id, item.href)}>{item.label}</a>)}</nav>
+    <div class="landing-footer__details"><span class="water-eyebrow">HELMOND & OMGEVING</span><a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a><a href={site.phoneHref} data-event="phone_click">{site.id === "gas" ? "LBI · niet-acute vragen: " : ""}{site.phone}</a><p>Op afspraak. Bel voor beschikbaarheid.</p>{!isPlaceholder(site.address) && <p>{site.address}</p>}{!isPlaceholder(site.kvk) && <p>KVK: {site.kvk}</p>}{!isPlaceholder(site.btw) && <p>BTW: {site.btw}</p>}</div>
+  </div>
+  {site.id === "gas" && <p class="water-shell landing-footer__safety">Gaslucht? Bel buiten, op veilige afstand, <a href="tel:08009009">0800-9009</a>. Bij direct gevaar: <a href="tel:112">112</a>.</p>}
+  <div class="water-shell landing-footer__bottom"><small>{preview ? "Ontwerpconcept · " : ""}{site.brandName} · {new Date().getFullYear()}</small><a href={`${SITES.lbi.domain}/privacy-cookies/`}>Privacy & cookies</a><a href={SITES.lbi.domain}>Meer over LBI Installaties ↗</a></div>
+</footer>

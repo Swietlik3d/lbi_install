@@ -1,0 +1,12 @@
+<script>
+  // Keep the existing local dataLayer contract; this does not load an analytics service.
+  document.addEventListener("click", event => {
+    const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href]") : null;
+    if (!link) return;
+    const href = link.getAttribute("href") ?? "";
+    const eventName = link.dataset.event ?? (href.startsWith("tel:") ? "phone_click" : href.startsWith("mailto:") ? "email_click" : href.startsWith("https://wa.me/") ? "whatsapp_click" : undefined);
+    if (!eventName) return;
+    const analyticsWindow = window as Window & { dataLayer?: Array<Record<string, unknown>> };
+    (analyticsWindow.dataLayer ??= []).push({ event: eventName, site: document.body.dataset.site, page: location.pathname });
+  }, { passive: true });
+</script>

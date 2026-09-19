@@ -10,20 +10,14 @@ import ReviewCard from "../components/ReviewCard.astro";
 import FAQ from "../components/FAQ.astro";
 import CTASection from "../components/CTASection.astro";
 import LBIHomeRedesign from "../components/LBIHomeRedesign.astro";
-import GasEmergencyLanding from "../components/GasEmergencyLanding.astro";
+import WaterEmergencyConcept from "../components/WaterEmergencyConcept.astro";
+import EmergencyConcept from "../components/EmergencyConcept.astro";
 import { getCurrentSite, isMicrosite } from "../config/sites";
 import type { CollectionEntry } from "astro:content";
+import type { ProjectItem } from "../lib/projects";
 
 type PageData = CollectionEntry<"pages">["data"];
 
-interface ProjectItem {
-  title: string;
-  summary?: string;
-  cover?: string;
-  coverAlt?: string;
-  category?: string;
-  location?: string;
-}
 interface ReviewItem {
   author: string;
   quote: string;
@@ -44,7 +38,6 @@ const site = getCurrentSite();
 const micro = isMicrosite(site);
 const hasBody = Astro.slots.has("default");
 const useLbiRedesign = site.id === "lbi" && page.page_type === "home";
-const useGasEmergencyLanding = site.id === "gas" && page.page_type === "home";
 
 // Derive a sensible icon from the link label so the home service grid looks intentional.
 function iconFor(label: string): string {
@@ -65,6 +58,11 @@ const serviceItems = page.internal_links.map((link) => ({
 }));
 ---
 
+{site.id === "lekkage" ? (
+  <WaterEmergencyConcept page={page} schemaNodes={schemaNodes} preview={false} />
+) : site.id === "elektra" || site.id === "gas" ? (
+  <EmergencyConcept kind={site.id} page={page} schemaNodes={schemaNodes} preview={false} />
+) : (
 <BaseLayout
   title={page.meta_title}
   description={page.meta_description}
@@ -72,8 +70,6 @@ const serviceItems = page.internal_links.map((link) => ({
 >
   {useLbiRedesign ? (
     <LBIHomeRedesign page={page} projectItems={projectItems} />
-  ) : useGasEmergencyLanding ? (
-    <GasEmergencyLanding page={page} />
   ) : (
     <>
   <Hero h1={page.h1} hero={page.hero} variant={micro ? "emergency" : "default"} />
@@ -145,3 +141,4 @@ const serviceItems = page.internal_links.map((link) => ({
     </>
   )}
 </BaseLayout>
+)}

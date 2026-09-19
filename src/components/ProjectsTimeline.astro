@@ -1,0 +1,66 @@
+---
+import ProjectMeta from "./ProjectMeta.astro";
+import type { ProjectItem } from "../lib/projects";
+interface Props { projects: ProjectItem[]; }
+const { projects } = Astro.props;
+---
+
+<ol class="project-timeline" aria-label="Tijdlijn van projecten, nieuwste eerst">
+  {projects.map((project, index) => (
+    <li id={project.id} class="project-timeline__entry">
+      <span class="project-timeline__marker" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+      <article aria-labelledby={`title-${project.id}`}>
+        <div class="project-timeline__image">
+          {project.cover && <img src={project.cover} alt={project.coverAlt ?? project.title} width="1200" height="900" loading="lazy" decoding="async" />}
+          <span class="project-timeline__image-label">LBI / {project.category ?? "Project"}</span>
+        </div>
+        <div class="project-timeline__content">
+          <p class="lbi-kicker">{project.category ?? "Project"}</p>
+          <h2 id={`title-${project.id}`}>{project.title}</h2>
+          <ProjectMeta date={project.date} location={project.location} />
+          <p class="project-timeline__summary">{project.summary}</p>
+          {project.exampleDetails && <p class="project-timeline__note">Datum en plaats zijn voorbeeldgegevens.</p>}
+          <a class="lbi-text-link" href="/contact/">
+            Ook zo’n project bespreken?
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+          </a>
+        </div>
+      </article>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .project-timeline { position: relative; margin: 0; padding: 0; list-style: none; }
+  .project-timeline::before { position: absolute; content: ""; top: 0; bottom: 0; left: 50%; width: 1px; background: linear-gradient(#ee6900, #6b3c18 75%, transparent); }
+  .project-timeline__entry { position: relative; padding-block: 28px 68px; scroll-margin-top: 110px; }
+  .project-timeline__marker { position: absolute; z-index: 1; top: 68px; left: 50%; display: grid; place-items: center; width: 42px; height: 42px; transform: translateX(-50%); border: 1px solid #b65b18; border-radius: 50%; background: #171412; color: #ff9b51; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; box-shadow: 0 0 0 8px #101010; }
+  article { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(72px, 8vw, 128px); }
+  .project-timeline__image { position: relative; overflow: hidden; aspect-ratio: 4 / 3; border: 1px solid var(--lbi-border); border-radius: 8px; background: #20201f; box-shadow: 0 20px 50px rgb(0 0 0 / 0.25); }
+  img { width: 100%; height: 100%; object-fit: cover; }
+  .project-timeline__image-label { position: absolute; left: 20px; bottom: 20px; border: 1px solid rgb(255 255 255 / 0.18); border-radius: 4px; padding: 8px 12px; background: rgb(15 15 15 / 0.85); color: white; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .project-timeline__content { padding-block: 24px; }
+  h2 { max-width: 530px; margin: 0 0 24px; color: white; font-size: clamp(30px, 3.1vw, 46px); line-height: 1.06; }
+  .project-timeline__summary { max-width: 480px; margin: 24px 0 0; color: var(--lbi-muted); font-size: 16px; line-height: 1.8; }
+  .project-timeline__note { margin: 14px 0 0; color: #aaa49b; font-size: 12px; }
+  .lbi-text-link { margin-top: 28px; line-height: 1.6; }
+  .project-timeline__entry:nth-child(even) .project-timeline__image { grid-column: 2; grid-row: 1; }
+  .project-timeline__entry:nth-child(even) .project-timeline__content { grid-column: 1; grid-row: 1; padding-left: 28px; }
+  @media (max-width: 900px) {
+    .project-timeline::before { left: 18px; }
+    .project-timeline__entry { padding: 20px 0 42px 64px; }
+    .project-timeline__marker { left: 18px; top: 38px; width: 34px; height: 34px; }
+    article { grid-template-columns: 1fr; gap: 0; }
+    .project-timeline__entry:nth-child(even) .project-timeline__image,
+    .project-timeline__entry:nth-child(even) .project-timeline__content { grid-column: auto; grid-row: auto; padding-left: 0; }
+    .project-timeline__summary { max-width: none; }
+  }
+  @media (max-width: 480px) {
+    .project-timeline::before, .project-timeline__marker { left: 12px; }
+    .project-timeline__entry { padding-left: 44px; }
+    .project-timeline__marker { width: 26px; height: 26px; font-size: 10px; box-shadow: 0 0 0 5px #101010; }
+    h2 { font-size: 30px; }
+    .project-timeline__image-label { left: 10px; bottom: 10px; }
+    .project-timeline__summary { font-size: 15px; }
+  }
+</style>

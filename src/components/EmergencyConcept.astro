@@ -1,0 +1,92 @@
+---
+import { SITES } from "../config/sites";
+import { EMERGENCY_CONCEPTS, type EmergencyKind } from "../config/emergency-concepts";
+import ConceptNavigation from "./ConceptNavigation.astro";
+import LandingHead from "./LandingHead.astro";
+import LandingHeading from "./LandingHeading.astro";
+import LandingSections from "./LandingSections.astro";
+import LandingFooter from "./LandingFooter.astro";
+import LandingEvents from "./LandingEvents.astro";
+import { getLandingPage, type LandingPage } from "../lib/landing-content";
+import "../styles/landing-content.css";
+import "../styles/water-concept.css";
+import "../styles/emergency-concept.css";
+
+interface Props { kind: EmergencyKind; page?: LandingPage; preview?: boolean; schemaNodes?: Array<Record<string, unknown> | null> }
+const { kind, page: suppliedPage, preview = true, schemaNodes } = Astro.props;
+const page = suppliedPage ?? await getLandingPage(kind);
+const content = EMERGENCY_CONCEPTS[kind];
+const site = SITES[kind];
+const gas = kind === "gas";
+const emergencyPhone = "0800-9009";
+const primaryHref = gas ? "tel:08009009" : page.cta_primary?.href ?? site.phoneHref;
+const primaryPhone = gas ? emergencyPhone : site.phone;
+const icons: Record<string, string> = {
+  phone: "M5 3h4l2 5-2.5 1.5a14 14 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2Z",
+  arrow: "M6 18 18 6M6 6h12v12",
+  chat: "M21 11.5a9 9 0 0 1-13.5 7.8L3 21l1.7-4.5A9 9 0 1 1 21 11.5ZM8 9h8M8 13h5",
+  check: "m5 12 4 4L19 6",
+  pin: "M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
+  shield: "m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6",
+  bolt: "m13 2-9 12h7l-1 8L21 9h-8V2Z",
+  panel: "M5 3h14v18H5ZM8 7h2v5H8Zm6 0h2v5h-2ZM8 16h8",
+  plug: "M8 3v5m8-5v5M6 8h12v3a6 6 0 0 1-12 0V8Zm6 9v5",
+  search: "M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-2 5 6 6M7 10h6m-3-3v6",
+  pipe: "M3 16V8a4 4 0 0 1 4-4h4m-8 8h5V9h9v11m-4-5h8m-8 4h8M8 2v4",
+  alert: "m12 3 10 18H2L12 3Zm0 6v5m0 3h.01",
+};
+---
+
+<!doctype html>
+<html lang="nl" data-water-concept data-emergency-concept={kind} data-site={site.id}>
+  <head>
+    <LandingHead page={page} site={site} preview={preview} schemaNodes={schemaNodes} themeColor={gas ? "#f7eee6" : "#f3f1e9"} />
+  </head>
+  <body class={`water-page emergency-page emergency-page--${kind}`} data-emergency-kind={kind} data-site={site.id}>
+    <a href="#main" class="water-skip">Naar hoofdinhoud</a>
+    <div class="water-topline"><span>{content.topline}</span><ConceptNavigation active={kind} preview={preview} /></div>
+    <header class="water-header"><div class="water-shell water-header__inner">
+      <a class="water-brand" href="#" aria-label={`${content.brand} — naar boven`}><span class="water-brand__mark">LBI<span>.</span></span><span class="water-brand__division">{content.division[0]}<br />{content.division[1]}</span></a>
+      <nav aria-label="Hoofdmenu"><a href="#hulp">Waarmee we helpen</a><a href="#werkwijze">Onze aanpak</a><a href="#vragen">Vragen</a></nav>
+      <a class="water-header__call" href={primaryHref} aria-label={gas ? "Gaslucht? Bel buiten 0800-9009" : `Bel LBI ${site.phone}`}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone} /></svg><span>{gas && <small>Bij gaslucht · bel buiten</small>}{primaryPhone}</span><span class="water-header__mobile-label">{gas ? "Bel buiten" : "Bel direct"}</span></a>
+    </div></header>
+
+    <main id="main">
+      {gas && <aside class="emergency-safety" aria-labelledby="gas-safety-title" id="veiligheid"><div class="water-shell emergency-safety__inner">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.alert}/></svg>
+        <div><h2 id="gas-safety-title">Gaslucht? Ga naar buiten. Bel op veilige afstand.</h2><p>Vermijd vuur, schakelaars en telefoongebruik bij het lek. Ventileer en sluit de hoofdkraan alleen als dit veilig kan. <a href="https://www.enexis.nl/storingen-en-onderhoud/meld-een-storing/gaslucht" target="_blank" rel="noopener noreferrer">Advies van Enexis ↗</a></p></div>
+        <div class="emergency-safety__numbers"><a href="tel:08009009">0800-9009 <span>Gaslucht · bel buiten</span></a><a href="tel:112">112 <span>Direct gevaar</span></a></div>
+      </div></aside>}
+
+      <section class="water-hero" aria-labelledby="emergency-heading"><div class="water-shell water-hero__grid">
+        <div class="water-hero__copy"><p class="water-eyebrow"><span class="water-locator" aria-hidden="true"></span> {page.hero?.kicker ?? site.brandName}</p>
+          <LandingHeading id="emergency-heading" title={page.h1} />
+          <p class="water-hero__intro">{page.hero?.subtitle}</p>
+          <div class="water-hero__actions"><a class="water-button water-button--dark" href={primaryHref}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone}/></svg>{gas ? "Gaslucht? Bel buiten 0800-9009" : page.cta_primary?.label ?? "Bel bij elektra storing"}<svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.arrow}/></svg></a>
+            {gas ? <a class="water-whatsapp" href="#contact">Herstel afstemmen <span aria-hidden="true">↗</span></a> : <a class="water-whatsapp" href={page.cta_secondary?.href ?? site.whatsappHref} target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.chat}/></svg>{page.cta_secondary?.label ?? "Stuur foto’s via WhatsApp"}</a>}
+          </div><p class="water-hero__note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.check}/></svg>{content.heroNote}</p>
+        </div>
+        <div class="water-visual" data-emergency-visual data-stage="0">
+          <span class="water-visual__formula" aria-hidden="true">{content.formula}<span>{content.unit}</span></span>
+          <div class="water-visual__orbit water-visual__orbit--one" aria-hidden="true"></div><div class="water-visual__orbit water-visual__orbit--two" aria-hidden="true"></div>
+          <div class="water-visual__top"><span><span class="water-dot" aria-hidden="true"></span>{content.sceneTitle}</span><span>01 — 03</span></div>
+          <div class="water-scene" data-emergency-scene role="img" aria-label={content.sceneDescription}>
+            {gas ? <svg class="water-scene__fallback" viewBox="0 0 700 550" aria-hidden="true"><defs><linearGradient id="copper-fallback" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8b553b"/><stop offset=".35" stop-color="#edd0ac"/><stop offset=".65" stop-color="#c58a5d"/><stop offset="1" stop-color="#75422c"/></linearGradient></defs><ellipse cx="351" cy="437" rx="233" ry="43" fill="#d9c7b6"/><path d="M133 369V267q0-47 47-47h340q43 0 43 47v102" fill="none" stroke="url(#copper-fallback)" stroke-width="42"/><rect x="206" y="193" width="73" height="55" rx="10" fill="#bd8a48"/><path d="M241 195v-46" stroke="#8b7346" stroke-width="17"/><path class="emergency-fallback-valve" d="M204 149h96" stroke="#da9e3d" stroke-width="15"/><path d="M422 219v-62" stroke="#b7895c" stroke-width="21"/><circle cx="422" cy="137" r="63" fill="#cab59f"/><circle cx="422" cy="137" r="54" fill="#fbf7ea"/><path class="emergency-fallback-needle" d="M422 137 393 103" stroke="#8d5b3a" stroke-width="5"/><circle cx="422" cy="137" r="7" fill="#716552"/><circle class="emergency-fallback-highlight" cx="337" cy="220" r="34" fill="none" stroke="#dc956a" stroke-width="5"/></svg> : <svg class="water-scene__fallback" viewBox="0 0 700 550" aria-hidden="true"><ellipse cx="352" cy="444" rx="233" ry="43" fill="#dad9ce"/><rect x="145" y="89" width="282" height="342" rx="24" fill="#d4d7d6"/><rect x="159" y="102" width="254" height="314" rx="18" fill="#f6f4e8"/><rect x="181" y="128" width="211" height="47" rx="5" fill="#283940"/>{[190,240,290,340].map((x,i) => <g><rect x={x} y="200" width="43" height="129" rx="5" fill="#e7e7de"/><rect class={i === 1 ? "emergency-fallback-switch" : ""} x={x+8} y={i === 1 ? "273" : "244"} width="27" height="27" rx="4" fill={i === 1 ? "#cd9440" : "#39454c"}/></g>)}<path d="M217 370v49h311v-82" fill="none" stroke="#a79c73" stroke-width="9"/><circle class="emergency-fallback-bulb" cx="527" cy="254" r="59" fill="#e1e5da"/><rect x="505" y="302" width="44" height="41" rx="5" fill="#909b99"/></svg>}
+          </div>
+          <div class="water-scene-label"><span class="water-scene-label__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons[gas ? "shield" : "bolt"]}/></svg></span><div><small>{content.sceneBadge}</small><strong data-scene-label>{content.stages[0].label}</strong></div></div>
+          <div class="water-scene-caption"><span class="water-scene-caption__line"></span><span data-scene-caption>{content.stages[0].caption}</span></div>
+        </div>
+      </div><div class="water-shell water-hero__bottom"><a class="water-scroll" href="#hulp"><span aria-hidden="true">↓</span>{gas ? "VEILIG VERDER MET UW INSTALLATIE" : "EEN HELDERE OPLOSSING BEGINT HIER"}</a>
+        <div class="water-stages" aria-label="Bekijk de werkzaamheden in drie stappen" hidden>{content.stages.map((stage,index) => <button type="button" data-emergency-stage={index} data-label={stage.label} data-caption={stage.caption} data-announcement={stage.announcement} aria-pressed={index === 0 ? "true" : "false"}><span>0{index+1}</span>{stage.name}<span class="water-stage-indicator" aria-hidden="true"></span></button>)}</div>
+      </div><p class="water-sr-only" data-emergency-status aria-live="polite"></p></section>
+
+      {!gas && <aside class="emergency-grid-note"><div class="water-shell"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.bolt}/></svg><p><strong>Ook de buren zonder stroom?</strong> Controleer de netstoring bij <a href="https://www.enexis.nl/storingen-en-onderhoud/meld-een-storing/stroomstoring" target="_blank" rel="noopener noreferrer">Enexis ↗</a> of bel <a href="tel:08009009">0800-9009</a>. Bij brand of direct gevaar: <a href="tel:112">112</a>.</p></div></aside>}
+      <section class="water-trust" aria-label="Onze aanpak"><div class="water-shell water-trust__inner"><p><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.pin}/></svg>Lokaal in Helmond</p><p><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.chat}/></svg>Persoonlijke afspraken</p><p><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.shield}/></svg>Aandacht voor veiligheid</p><span>VAN LBI INSTALLATIES ↗</span></div></section>
+      <LandingSections page={page} site={site} />
+    </main>
+    <LandingFooter site={site} preview={preview} />
+    <a class="water-mobile-call" href={primaryHref}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone}/></svg><span>{content.mobileLabel}</span><strong>{primaryPhone}</strong></a>
+    <script>import { initEmergencyConcept } from "../scripts/emergency-concept"; initEmergencyConcept();</script>
+    <LandingEvents />
+  </body>
+</html>

@@ -1,0 +1,105 @@
+.emergency-page--elektra { --water-ink: #28343e; --water-muted: #676a6b; --water-teal: #a26e27; --water-orange: #dca54b; --emergency-surface: #f3f1e9; --emergency-glow: #f0e4bd; --emergency-border: #dcdcd1; --emergency-label: #696b5f; --emergency-bottom: #e9e8dc; --emergency-process: #26343e; --emergency-soft: #ead5a4; }
+.emergency-page--gas { --water-ink: #3c2f2b; --water-muted: #76685f; --water-teal: #a65d40; --water-orange: #df9669; --emergency-surface: #f7eee6; --emergency-glow: #efd7c0; --emergency-border: #e5d7cb; --emergency-label: #806957; --emergency-bottom: #eee1d2; --emergency-process: #3a2d28; --emergency-soft: #e8c7a9; }
+.emergency-page .water-topline { padding-block: 2px; background: var(--emergency-bottom); border-color: var(--emergency-border); }
+.emergency-page .water-header, .emergency-page .water-trust { background: #fcfbf8f5; border-color: var(--emergency-border); }
+.emergency-page .water-brand__division, .emergency-page .water-header__call { border-color: var(--emergency-border); }
+.emergency-page .water-header__call > span > small { display: block; font-size: 9px; color: var(--water-muted); font-weight: 400; margin-bottom: 4px; }
+.emergency-page .water-header__call:hover { background: var(--emergency-surface); }
+.emergency-page .water-hero { background: radial-gradient(ellipse at 80% 47%, var(--emergency-glow) 0%, transparent 45%), var(--emergency-surface); }
+.emergency-page .water-hero__intro { max-width: 430px; }
+.emergency-page .water-hero__actions { flex-wrap: wrap; gap: 16px 23px; }
+.emergency-page .water-hero__note { color: var(--water-muted); }
+.emergency-page .water-visual__top, .emergency-page .water-scene-caption, .emergency-page .water-scene-label small { color: var(--emergency-label); }
+.emergency-page .water-visual__orbit { border-color: color-mix(in srgb, var(--emergency-label) 12%, transparent); }
+.emergency-page .water-scene-label__icon { border-color: var(--emergency-border); color: var(--water-teal); }
+.emergency-page .water-hero__bottom { border-color: var(--emergency-border); }
+.emergency-page .water-stages button { color: var(--emergency-label); }
+.emergency-page .water-stages button[aria-pressed="true"] { color: var(--water-ink); }
+.emergency-page .water-stage-indicator { background: var(--water-orange); }
+.emergency-page .water-scroll > span { border-color: var(--emergency-border); }
+.emergency-page .water-visual__formula { font-family: Georgia, serif; font-size: clamp(185px, 24vw, 326px); right: 3%; top: 14%; }
+.emergency-page--elektra .water-visual__formula { font-family: "Aptos", "Segoe UI", sans-serif; font-weight: 300; letter-spacing: -.085em; font-size: clamp(135px, 18.6vw, 261px); top: 16%; right: 0; }
+.emergency-page--elektra .water-visual__formula > span { font-size: .4em; vertical-align: 0; margin-left: 6px; }
+.emergency-page--gas .water-hero h1 { font-size: clamp(64px, 6.7vw, 97px); }
+.emergency-page--gas .water-hero__copy { padding-top: 44px; }
+.emergency-page--gas .water-scene { top: 35px; }
+.emergency-page .water-button--dark:hover { background: color-mix(in srgb, var(--water-ink) 80%, #a89883); }
+.emergency-page .water-whatsapp { border-color: var(--emergency-border); }
+.emergency-page .water-trust p svg, .emergency-page .water-trust__inner > span { color: var(--emergency-label); }
+.emergency-page .water-services, .emergency-page .water-service + .water-service, .emergency-page .water-faq details { border-color: var(--emergency-border); }
+.emergency-page .water-service:hover { background: var(--emergency-surface); }
+.emergency-page .water-service__top svg { color: var(--water-teal); }
+.emergency-page .water-service p, .emergency-page .water-section-heading > p, .emergency-page .water-faq details > p { color: var(--water-muted); }
+.emergency-page .water-section-heading > p { max-width: 370px; }
+.emergency-page .water-section-heading .water-eyebrow, .emergency-page .water-questions .water-eyebrow, .emergency-page .water-service__top > span { color: var(--emergency-label); }
+.emergency-page .water-process { background: var(--emergency-process); color: #fcf7ed; }
+.emergency-page .water-process h2 em { color: var(--emergency-soft); }
+.emergency-page .water-process .water-eyebrow, .emergency-page .water-process__steps li > span { color: var(--emergency-soft); }
+.emergency-page .water-process__steps p, .emergency-page .water-process__intro > p:not(.water-eyebrow) { color: #d2cabc; }
+.emergency-page .water-process__steps li { border-color: #c5b9a330; }
+.emergency-page .water-button--light { background: var(--emergency-soft); color: var(--water-ink); }
+.emergency-page .water-questions > div > a { border-color: var(--emergency-border); }
+.emergency-page .water-faq summary > span { color: var(--emergency-label); }
+.emergency-page .water-contact { background: var(--emergency-bottom); border-color: var(--emergency-border); }
+.emergency-page .water-contact .water-eyebrow, .emergency-page .water-footer p, .emergency-page .water-footer small { color: var(--emergency-label); }
+.emergency-page .water-contact h2 { max-width: 600px; }
+.emergency-page .water-contact a { white-space: nowrap; }
+.emergency-page .water-contact__inner { gap: 40px; }
+.emergency-contact-note { max-width: 480px; margin-top: 15px !important; color: var(--water-muted); line-height: 1.7; font-size: 12px; }
+.emergency-page .water-mobile-call { background: var(--water-ink); }
+.emergency-page .water-mobile-call > span { color: #eee8dd; }
+.emergency-safety { background: #fff6e9; border-bottom: 1px solid #e6c8a7; }
+.emergency-safety__inner { display: flex; align-items: center; gap: 19px; padding-block: 19px; }
+.emergency-safety__inner > svg { color: #a55a2a; width: 25px; height: 25px; }
+.emergency-safety h2 { font-size: 15px; letter-spacing: -.01em; font-weight: 650; }
+.emergency-safety p { margin-top: 5px; font-size: 11px; line-height: 1.65; color: #76563c; max-width: 650px; }
+.emergency-safety p a { text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+.emergency-safety__numbers { display: flex; gap: 23px; margin-left: auto; flex-shrink: 0; }
+.emergency-safety__numbers > a { font-size: 23px; font-weight: 650; letter-spacing: -.02em; white-space: nowrap; }
+.emergency-safety__numbers > a:last-child { color: #a14123; }
+.emergency-safety__numbers > a > span { display: block; font-size: 9px; font-weight: 500; letter-spacing: 0; margin-top: 3px; }
+.emergency-grid-note { background: #ecebdd; border-bottom: 1px solid #d8d7c5; }
+.emergency-grid-note > div { display: flex; align-items: center; gap: 13px; padding-block: 18px; }
+.emergency-grid-note svg { color: #9a732c; width: 18px; height: 18px; }
+.emergency-grid-note p { font-size: 12px; line-height: 1.7; color: #605d4e; }
+.emergency-grid-note a { font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.emergency-fallback-valve { transform-origin: 241px 149px; }
+.emergency-fallback-needle { transform-origin: 422px 137px; }
+.emergency-page .water-visual[data-stage="1"] .emergency-fallback-valve, .emergency-page .water-visual[data-stage="2"] .emergency-fallback-valve { transform: rotate(70deg); }
+.emergency-page .water-visual[data-stage="1"] .emergency-fallback-needle { transform: rotate(-30deg); }
+.emergency-page .water-visual[data-stage="2"] .emergency-fallback-needle { transform: rotate(40deg); }
+.emergency-page .water-visual[data-stage="2"] .emergency-fallback-highlight { stroke: #718b64; }
+.emergency-page .water-visual[data-stage="2"] .emergency-fallback-switch { transform: translateY(-29px); fill: #39454c; }
+.emergency-page .water-visual[data-stage="2"] .emergency-fallback-bulb { fill: #ffd784; }
+.emergency-page .water-visual[data-stage="0"] .emergency-fallback-bulb { fill: #b8a781; }
+@media (max-width:1100px) { .emergency-page--gas .water-hero h1 { font-size: 76px; } .emergency-safety__inner { gap: 13px; } .emergency-safety p { max-width: 480px; } .emergency-safety__numbers { gap: 14px; } .emergency-safety__numbers > a { font-size: 20px; } .emergency-page .water-scene-caption { font-size: 9px; right: 20px; } }
+@media (max-width:800px) { .emergency-page--gas .water-hero h1 { font-size: 62px; } .emergency-safety__inner { align-items: flex-start; flex-wrap: wrap; } .emergency-safety__inner > div:not(.emergency-safety__numbers) { flex: 1; } .emergency-safety__numbers { margin-left: 38px; } .emergency-safety__numbers > a { display: flex; align-items: center; gap: 8px; } .emergency-safety__numbers > a > span { max-width: 75px; white-space: normal; font-size: 9px; margin-top: 0; } .emergency-page .water-contact__inner { gap: 25px; } }
+@media (max-width:600px) {
+  .emergency-page .water-topline { padding-block: 1px; }
+  .emergency-page .water-topline > span { max-width: 135px; font-size: 7px; line-height: 1.5; }
+  .emergency-page .water-hero__copy { padding-top: 34px; }
+  .emergency-page--gas .water-hero h1 { font-size: clamp(48px, 13.5vw, 72px); }
+  .emergency-page--elektra .water-hero h1 { font-size: clamp(53px, 15vw, 82px); }
+  .emergency-page .water-hero__actions { gap: 14px; }
+  .emergency-page--gas .water-hero__actions { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .emergency-page .water-visual__formula { font-size: 210px; }
+  .emergency-page--elektra .water-visual__formula { font-size: 172px; top: 14%; right: 4%; }
+  .emergency-page .water-visual { height: 395px; }
+  .emergency-page .water-scene { inset: 10px -35px 0; }
+  .emergency-page .water-scene-label { bottom: 6%; padding: 10px; gap: 8px; }
+  .emergency-page .water-scene-label strong { font-size: 10px; }
+  .emergency-page .water-scene-label small { font-size: 6px; letter-spacing: .09em; }
+  .emergency-page .water-visual__top { font-size: 6px; }
+  .emergency-safety__inner { gap: 10px; padding-block: 16px; }
+  .emergency-safety__inner > svg { width: 20px; height: 20px; }
+  .emergency-safety h2 { font-size: 13px; line-height: 1.4; }
+  .emergency-safety p { font-size: 10px; }
+  .emergency-safety__numbers { margin-left: 30px; width: calc(100% - 30px); justify-content: space-between; gap: 15px; }
+  .emergency-safety__numbers > a { font-size: 21px; }
+  .emergency-grid-note p { font-size: 11px; }
+  .emergency-page .water-section-heading > p { max-width: none; }
+  .emergency-page .water-contact h2 { font-size: 31px; }
+  .emergency-page .water-mobile-call { gap: 8px; }
+  .emergency-page .water-mobile-call > span { font-size: 9px; }
+  .emergency-page .water-mobile-call > strong { font-size: 15px; margin-left: 2px; }
+}

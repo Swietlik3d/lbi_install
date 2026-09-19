@@ -1,50 +1,103 @@
 ---
-site: "gas"
-path: "/veiligheid-bij-gaslucht/"
-page_type: "emergency"
-meta_title: "Veiligheid bij gaslucht in Helmond | Wat te doen | Gasleiding Service"
-meta_description: "Ruikt u gas in Helmond? Lees wat u direct moet doen. Bij gevaar belt u 112 en het Nationaal Storingsnummer 0800-9009. Onderdeel van LBI Installaties."
-focus_keyword: "gaslucht wat te doen Helmond"
+site: gas
+path: /veiligheid-bij-gaslucht/
+page_type: emergency
+meta_title: Veiligheid bij Gaslucht Helmond | Bel 0800-9009
+meta_description: "Ruikt u gas? Lees wat u eerst moet doen: ventileren indien veilig, geen vuur of
+  schakelaars, naar buiten en bel 0800-9009 of 112."
+focus_keyword: veiligheid bij gaslucht
 secondary_keywords:
-  - "gas ruiken Helmond"
-  - "gaslek Helmond"
-h1: "Ruikt u gas? Dit moet u doen"
+  - gaslucht Helmond
+  - wat doen bij gaslucht
+  - Nationaal Storingsnummer gas
+h1: Veiligheid bij gaslucht
 hero:
-  kicker: "Veiligheid eerst"
-  subtitle: "Lees onderstaande instructies. Bij direct gevaar belt u 112. Bel ons pas voor herstel als de situatie veilig is."
+  kicker: Eerst veiligheid, daarna pas installatiehulp
+  subtitle: Ruikt u gas? Ga naar buiten en bel 0800-9009; bij direct gevaar 112. LBI kan pas helpen
+    wanneer de situatie veilig is.
   showCallButtons: false
 sections:
-  - heading: "Waarom deze volgorde belangrijk is"
-    body: >-
-      Bij een gaslucht gaat veiligheid altijd voor. Volg eerst de instructies hierboven: ramen en
-      deuren open, geen vuur, geen elektrische schakelaars, hoofdkraan dicht indien veilig, naar
-      buiten en bellen met het Nationaal Storingsnummer 0800-9009. Bij direct gevaar: 112.
-    layout: "text"
-  - heading: "En daarna?"
-    body: >-
-      Is de acute situatie veilig en is het storingsnummer ingeschakeld? Dan kunnen wij helpen met
-      het opsporen en herstellen van het probleem aan uw gasleiding. Bel of app ons hiervoor.
-    layout: "text"
+  - id: main-1
+    heading: Wat u direct doet
+    body: "Ruikt u gas? Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel geen
+      elektrische apparaten aan of uit. Sluit de hoofdkraan indien dit veilig kan, ga naar buiten en
+      bel het Nationaal Storingsnummer 0800-9009. Bij direct gevaar: bel 112."
+    layout: text
+  - id: main-2
+    heading: Waarom niet eerst LBI bellen?
+    body: Bij gaslucht is het Nationaal Storingsnummer de juiste eerste stap. LBI is er voor overleg
+      over controle, herstel of aanpassing van de binneninstallatie wanneer de situatie veilig is.
+    layout: text
+  - id: main-3
+    heading: Gebruik geen schakelaars
+    body: Schakel geen lampen, apparaten, deurbel, afzuiging of andere elektrische onderdelen aan of
+      uit. Ook kleine vonken kunnen gevaarlijk zijn bij gaslucht.
+    layout: text
+  - id: main-4
+    heading: Ga naar buiten
+    body: Als u gas ruikt, verlaat de woning en bel vanaf een veilige plek. Waarschuw andere aanwezigen
+      zonder elektrische apparaten te gebruiken.
+    layout: text
+  - id: main-5
+    heading: Na de veilige situatie
+    body: Is de situatie veilig verklaard of is er geen direct gevaar meer? Dan kunt u LBI benaderen
+      voor controle, herstel of aanpassing van de gasleiding binnen de woning.
+    layout: text
+  - id: wanneer-bellen
+    heading: Wanneer bellen?
+    bullets:
+      - U ruikt gas in of rond de woning.
+      - U twijfelt of een gaslucht gevaarlijk is.
+      - U wilt weten wat u niet moet doen.
+      - De situatie is veilig verklaard en u zoekt herstel of controle.
+      - U wilt deze veiligheidsinformatie duidelijk op de website tonen.
+    layout: text
+  - id: werkwijze
+    heading: Hoe werkt het?
+    bullets:
+      - "Veiligheid eerst, daarna overleg: Bij gaslucht gaat u naar buiten en belt u 0800-9009; bij
+        direct gevaar 112. Neem pas contact op met LBI wanneer de situatie veilig is. Vertel kort
+        wat er speelt en waar de klus in Helmond of omgeving is."
+      - "Stuur foto’s via WhatsApp: Stuur foto’s alleen wanneer u veilig binnen kunt zijn en er geen
+        gaslucht of direct gevaar is. Stuur foto’s alleen wanneer de situatie veilig is."
+      - "Afspraak of inschatting: LBI bespreekt na een veilige situatie of controle of herstel aan
+        de binneninstallatie nodig is. Controle of herstel volgt pas nadat de situatie veilig is."
+      - "Uitvoering met duidelijke afspraken: Werkzaamheden worden pas besproken en uitgevoerd met
+        duidelijke afspraken en zonder risico te nemen."
+    layout: steps
 faqs:
-  - question: "Wie moet ik als eerste bellen bij gaslucht?"
-    answer: "Bij direct gevaar 112. Voor een gaslek het Nationaal Storingsnummer 0800-9009. Daarna kunt u ons bellen voor herstel."
-  - question: "Mag ik het licht aandoen als ik gas ruik?"
-    answer: "Nee. Schakel geen elektrische apparaten of schakelaars aan of uit en gebruik geen vuur. Open ramen en deuren en ga naar buiten."
+  - question: Wat moet ik doen bij gaslucht?
+    answer: "Ruikt u gas? Open ramen en deuren indien dit veilig kan, gebruik geen vuur en schakel geen
+      elektrische apparaten aan of uit. Sluit de hoofdkraan indien dit veilig kan, ga naar buiten en
+      bel het Nationaal Storingsnummer 0800-9009. Bij direct gevaar: bel 112."
+  - question: Mag ik een lamp aandoen?
+    answer: Nee. Schakel geen elektrische apparaten aan of uit en gebruik geen schakelaars.
+  - question: Moet ik ramen openen?
+    answer: Alleen indien dit veilig kan. Breng uzelf niet in gevaar.
+  - question: Wanneer bel ik 112?
+    answer: Bij direct gevaar belt u 112.
+  - question: Wanneer kan LBI helpen?
+    answer: Pas wanneer de situatie veilig is, kan LBI helpen met controle, herstel of aanpassing van de
+      binneninstallatie.
+  - question: Is dit een gaslek-spoeddienst?
+    answer: Nee. Deze site geeft veilige informatie en biedt hulp bij gasleidingwerk na of zonder acute
+      gevaarlijke situatie.
 internal_links:
-  - label: "Controle & herstel"
-    href: "/controle-herstel/"
-    description: "Na de acute fase: controle en herstel."
-  - label: "Gasleiding aansluiten & verleggen"
-    href: "/gasleiding-aansluiten-verleggen/"
-    description: "Aanleg en aanpassing van gasleidingen."
-  - label: "Contact"
-    href: "/contact/"
-    description: "Bel of app voor herstel."
+  - label: Gasleiding aansluiten of verleggen
+    href: /gasleiding-aansluiten-verleggen/
+    description: Na een veilige situatie.
+  - label: Controle en herstel
+    href: /controle-herstel/
+    description: Binneninstallatie na veilige situatie.
+  - label: Contact
+    href: /contact/
+    description: Niet-acute gasleidingvragen.
+  - label: Meer over LBI Installaties
+    href: https://www.lbi-helmond.nl/
+    description: LBI Installaties.
 image_plan: []
-schema_type: "FAQPage"
+schema_type: FAQPage
 safety_alert: true
 draft: false
 order: 4
 ---
-
-Veiligheidsinformatie bij gaslucht in Helmond. De instructies hierboven staan bewust vóór alle commerciële informatie.

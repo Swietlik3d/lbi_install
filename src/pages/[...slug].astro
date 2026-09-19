@@ -5,6 +5,8 @@ import ServiceLayout from "../layouts/ServiceLayout.astro";
 import EmergencyLayout from "../layouts/EmergencyLayout.astro";
 import ContactLayout from "../layouts/ContactLayout.astro";
 import PageLayout from "../layouts/PageLayout.astro";
+import ProjectsLayout from "../layouts/ProjectsLayout.astro";
+import { compareProjects, type ProjectItem } from "../lib/projects";
 import { getCurrentSite, getCurrentSiteId } from "../config/sites";
 import { getNavigation } from "../config/navigation";
 import {
@@ -14,14 +16,6 @@ import {
   breadcrumbSchema,
 } from "../config/schema";
 
-interface ProjectItem {
-  title: string;
-  summary?: string;
-  cover?: string;
-  coverAlt?: string;
-  category?: string;
-  location: string;
-}
 interface ReviewItem {
   author: string;
   quote: string;
@@ -95,15 +89,8 @@ if (needProjects) {
     ({ data }) => data.site === siteId && data.draft !== true
   );
   projectItems = projects
-    .sort((a, b) => a.data.order - b.data.order)
-    .map((p) => ({
-      title: p.data.title,
-      summary: p.data.summary,
-      cover: p.data.cover,
-      coverAlt: p.data.coverAlt,
-      category: p.data.category,
-      location: p.data.location,
-    }));
+    .map((project) => ({ ...project.data, id: project.id }))
+    .sort(compareProjects);
 }
 if (needReviews) {
   const reviews = await getCollection(
@@ -139,6 +126,8 @@ if (needReviews) {
     <ServiceLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs}>
       <Content />
     </ServiceLayout>
+  ) : page.page_type === "projects" && siteId === "lbi" ? (
+    <ProjectsLayout page={page} schemaNodes={schemaNodes} projects={projectItems ?? []} />
   ) : page.page_type === "projects" ? (
     <PageLayout page={page} schemaNodes={schemaNodes} breadcrumbs={crumbs} projectItems={projectItems}>
       <Content />

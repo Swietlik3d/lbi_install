@@ -1,0 +1,34 @@
+---
+import { projectDate } from "../lib/projects";
+
+interface Props {
+  date?: Date;
+  location?: string;
+}
+const { date, location } = Astro.props;
+---
+
+<dl class="project-meta">
+  <div>
+    <dt>
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4m8-4v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z" /></svg>
+      <span class="sr-only">Datum</span>
+    </dt>
+    <dd>{date ? <time datetime={date.toISOString().slice(0, 10)}>{projectDate(date)}</time> : projectDate()}</dd>
+  </div>
+  <div>
+    <dt>
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z" /><circle cx="12" cy="10" r="2" /></svg>
+      <span class="sr-only">Locatie</span>
+    </dt>
+    <dd>{location || "Locatie volgt"}</dd>
+  </div>
+</dl>
+
+<style>
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 0; color: var(--lbi-muted, #cac5bd); font-size: 13px; }
+  .project-meta div { display: flex; align-items: center; gap: 8px; }
+  dt { display: flex; }
+  dd { margin: 0; }
+  svg { width: 16px; height: 16px; fill: none; stroke: var(--lbi-orange, #ee6900); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+</style>

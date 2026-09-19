@@ -6,22 +6,23 @@ interface Props {
   compact?: boolean;
 }
 
-const { heading = "Direct contact", compact = false } = Astro.props;
 const site = getCurrentSite();
+const gas = site.id === "gas";
+const { heading = gas ? "Niet-acute vragen aan LBI" : "Direct contact", compact = false } = Astro.props;
 const page = Astro.url.pathname;
 const hasAddress = !isPlaceholder(site.address);
 const isLbi = site.id === "lbi";
 ---
 
-<div class:list={["card p-6 sm:p-8", compact && "p-5"]}>
+<div class:list={["card min-w-0 p-6 sm:p-8", compact && "p-5"]}>
   <h2 class="text-xl font-extrabold text-ink">{heading}</h2>
   <p class="mt-2 text-sm text-muted">
-    {isLbi
+    {gas ? "Voor overleg, controle en herstel nadat de situatie veilig is. Bij gaslucht gaat u naar buiten en belt u 0800-9009; bij direct gevaar 112." : isLbi
       ? "Bel, mail of stuur via WhatsApp een korte omschrijving en enkele foto's."
       : "De snelste manier is bellen of WhatsApp. We reageren zo snel mogelijk."}
   </p>
 
-  <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+  <div class="mt-5 flex flex-col flex-wrap gap-3 sm:flex-row">
     <a
       href={site.phoneHref}
       class="btn btn-primary"
@@ -44,22 +45,22 @@ const isLbi = site.id === "lbi";
   </div>
 
   <dl class="mt-6 space-y-3 text-sm">
-    <div class="flex gap-2">
+    <div class="flex flex-col gap-1 sm:flex-row sm:gap-2">
       <dt class="w-24 shrink-0 font-semibold text-ink">E-mail</dt>
-      <dd><a href={`mailto:${site.email}`} class="text-brand hover:underline">{site.email}</a></dd>
+      <dd class="min-w-0 break-words"><a href={`mailto:${site.email}`} class="text-brand hover:underline">{site.email}</a></dd>
     </div>
-    <div class="flex gap-2">
+    <div class="flex flex-col gap-1 sm:flex-row sm:gap-2">
       <dt class="w-24 shrink-0 font-semibold text-ink">Werkgebied</dt>
       <dd class="text-muted">{site.area}</dd>
     </div>
     {hasAddress && (
-      <div class="flex gap-2">
+      <div class="flex flex-col gap-1 sm:flex-row sm:gap-2">
         <dt class="w-24 shrink-0 font-semibold text-ink">Adres</dt>
         <dd class="text-muted">{site.address}</dd>
       </div>
     )}
     {!isLbi && (
-      <div class="flex gap-2">
+      <div class="flex flex-col gap-1 sm:flex-row sm:gap-2">
         <dt class="w-24 shrink-0 font-semibold text-ink">Openingstijden</dt>
         <dd class="text-muted">Op afspraak — bel of app voor de actuele beschikbaarheid.</dd>
       </div>

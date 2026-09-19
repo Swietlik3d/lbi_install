@@ -1,0 +1,10 @@
+{
+  "host": "178.105.195.84",
+  "remoteRoot": "/var/www/strony",
+  "sites": {
+    "lbi": "https://lbi-preview.178-105-195-84.sslip.io",
+    "elektra": "https://elektra-preview.178-105-195-84.sslip.io",
+    "lekkage": "https://lekkage-preview.178-105-195-84.sslip.io",
+    "gas": "https://gas-preview.178-105-195-84.sslip.io"
+  }
+}

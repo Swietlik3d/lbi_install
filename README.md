@@ -157,7 +157,14 @@ Search the repo for `TODO` and `[` placeholders. The important ones:
   values (or via the CMS "Bedrijfsgegevens" screen). Phone, WhatsApp and email are
   already filled in.
 - **Reviews** — only publish **real, verifiable** reviews. The repo ships none.
-- **Projects** — add real projects with your own photos. The repo ships a draft template.
+- **Projects** — the LBI homepage and `/projecten/` share three projects with real photos
+  from `pics/`. Their dates and locations are examples, visibly marked by
+  `exampleDetails: true`. Replace these values and turn that flag off when confirmed.
+  Add entries through **Projecten** in the CMS or `src/content/projects/*.md`.
+  Published entries require a title, summary, photo, alt text, date and location.
+  The timeline sorts by date (newest first); the homepage shows the first three.
+  `order` breaks date ties. Drafts stay hidden. The visible description comes from
+  `summary`; the Markdown body can hold internal source notes.
 - **Privacy & cookies** (`src/content/pages/lbi/privacy-cookies.md`) — fill in and have it
   legally checked.
 - **Opening hours / availability** — none are claimed anywhere. Add them only if true.
@@ -237,6 +244,9 @@ npm run build:all
 
 Make sure each host serves `404.html` as the not-found page and (for the bare domain)
 redirects to the `www` host to match the canonical URLs.
+
+The existing online client previews and the update procedure are documented in
+[Hetzner client previews](docs/hetzner-preview.md).
 
 ## 12. Contact form (optional)
 

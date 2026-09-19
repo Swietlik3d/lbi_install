@@ -7,6 +7,7 @@ import ContactBlock from "../components/ContactBlock.astro";
 import ContactForm from "../components/ContactForm.astro";
 import SectionRenderer from "../components/SectionRenderer.astro";
 import FAQ from "../components/FAQ.astro";
+import InternalLinks from "../components/InternalLinks.astro";
 import { getCurrentSite } from "../config/sites";
 import type { CollectionEntry } from "astro:content";
 
@@ -35,7 +36,6 @@ const twoCol = site.enableContactForm;
   schemaNodes={schemaNodes}
 >
   <Breadcrumbs items={breadcrumbs} />
-  <Hero h1={page.h1} hero={{ ...page.hero, showCallButtons: false }} />
 
   {page.safety_alert && (
     <div class="container-base pt-10">
@@ -43,6 +43,7 @@ const twoCol = site.enableContactForm;
     </div>
   )}
 
+  <Hero h1={page.h1} hero={{ ...page.hero, showCallButtons: false }} />
   <section class="section">
     <div class="container-base">
       <div class:list={["grid gap-8", twoCol ? "lg:grid-cols-2" : "max-w-xl"]}>
@@ -65,4 +66,5 @@ const twoCol = site.enableContactForm;
   )}
 
   <FAQ faqs={page.faqs} />
+  {site.id !== "lbi" && <InternalLinks links={page.internal_links} />}
 </BaseLayout>

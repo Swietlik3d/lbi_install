@@ -25,12 +25,14 @@
     "typecheck": "cross-env SITE_ID=lbi astro check"
   },
   "dependencies": {
-    "astro": "^5.7.0"
+    "astro": "^5.7.0",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^20.17.0",
+    "@types/three": "^0.180.0",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
     "tailwindcss": "^3.4.17",

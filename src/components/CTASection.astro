@@ -19,6 +19,7 @@ const { title, text, ctaPrimary, ctaSecondary } = Astro.props;
 const site = getCurrentSite();
 const page = Astro.url.pathname;
 const isLbi = site.id === "lbi";
+const gas = site.id === "gas";
 
 const primary: Cta = ctaPrimary ?? {
   label: `Bel ${site.phone}`,
@@ -47,15 +48,15 @@ const styleClass: Record<string, string> = {
       <div class="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
         <div>
           <h2 class="text-2xl font-extrabold sm:text-3xl">
-            {title ?? (isLbi ? "Uw klus bespreken?" : `Direct een vakman nodig in ${site.area.split(" ")[0]}?`)}
+            {title ?? (gas ? "Is de situatie veilig? Bespreek het vervolg." : isLbi ? "Uw klus bespreken?" : `Hulp nodig in ${site.area.split(" ")[0]}?`)}
           </h2>
           <p class="mt-2 max-w-prose text-brand-ink/90">
-            {text ?? (isLbi
+            {text ?? (gas ? "Voor controle en herstel nadat de situatie veilig is. Bij gaslucht: ga naar buiten en bel 0800-9009. Bij direct gevaar: 112." : isLbi
               ? "Bel of stuur een bericht. We bespreken uw vraag en bepalen samen een passende vervolgstap."
-              : "Bel of app ons. We denken meteen met u mee en plannen snel een afspraak.")}
+              : "Bel voor beschikbaarheid of stuur foto's voor een eerste inschatting. We bespreken wat nodig is en maken duidelijke afspraken.")}
           </p>
         </div>
-        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <div class="flex w-full flex-col flex-wrap gap-3 sm:w-auto sm:max-w-xl sm:flex-row">
           <a
             href={primary.href}
             class:list={["btn bg-white text-brand hover:bg-white/90", primary.style === "whatsapp" && styleClass.whatsapp]}

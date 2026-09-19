@@ -73,6 +73,7 @@ collections:
         collapsed: true
         summary: "{{fields.heading}}"
         fields:
+          - { label: "Anker-ID (voor links en indeling)", name: "id", widget: "string", required: false, hint: "Behoud wanneer-bellen en werkwijze op de landingspagina." }
           - { label: "Kop", name: "heading", widget: "string", required: false }
           - { label: "Tekst", name: "body", widget: "text", required: false }
           - { label: "Opsomming", name: "bullets", widget: "list", required: false }
@@ -190,7 +191,7 @@ collections:
       - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
       - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
       - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
-      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "text", hint: "Gebruik op de homepage drie regels voor de grote kop." }
       - *f_hero
       - *f_sections
       - *f_cta_primary
@@ -228,7 +229,7 @@ collections:
       - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
       - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
       - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
-      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "text", hint: "Gebruik op de homepage drie regels voor de grote kop." }
       - *f_hero
       - *f_sections
       - *f_cta_primary
@@ -266,7 +267,7 @@ collections:
       - { label: "Meta omschrijving", name: "meta_description", widget: "text" }
       - { label: "Focus keyword", name: "focus_keyword", widget: "string", required: false }
       - { label: "Secundaire keywords", name: "secondary_keywords", widget: "list", required: false }
-      - { label: "H1 (titel op pagina)", name: "h1", widget: "string" }
+      - { label: "H1 (titel op pagina)", name: "h1", widget: "text", hint: "Gebruik op de homepage drie regels voor de grote kop." }
       - *f_hero
       - *f_sections
       - *f_cta_primary
@@ -295,11 +296,12 @@ collections:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Site", name: "site", widget: "select", default: "lbi", options: ["lbi", "elektra", "lekkage", "gas"] }
       - { label: "Categorie", name: "category", widget: "string", required: false }
-      - { label: "Locatie", name: "location", widget: "string", default: "Helmond" }
-      - { label: "Datum", name: "date", widget: "datetime", required: false }
-      - { label: "Samenvatting", name: "summary", widget: "text", required: false }
-      - { label: "Omslagfoto", name: "cover", widget: "image", required: false }
-      - { label: "Alt-tekst omslag", name: "coverAlt", widget: "string", required: false }
+      - { label: "Locatie", name: "location", widget: "string" }
+      - { label: "Datum", name: "date", widget: "datetime", date_format: "DD-MM-YYYY", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "Datum en plaats zijn voorbeeldgegevens", name: "exampleDetails", widget: "boolean", default: false, required: false }
+      - { label: "Samenvatting", name: "summary", widget: "text" }
+      - { label: "Omslagfoto", name: "cover", widget: "image" }
+      - { label: "Alt-tekst omslag", name: "coverAlt", widget: "string" }
       - { label: "Concept", name: "draft", widget: "boolean", default: true }
       - { label: "Volgorde", name: "order", widget: "number", default: 0, value_type: "int", required: false }
       - { label: "Beschrijving", name: "body", widget: "markdown", required: false }

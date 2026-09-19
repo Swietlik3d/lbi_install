@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import Hero from "../components/Hero.astro";
+import SafetyAlert from "../components/SafetyAlert.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import SectionRenderer from "../components/SectionRenderer.astro";
 import ProjectCard from "../components/ProjectCard.astro";
@@ -54,6 +55,7 @@ const hasBody = Astro.slots.has("default");
   schemaNodes={schemaNodes}
 >
   <Breadcrumbs items={breadcrumbs} />
+  {page.safety_alert && <div class="container-base pt-10"><SafetyAlert /></div>}
   <Hero h1={page.h1} hero={page.hero} />
   <SectionRenderer sections={page.sections} />
 

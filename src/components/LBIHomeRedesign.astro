@@ -1,18 +1,11 @@
 ---
 import FAQ from "./FAQ.astro";
+import ProjectsPreview from "./ProjectsPreview.astro";
+import type { ProjectItem } from "../lib/projects";
 import { getCurrentSite } from "../config/sites";
 import type { CollectionEntry } from "astro:content";
 
 type PageData = CollectionEntry<"pages">["data"];
-
-interface ProjectItem {
-  title: string;
-  summary?: string;
-  cover?: string;
-  coverAlt?: string;
-  category?: string;
-  location?: string;
-}
 
 interface Props {
   page: PageData;
@@ -74,54 +67,6 @@ const whyItems = [
     icon: "shield",
   },
 ];
-
-const temporaryVisuals = [
-  {
-    title: "Keukenrenovatie",
-    cover: "/images/lbi/lbi-hero-kitchen.webp",
-    href: "/keukenverbouwing-helmond/",
-    coverAlt: "Sfeerbeeld van een moderne keuken",
-  },
-  {
-    title: "Badkamerrenovatie",
-    cover: "/images/lbi/lbi-bathroom.webp",
-    href: "/badkamerverbouwing-helmond/",
-    coverAlt: "Sfeerbeeld van een moderne badkamer",
-  },
-  {
-    title: "Aanbouw en verbouw",
-    cover: "/images/lbi/lbi-aanbouw.webp",
-    href: "/diensten/#vloeren-verbouw",
-    coverAlt: "Sfeerbeeld van een moderne woninguitbreiding",
-  },
-  {
-    title: "Vloerafwerking",
-    cover: "/images/lbi/lbi-floor.webp",
-    href: "/diensten/#vloeren-verbouw",
-    coverAlt: "Sfeerbeeld van een afgewerkte vloer",
-  },
-  {
-    title: "Renovatie van woonruimte",
-    cover: "/images/lbi/lbi-attic.webp",
-    href: "/diensten/",
-    coverAlt: "Sfeerbeeld van een gerenoveerde zolderruimte",
-  },
-  {
-    title: "Installatiewerk aan huis",
-    cover: "/images/lbi/lbi-van.webp",
-    href: "/contact/",
-    coverAlt: "Sfeerbeeld van een werkbus",
-  },
-];
-
-const visualStrip = projectItems.length > 0
-  ? projectItems.slice(0, 6).map((project) => ({
-      title: project.title,
-      cover: project.cover ?? "/images/lbi/lbi-van.webp",
-      href: "/projecten/",
-      coverAlt: project.coverAlt ?? project.title,
-    }))
-  : temporaryVisuals;
 
 const primaryCta = page.cta_primary ?? {
   label: "Bel voor overleg",
@@ -280,35 +225,7 @@ function iconPath(icon: string) {
     </div>
   </section>
 
-  <section class="lbi-projects" aria-labelledby="lbi-projects-title">
-    <div class="lbi-shell">
-      <div class="lbi-section-row">
-        <div>
-          <p class="lbi-kicker">Diensten in beeld</p>
-          <h2 id="lbi-projects-title">Mogelijkheden voor uw woning</h2>
-        </div>
-        <a href="/diensten/" class="lbi-text-link">
-          Bekijk alle diensten
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-        </a>
-      </div>
-      <div class="lbi-project-strip">
-        {visualStrip.map((visual, index) => (
-          <a href={visual.href} class="lbi-project-tile">
-            <img
-              src={visual.cover}
-              alt={visual.coverAlt}
-              width="420"
-              height="236"
-              loading={index < 2 ? "eager" : "lazy"}
-              decoding="async"
-            />
-            <span>{visual.title}</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
+  <ProjectsPreview projects={projectItems} />
 
   <div class="lbi-faq">
     <FAQ faqs={page.faqs} title="Veelgestelde vragen over LBI" />

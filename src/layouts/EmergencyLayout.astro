@@ -33,7 +33,6 @@ const hasBody = Astro.slots.has("default");
   schemaNodes={schemaNodes}
 >
   <Breadcrumbs items={breadcrumbs} />
-  <Hero h1={page.h1} hero={page.hero} variant="emergency" />
 
   {/* Safety block sits ABOVE all commercial content when enabled (gas pages). */}
   {page.safety_alert && (
@@ -42,7 +41,13 @@ const hasBody = Astro.slots.has("default");
     </div>
   )}
 
-  <TrustBadges />
+  <Hero h1={page.h1} hero={page.hero} variant="emergency" />
+  <TrustBadges items={[
+    { label: "Onderdeel van LBI Installaties", note: "Rechtstreeks contact met Luc." },
+    { label: "Duidelijk overleg", note: "Werkzaamheden en vervolgstappen vooraf bespreken." },
+    { label: "Helmond en omgeving", note: "Bel voor de actuele beschikbaarheid." },
+    { label: "Praktische aanpak", note: "Foto's helpen bij een eerste inschatting." },
+  ]} />
   <SectionRenderer sections={page.sections} />
 
   {hasBody && (

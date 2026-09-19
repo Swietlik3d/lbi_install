@@ -1,0 +1,17 @@
+---
+import { SITES } from "../config/sites";
+interface Props { active: "water" | "elektra" | "gas"; preview?: boolean }
+const { active, preview = true } = Astro.props;
+const concepts = [{ id: "water", name: "Water", domain: SITES.lekkage.domain }, { id: "elektra", name: "Elektra", domain: SITES.elektra.domain }, { id: "gas", name: "Gas", domain: SITES.gas.domain }];
+---
+<nav class="concept-navigation" aria-label="Andere specialismen">
+  {concepts.map(item => <a href={preview ? `/concept/${item.id}/` : active === item.id ? "/" : `${item.domain}/`} aria-current={active === item.id ? "page" : undefined}><span aria-hidden="true"></span>{item.name}</a>)}
+</nav>
+<style>
+  .concept-navigation { display: flex; align-items: center; gap: 21px; }
+  .concept-navigation a { display: flex; align-items: center; gap: 6px; min-height: 28px; padding: 3px 0; font-size: 11px; letter-spacing: .03em; text-decoration: none; opacity: .7; }
+  .concept-navigation a[aria-current="page"] { font-weight: 700; opacity: 1; }
+  .concept-navigation a[aria-current="page"] > span { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .concept-navigation a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  @media(max-width:600px) { .concept-navigation { gap: 12px; } .concept-navigation a { font-size: 10px; min-height: 28px; } }
+</style>

@@ -1,0 +1,79 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import ProjectsTimeline from "../components/ProjectsTimeline.astro";
+import type { CollectionEntry } from "astro:content";
+import type { ProjectItem } from "../lib/projects";
+interface Props {
+  page: CollectionEntry<"pages">["data"];
+  projects: ProjectItem[];
+  schemaNodes?: Array<Record<string, unknown> | null>;
+}
+const { page, projects, schemaNodes = [] } = Astro.props;
+---
+
+<BaseLayout title={page.meta_title} description={page.meta_description} schemaNodes={schemaNodes}>
+  <div class="lbi-home projects-page">
+    <header class="projects-heading">
+      <div class="lbi-shell">
+        <nav aria-label="Kruimelpad" class="projects-breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Projects</span></nav>
+        <div class="projects-heading__row">
+          <div>
+            <p class="lbi-kicker">{page.hero?.kicker}</p>
+            <h1>{page.h1}<span>.</span></h1>
+          </div>
+          <p class="projects-heading__intro">{page.hero?.subtitle}</p>
+        </div>
+        <div class="projects-heading__footer">
+          <span class="projects-count"><strong>{String(projects.length).padStart(2, "0")}</strong> projecten in beeld</span>
+          <a class="lbi-text-link" href="#tijdlijn">Ontdek ons werk <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </header>
+    <section class="projects-archive lbi-shell" id="tijdlijn" aria-labelledby="timeline-heading">
+      <div class="projects-archive__heading">
+        <h2 id="timeline-heading">Een tijdlijn van ons werk</h2>
+        <span>Nieuwste eerst <span aria-hidden="true">↘</span></span>
+      </div>
+      {projects.length > 0 ? <ProjectsTimeline projects={projects} /> : <p>Nieuwe projecten volgen binnenkort.</p>}
+    </section>
+    <section class="projects-contact" aria-labelledby="projects-contact-title">
+      <div class="lbi-shell projects-contact__inner">
+        <div><p class="lbi-kicker">Van inspiratie naar uw eigen plan</p><h2 id="projects-contact-title">Uw project als volgende?</h2><p>Vertel ons wat u voor ogen heeft. We denken graag met u mee.</p></div>
+        <a class="lbi-btn lbi-btn--primary" href="/contact/">Bespreek uw project <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-page { background: #101010; }
+  .projects-heading { border-bottom: 1px solid var(--lbi-border); padding-block: 30px 32px; background: radial-gradient(ellipse at 85% 5%, rgb(238 105 0 / 0.12), transparent 55%), #121211; }
+  .projects-breadcrumb { display: flex; gap: 14px; color: #c6bfb5; font-size: 12px; }
+  .projects-breadcrumb a { color: #c6bfb5; text-decoration: none; }
+  .projects-breadcrumb a:hover { color: white; }
+  .projects-heading__row { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; padding-block: 62px 48px; }
+  h1 { margin: 0; color: white; font-size: clamp(64px, 9vw, 128px); line-height: 0.9; }
+  h1 span { color: var(--lbi-orange); }
+  .projects-heading__intro { max-width: 440px; margin: 0; color: var(--lbi-muted); font-size: 17px; line-height: 1.8; }
+  .projects-heading__footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; border-top: 1px solid var(--lbi-border); padding-top: 24px; }
+  .projects-count { display: flex; align-items: center; gap: 12px; color: var(--lbi-muted); font-size: 13px; }
+  .projects-count strong { color: #ff8a33; font-size: 20px; font-weight: 500; }
+  .projects-archive { padding-block: 54px 28px; scroll-margin-top: 100px; }
+  .projects-archive__heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 30px; }
+  .projects-archive__heading h2 { margin: 0; color: #eee9e1; font-family: inherit; font-size: 18px; text-transform: none; }
+  .projects-archive__heading > span { color: #aaa49b; font-size: 12px; white-space: nowrap; }
+  .projects-archive__heading > span span { margin-left: 12px; color: var(--lbi-orange); }
+  .projects-contact { border-top: 1px solid var(--lbi-border); background: #181716; padding-block: 54px; }
+  .projects-contact__inner { display: flex; justify-content: space-between; align-items: center; gap: 32px; }
+  .projects-contact h2 { margin: 0; color: white; font-size: clamp(32px, 4vw, 48px); line-height: 1.1; }
+  .projects-contact p:last-child { margin: 16px 0 0; color: var(--lbi-muted); line-height: 1.7; }
+  .projects-contact .lbi-btn { flex-shrink: 0; color: #101010; gap: 24px; }
+  @media (max-width: 700px) {
+    .projects-heading__row { align-items: flex-start; flex-direction: column; gap: 28px; padding-block: 42px 32px; }
+    .projects-heading__intro { font-size: 15px; }
+    .projects-heading__footer { align-items: flex-start; flex-wrap: wrap; }
+    .projects-archive { padding-top: 32px; }
+    .projects-archive__heading { flex-wrap: wrap; gap: 10px; }
+    .projects-contact__inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>

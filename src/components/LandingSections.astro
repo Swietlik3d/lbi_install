@@ -1,0 +1,35 @@
+---
+import { landingHref, paragraphs, processStep, type LandingPage } from "../lib/landing-content";
+import type { SiteConfig } from "../config/sites";
+
+interface Props { page: LandingPage; site: SiteConfig }
+const { page, site } = Astro.props;
+const gas = site.id === "gas";
+const water = site.id === "lekkage";
+const serviceLinks = page.internal_links.filter(link => link.href.startsWith("/") && link.href !== "/" && link.href !== "/contact/").slice(0, 3);
+const mainSections = page.sections.filter(section => section.id !== "wanneer-bellen" && section.id !== "werkwijze");
+const when = page.sections.find(section => section.id === "wanneer-bellen");
+const process = page.sections.find(section => section.id === "werkwijze");
+const processSteps = process?.bullets.map(processStep) ?? [];
+const primary = page.cta_primary ?? { label: "Bel voor overleg", href: site.phoneHref };
+const secondary = page.cta_secondary ?? { label: gas ? "Stuur foto's als het veilig is" : "Stuur foto's via WhatsApp", href: site.whatsappHref };
+const serviceIcons = ["M4 3v7h7v11m-4-7H1V3m6 14h8m-8 3h8m1-17v7h7m-7-4h7", "M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-2 5 6 6M7 10h6m-3-3v6", "m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6"];
+const helpHeading = gas ? "Zorg voor uw gasleiding." : water ? "Waar lekt het?" : "Waar valt het uit?";
+const processHeading = gas ? "Eerst zekerheid." : water ? "Van onrust" : "Van uitval";
+const processEmphasis = gas ? "Dan verder." : water ? "naar opgelost." : "naar licht.";
+const arrow = "M6 18 18 6M6 6h12v12";
+---
+<section class="water-help water-shell" id="hulp" aria-labelledby="landing-help-title">
+  <div class="water-section-heading"><div><p class="water-eyebrow">{gas ? "NADAT DE SITUATIE VEILIG IS" : "PRAKTISCHE HULP IN HELMOND"}</p><h2 id="landing-help-title">{helpHeading}</h2></div><p>{gas ? "Controle, herstel of aanpassing van uw gasleiding. We bespreken het werk wanneer de situatie veilig is." : "Vertel wat u ziet en waar het probleem zit. We bespreken wat nodig is en wanneer we kunnen helpen."}</p></div>
+  <div class="water-services">{serviceLinks.map((service, index) => <a class="water-service" href={landingHref(site.id, service.href)}><div class="water-service__top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={serviceIcons[index]}/></svg><span>0{index + 1}</span></div><h3>{service.label}</h3>{service.description && <p>{service.description}</p>}<span class="water-service__link">Bekijk hoe we helpen <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></span></a>)}</div>
+</section>
+
+{mainSections.length > 0 && <section class="landing-detail water-shell" aria-labelledby="landing-detail-title"><div class="landing-detail__heading"><p class="water-eyebrow">{site.brandName}</p><h2 id="landing-detail-title">Een duidelijke aanpak.<br /><em>Voor uw situatie.</em></h2></div><div class="landing-detail__articles">{mainSections.map((section, index) => <article id={section.id}><span class="landing-detail__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><div>{section.heading && <h3>{section.heading}</h3>}{paragraphs(section.body).map(paragraph => <p>{paragraph}</p>)}{section.bullets.length > 0 && <ul>{section.bullets.map(bullet => <li>{bullet}</li>)}</ul>}</div></article>)}</div></section>}
+
+{when && <section class="landing-when" id="wanneer-bellen" aria-labelledby="landing-when-title"><div class="water-shell landing-when__grid"><div><p class="water-eyebrow">HERKENT U DIT?</p><h2 id="landing-when-title">{when.heading ?? "Wanneer bellen?"}</h2>{paragraphs(when.body).map(paragraph => <p>{paragraph}</p>)}<a class="water-whatsapp" href={gas ? "#veiligheid" : primary.href}>{gas ? "Lees eerst het veiligheidsadvies" : primary.label}<span aria-hidden="true">↗</span></a></div><ul>{when.bullets.map(bullet => <li><span aria-hidden="true">✓</span>{bullet}</li>)}</ul></div></section>}
+
+{processSteps.length > 0 && <section class="water-process" id="werkwijze" aria-labelledby="landing-process-title"><div class="water-shell water-process__grid"><div class="water-process__intro"><p class="water-eyebrow">{gas ? "VEILIGHEID BEPAALT DE VOLGORDE" : "DUIDELIJKE AFSPRAKEN"}</p><h2 id="landing-process-title">{processHeading}<br /><em>{processEmphasis}</em></h2>{paragraphs(process?.body).map(paragraph => <p>{paragraph}</p>)}<a class="water-button water-button--light" href={gas ? "#contact" : primary.href}>{gas ? "Herstel met LBI bespreken" : primary.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></div><ol class="water-process__steps">{processSteps.map((step, index) => <li><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{step.title}</h3>{step.body && <p>{step.body}</p>}</div></li>)}</ol></div></section>}
+
+{page.faqs.length > 0 && <section class="water-questions water-shell" id="vragen" aria-labelledby="landing-questions-title"><div><p class="water-eyebrow">DUIDELIJKHEID VOORAF</p><h2 id="landing-questions-title">Een paar<br />veelgestelde vragen.</h2><a href={gas ? "#veiligheid" : site.whatsappHref}>{gas ? "Lees eerst het veiligheidsadvies" : "Stel uw vraag via WhatsApp"}<span aria-hidden="true">↗</span></a></div><div class="water-faq">{page.faqs.map(item => <details><summary>{item.question}<span aria-hidden="true">+</span></summary>{paragraphs(item.answer).map(answer => <p>{answer}</p>)}</details>)}</div></section>}
+
+<section class="water-contact" id="contact" aria-labelledby="landing-contact-title"><div class="water-shell water-contact__inner"><div><p class="water-eyebrow">{gas ? "IS DE SITUATIE VEILIG?" : "WE BEGINNEN MET EEN GESPREK"}</p><h2 id="landing-contact-title">{gas ? "Bespreek het vervolg met LBI." : water ? "Laat het niet doorlopen." : "Tijd voor een heldere oplossing."}</h2>{gas && <p class="emergency-contact-note">Voor controle en herstel na veiligstellen. Bij gaslucht: bel buiten 0800-9009.</p>}</div><a href={primary.href} aria-label={`${primary.label}: ${site.phone}`} data-event="phone_click">{site.phone}<svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow}/></svg></a></div><div class="water-shell landing-contact-options"><a href={secondary.href} data-event="whatsapp_click" target="_blank" rel="noopener noreferrer">{secondary.label} ↗</a><a href={`mailto:${site.email}`} data-event="email_click">{site.email} ↗</a><a href={landingHref(site.id, "/contact/")}>Meer contactinformatie ↗</a></div></section>

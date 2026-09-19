@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# local preview packages, screenshots, and deployment reports
+/artifacts/
+
 # astro
 .astro/
 

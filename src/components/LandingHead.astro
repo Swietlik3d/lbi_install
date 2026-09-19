@@ -1,0 +1,27 @@
+---
+import Seo from "./Seo.astro";
+import SchemaJsonLd from "./SchemaJsonLd.astro";
+import { businessSchema, breadcrumbSchema, faqPageSchema } from "../config/schema";
+import type { SiteConfig } from "../config/sites";
+import type { LandingPage } from "../lib/landing-content";
+
+interface Props {
+  page: LandingPage;
+  site: SiteConfig;
+  preview: boolean;
+  themeColor: string;
+  schemaNodes?: Array<Record<string, unknown> | null>;
+}
+const { page, site, preview, themeColor, schemaNodes } = Astro.props;
+const canonical = new URL(page.path, site.domain).toString();
+const nodes = schemaNodes ?? [
+  businessSchema(site),
+  breadcrumbSchema([{ name: "Home", url: canonical }]),
+  faqPageSchema(page.faqs),
+];
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<Seo site={site} title={page.meta_title} description={page.meta_description} canonical={canonical} robots={preview ? "noindex,nofollow" : "index,follow"} themeColor={themeColor} />
+<SchemaJsonLd nodes={nodes} />

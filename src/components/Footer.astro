@@ -17,8 +17,8 @@ const page = Astro.url.pathname;
 const year = new Date().getFullYear();
 const lbi = site.id === "lbi";
 const gas = site.id === "gas";
-const showKvk = !lbi || !isPlaceholder(site.kvk);
-const showBtw = !lbi || !isPlaceholder(site.btw);
+const showKvk = !isPlaceholder(site.kvk);
+const showBtw = !isPlaceholder(site.btw);
 
 // Privacy lives on the main LBI site; microsites link out to it.
 const privacyHref = micro ? `${LBI_MAIN_URL}/privacy-cookies/` : "/privacy-cookies/";
@@ -42,10 +42,11 @@ const privacyHref = micro ? `${LBI_MAIN_URL}/privacy-cookies/` : "/privacy-cooki
             <span class="gas-brand__divider" aria-hidden="true"></span>
             <span class="gas-brand__text">Installaties<br />Helmond</span>
           </a>
-          <p>Uw specialist in installatiewerk en spoedservice in Helmond en omgeving.</p>
+          <p>{site.brandName}. <a href={LBI_MAIN_URL}>Onderdeel van LBI Installaties</a>.</p>
+          <p>Gasleiding aansluiten, verleggen, controleren en herstellen wanneer de situatie veilig is.</p>
         </div>
         <div>
-          <h2>Contact</h2>
+          <h2>Niet-acute vragen aan LBI</h2>
           <ul>
             <li><a href={site.phoneHref} data-event="phone_click" data-site={site.id} data-page={page}>{site.phone}</a></li>
             <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
@@ -53,21 +54,20 @@ const privacyHref = micro ? `${LBI_MAIN_URL}/privacy-cookies/` : "/privacy-cooki
           </ul>
         </div>
         <div>
-          <h2>Spoedservice</h2>
-          <p>24/7 bereikbaar</p>
-          <p>Bij gaslucht of gasstoring meteen bellen.</p>
+          <h2>Gaslucht?</h2>
+          <p>Ga naar buiten. Bel op veilige afstand <a href="tel:08009009">0800-9009</a>.</p>
+          <p>Bij direct gevaar: <a href="tel:112">112</a>.</p>
         </div>
         <div>
-          <h2>Over LBI</h2>
-          <p>Persoonlijke service, vakkundig werk en jarenlange ervaring.</p>
+          <h2>Verder lezen</h2>
+          <ul>{nav.map(item => <li><a href={item.href}>{item.label}</a></li>)}</ul>
         </div>
       </div>
       <div class="gas-footer__bottom">
         <p>&copy; {year} LBI Installaties Helmond</p>
-        <span>|</span>
-        <p>KVK 00000000</p>
-        <span>|</span>
-        <p>BTW NL000000000B00</p>
+        {showKvk && <p>KVK: {site.kvk}</p>}
+        {showBtw && <p>BTW: {site.btw}</p>}
+        <a href={privacyHref}>Privacy &amp; cookies</a>
       </div>
     </>
   ) : (

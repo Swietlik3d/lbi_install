@@ -1,7 +1,9 @@
 ---
-import { getCurrentSite } from "../config/sites";
+import { getCurrentSite, type SiteConfig } from "../config/sites";
 
 interface Props {
+  site?: SiteConfig;
+  themeColor?: string;
   title: string;
   description: string;
   canonical: string;
@@ -10,10 +12,9 @@ interface Props {
   ogType?: "website" | "article";
 }
 
-const { title, description, canonical, robots = "index,follow", ogImage, ogType = "website" } =
+const { title, description, canonical, robots = "index,follow", ogImage, ogType = "website", site = getCurrentSite(), themeColor = site.themeColor } =
   Astro.props;
 
-const site = getCurrentSite();
 const ogLocale = site.language.replace("-", "_"); // nl-NL -> nl_NL
 const imageUrl = new URL(ogImage ?? site.ogImage, site.domain).toString();
 ---
@@ -22,7 +23,7 @@ const imageUrl = new URL(ogImage ?? site.ogImage, site.domain).toString();
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
 <meta name="robots" content={robots} />
-<meta name="theme-color" content={site.themeColor} />
+<meta name="theme-color" content={themeColor} />
 
 <!-- Open Graph -->
 <meta property="og:type" content={ogType} />

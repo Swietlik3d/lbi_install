@@ -1,0 +1,140 @@
+---
+import { SITES } from "../config/sites";
+import ConceptNavigation from "./ConceptNavigation.astro";
+import LandingHead from "./LandingHead.astro";
+import LandingHeading from "./LandingHeading.astro";
+import LandingSections from "./LandingSections.astro";
+import LandingFooter from "./LandingFooter.astro";
+import LandingEvents from "./LandingEvents.astro";
+import { getLandingPage, type LandingPage } from "../lib/landing-content";
+import "../styles/landing-content.css";
+import "../styles/water-concept.css";
+
+interface Props { page?: LandingPage; preview?: boolean; schemaNodes?: Array<Record<string, unknown> | null> }
+const { page: suppliedPage, preview = true, schemaNodes } = Astro.props;
+const site = SITES.lekkage;
+const page = suppliedPage ?? await getLandingPage("lekkage");
+const icons: Record<string, string> = {
+  phone: "M5 3h4l2 5-2.5 1.5a14 14 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2Z",
+  arrow: "M5 12h14m-5-5 5 5-5 5",
+  arrowUp: "M6 18 18 6M6 6h12v12",
+  drop: "M12 3S5 11 5 15a7 7 0 0 0 14 0c0-4-7-12-7-12ZM8 15a4 4 0 0 0 4 4",
+  chat: "M21 11.5a9 9 0 0 1-13.5 7.8L3 21l1.7-4.5A9 9 0 1 1 21 11.5Z M8 9h8M8 13h5",
+  check: "m5 12 4 4L19 6",
+  pin: "M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
+  pipe: "M4 3v7h7v11m-4-7H1V3m6 14h8m-8 3h8m1-17v7h7m-7-4h7",
+  search: "M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-2 5 6 6M7 10h6m-3-3v6",
+  shield: "m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6",
+};
+
+---
+
+<!doctype html>
+<html lang="nl" data-water-concept data-site={site.id}>
+  <head>
+    <LandingHead page={page} site={site} preview={preview} schemaNodes={schemaNodes} themeColor="#edf3f1" />
+  </head>
+  <body class="water-page" data-site={site.id}>
+    <a href="#main" class="water-skip">Naar hoofdinhoud</a>
+    <div class="water-topline">
+      <span>LEKKAGE REPARATIE HELMOND</span>
+      <ConceptNavigation active="water" preview={preview} />
+    </div>
+    <header class="water-header">
+      <div class="water-shell water-header__inner">
+        <a class="water-brand" href="#" aria-label="LBI Water — naar boven">
+          <span class="water-brand__mark">LBI<span>.</span></span>
+          <span class="water-brand__division">WATER &<br />LEKKAGE</span>
+        </a>
+        <nav aria-label="Hoofdmenu">
+          <a href="#hulp">Waarmee we helpen</a>
+          <a href="#werkwijze">Onze aanpak</a>
+          <a href="#vragen">Vragen</a>
+        </nav>
+        <a class="water-header__call" href={site.phoneHref}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone} /></svg>
+          <span>{site.phone}</span><span class="water-header__mobile-label">Bel direct</span>
+        </a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="water-hero" aria-labelledby="water-heading">
+        <div class="water-shell water-hero__grid">
+          <div class="water-hero__copy">
+            <p class="water-eyebrow"><span class="water-locator" aria-hidden="true"></span> {page.hero?.kicker ?? site.brandName}</p>
+            <LandingHeading id="water-heading" title={page.h1} />
+            <p class="water-hero__intro">{page.hero?.subtitle}</p>
+            <div class="water-hero__actions">
+              <a class="water-button water-button--dark" href={page.cta_primary?.href ?? site.phoneHref}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone} /></svg>
+                {page.cta_primary?.label ?? "Bel bij lekkage"}
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.arrowUp} /></svg>
+              </a>
+              <a class="water-whatsapp" href={page.cta_secondary?.href ?? site.whatsappHref} target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.chat} /></svg>
+                {page.cta_secondary?.label ?? "Stuur lekkagefoto’s"}
+              </a>
+            </div>
+            <p class="water-hero__note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.check} /></svg> Persoonlijk contact. Duidelijke afspraken.</p>
+          </div>
+
+          <div class="water-visual" data-water-visual data-stage="0">
+            <span class="water-visual__formula" aria-hidden="true">H<span>2</span>O</span>
+            <div class="water-visual__orbit water-visual__orbit--one" aria-hidden="true"></div>
+            <div class="water-visual__orbit water-visual__orbit--two" aria-hidden="true"></div>
+            <div class="water-visual__top"><span><span class="water-dot" aria-hidden="true"></span> VAN LEKKAGE NAAR OPLOSSING</span><span>01 — 03</span></div>
+            <div class="water-scene" data-water-scene role="img" aria-label="Illustratie van een waterleiding met lekkage; de drie knoppen tonen opsporen, afsluiten en herstellen.">
+              <svg class="water-scene__fallback" viewBox="0 0 700 550" aria-hidden="true">
+                <defs>
+                  <linearGradient id="pipe-metal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#70848a"/><stop offset=".35" stop-color="#f8fbfc"/><stop offset=".55" stop-color="#c5d5d8"/><stop offset="1" stop-color="#536c74"/></linearGradient>
+                  <linearGradient id="water-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#99deed" stop-opacity=".8"/><stop offset="1" stop-color="#137c99" stop-opacity=".55"/></linearGradient>
+                </defs>
+                <ellipse cx="352" cy="448" rx="245" ry="48" fill="#12393e" opacity=".07"/>
+                <ellipse cx="352" cy="427" rx="228" ry="44" fill="#d6e5e4"/>
+                <path d="M136 371V234q0-50 50-50h125m56 0h146q50 0 50 50v115" fill="none" stroke="#71888e" stroke-width="57"/>
+                <path d="M136 369V234q0-50 50-50h125m56 0h146q50 0 50 50v115" fill="none" stroke="url(#pipe-metal)" stroke-width="49"/>
+                <path d="M308 152v64m61-64v64" stroke="#71878c" stroke-width="16"/>
+                <g class="water-fallback-leak" fill="url(#water-glass)"><path d="M339 201c-3 31-33 51-33 77a32 32 0 0 0 64 0c0-28-26-49-31-77Z"/><ellipse cx="326" cy="341" rx="8" ry="14"/><ellipse cx="365" cy="376" rx="6" ry="11"/></g>
+                <path class="water-fallback-repair" d="M302 184h75" stroke="#549687" stroke-width="67"/>
+                <path d="M477 160v-41" stroke="#71878c" stroke-width="16"/>
+                <ellipse cx="477" cy="116" rx="43" ry="14" fill="none" stroke="#e97148" stroke-width="10"/>
+              </svg>
+            </div>
+            <div class="water-scene-label"><span class="water-scene-label__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.drop} /></svg></span><div><small>ELKE DRUPPEL TELT</small><strong data-scene-label>Bij de bron beginnen.</strong></div></div>
+            <div class="water-scene-caption"><span class="water-scene-caption__line"></span><span data-scene-caption>Een kleine lekkage verdient aandacht.</span></div>
+          </div>
+        </div>
+        <div class="water-shell water-hero__bottom">
+          <a class="water-scroll" href="#hulp"><span aria-hidden="true">↓</span> EEN OPLOSSING BEGINT HIER</a>
+          <div class="water-stages" aria-label="Bekijk de stappen van de reparatie" hidden>
+            <button type="button" data-water-stage="0" aria-pressed="true"><span>01</span> Opsporen <span class="water-stage-indicator" aria-hidden="true"></span></button>
+            <button type="button" data-water-stage="1" aria-pressed="false"><span>02</span> Afsluiten <span class="water-stage-indicator" aria-hidden="true"></span></button>
+            <button type="button" data-water-stage="2" aria-pressed="false"><span>03</span> Herstellen <span class="water-stage-indicator" aria-hidden="true"></span></button>
+          </div>
+        </div>
+        <p class="water-sr-only" data-water-status aria-live="polite"></p>
+      </section>
+
+      <section class="water-trust" aria-label="Onze beloftes">
+        <div class="water-shell water-trust__inner">
+          <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.pin}/></svg> Lokaal in Helmond</p>
+          <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.chat}/></svg> Rechtstreeks met uw vakman</p>
+          <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.shield}/></svg> Zorgvuldig herstel</p>
+          <span>VAN LBI INSTALLATIES <span aria-hidden="true">↗</span></span>
+        </div>
+      </section>
+
+      <LandingSections page={page} site={site} />
+    </main>
+
+    <LandingFooter site={site} preview={preview} />
+    <a class="water-mobile-call" href={site.phoneHref}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone}/></svg><span>Hulp bij lekkage</span><strong>{site.phone}</strong></a>
+
+    <script>
+      import { initWaterConcept } from "../scripts/water-concept";
+      initWaterConcept();
+    </script>
+    <LandingEvents />
+  </body>
+</html>

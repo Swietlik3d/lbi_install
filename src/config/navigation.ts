@@ -13,7 +13,7 @@ export const NAVIGATION: Record<SiteId, NavItem[]> = {
   lbi: [
     { label: "Home", href: "/" },
     { label: "Diensten", href: "/diensten/" },
-    { label: "Projecten", href: "/projecten/" },
+    { label: "Projects", href: "/projecten/" },
     { label: "Over LBI", href: "/over-lbi/" },
     { label: "Werkwijze", href: "/#werkwijze" },
     { label: "Reviews", href: "/reviews/" },

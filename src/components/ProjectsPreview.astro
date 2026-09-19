@@ -1,0 +1,86 @@
+---
+import ProjectMeta from "./ProjectMeta.astro";
+import type { ProjectItem } from "../lib/projects";
+interface Props { projects: ProjectItem[]; }
+const { projects } = Astro.props;
+const selection = projects.slice(0, 3);
+---
+
+{selection.length > 0 && (
+  <section class="projects-preview" id="projects" aria-labelledby="projects-title">
+    <div class="lbi-shell">
+      <div class="lbi-section-row">
+        <div>
+          <p class="lbi-kicker">Van plan naar resultaat</p>
+          <h2 id="projects-title">Projects<span>.</span></h2>
+          <p class="projects-lead">Een kijkje in ons werk. Elk project vertelt zijn eigen verhaal.</p>
+        </div>
+        <a class="lbi-text-link" href="/projecten/">
+          Bekijk de tijdlijn
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+        </a>
+      </div>
+      <ol class="projects-preview__list">
+        {selection.map((project, index) => (
+          <li>
+            <div class="projects-preview__milestone" aria-hidden="true">
+              <span class="projects-preview__dot"></span>
+              <span>{String(index + 1).padStart(2, "0")} / {project.category || "Project"}</span>
+            </div>
+            <article class="projects-preview__card">
+              <a class="projects-preview__image" href={`/projecten/#${project.id}`} aria-label={`Bekijk project: ${project.title}`}>
+                {project.cover && <img src={project.cover} alt={project.coverAlt ?? project.title} width="1200" height="900" loading="lazy" decoding="async" />}
+                <span class="projects-preview__arrow" aria-hidden="true">↗</span>
+              </a>
+              <div class="projects-preview__body">
+                <ProjectMeta date={project.date} location={project.location} />
+                <h3><a href={`/projecten/#${project.id}`}>{project.title}</a></h3>
+                <p>{project.summary}</p>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ol>
+      {selection.some((project) => project.exampleDetails) && <p class="projects-note">Eigen projectfoto’s · Datums en plaatsen zijn voorbeeldgegevens.</p>}
+    </div>
+  </section>
+)}
+
+<style>
+  .projects-preview { scroll-margin-top: 100px; padding-block: 76px 64px; border-bottom: 1px solid var(--lbi-border); background: radial-gradient(ellipse at 95% 0, rgb(238 105 0 / 0.06), transparent 45%), #101010; }
+  h2 { margin: 0; color: #fff; font-size: clamp(44px, 5vw, 68px); line-height: 1; }
+  h2 span { color: var(--lbi-orange); }
+  .projects-lead { margin: 16px 0 0; color: var(--lbi-muted); font-size: 16px; line-height: 1.7; }
+  .projects-preview__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 40px 0 0; padding: 0; list-style: none; }
+  .projects-preview__list > li { position: relative; min-width: 0; }
+  .projects-preview__milestone { position: relative; display: flex; align-items: center; gap: 12px; height: 36px; margin-bottom: 20px; color: #e0d8cd; font-size: 11px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; }
+  .projects-preview__milestone::before { position: absolute; content: ""; top: 0; left: 0; width: calc(100% + 24px); height: 1px; background: #4a3322; }
+  li:last-child .projects-preview__milestone::before { width: 100%; }
+  .projects-preview__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lbi-orange); box-shadow: 0 0 0 4px rgb(238 105 0 / 0.12); }
+  .projects-preview__card { height: calc(100% - 56px); overflow: hidden; border: 1px solid var(--lbi-border); border-radius: 8px; background: #191918; transition: border-color 200ms; }
+  .projects-preview__card:hover { border-color: rgb(238 105 0 / 0.6); }
+  .projects-preview__image { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: #252524; }
+  img { width: 100%; height: 100%; object-fit: cover; transition: transform 350ms ease; }
+  .projects-preview__image:hover img { transform: scale(1.035); }
+  .projects-preview__arrow { position: absolute; right: 16px; bottom: 16px; display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid rgb(255 255 255 / 0.3); border-radius: 50%; background: rgb(16 16 16 / 0.82); color: white; font-size: 21px; }
+  .projects-preview__body { padding: 24px; }
+  h3 { margin: 18px 0 12px; color: white; font-size: clamp(22px, 2vw, 28px); line-height: 1.2; }
+  h3 a { color: inherit; text-decoration: none; }
+  h3 a:hover { color: #ff8a33; }
+  .projects-preview__body > p { margin: 0; color: var(--lbi-muted); font-size: 14px; line-height: 1.75; }
+  .projects-note { margin: 24px 0 0; color: #aaa49b; font-size: 12px; line-height: 1.6; }
+  @media (max-width: 900px) {
+    .projects-preview__list { gap: 16px; }
+    .projects-preview__milestone::before { width: calc(100% + 16px); }
+    .projects-preview__body { padding: 20px 16px; }
+  }
+  @media (max-width: 700px) {
+    .projects-preview { padding-block: 48px; }
+    .projects-preview__list { grid-template-columns: 1fr; gap: 30px; border-left: 1px solid #4a3322; margin-left: 4px; padding-left: 22px; }
+    .projects-preview__milestone { margin-bottom: 10px; }
+    .projects-preview__milestone::before { display: none; }
+    .projects-preview__dot { position: absolute; left: -26px; }
+    .projects-preview__card { height: auto; }
+    .projects-preview__body { padding: 22px; }
+  }
+</style>
