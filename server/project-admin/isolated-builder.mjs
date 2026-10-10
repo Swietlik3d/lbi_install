@@ -237,6 +237,81 @@ async function copyRegularFile(source, destination, mode = 0o440) {
   }
 }
 
+async function inspectOwnedRequestDirectory(directory, expectedParent, label) {
+  if (path.dirname(directory) !== expectedParent) throw new Error(`${label} is not a direct request child.`);
+  const info = await fsp.lstat(directory);
+  if (!info.isDirectory() || info.isSymbolicLink()) throw new Error(`${label} is unsafe.`);
+  const real = await fsp.realpath(directory);
+  if (normalizeCase(real) !== normalizeCase(directory)) throw new Error(`${label} may not traverse links.`);
+  if (process.platform !== "win32" && typeof process.getuid === "function" && info.uid !== process.getuid()) {
+    throw new Error(`${label} is not owned by the admin process.`);
+  }
+  return info;
+}
+
+async function thawOwnedRequestDirectory(directory, expectedInfo, label) {
+  if (process.platform === "win32") return;
+  const flags = fs.constants.O_RDONLY | (fs.constants.O_DIRECTORY ?? 0) | (fs.constants.O_NOFOLLOW ?? 0);
+  const handle = await fsp.open(directory, flags);
+  try {
+    const current = await handle.stat();
+    if (
+      !current.isDirectory() ||
+      current.dev !== expectedInfo.dev ||
+      current.ino !== expectedInfo.ino ||
+      (typeof process.getuid === "function" && current.uid !== process.getuid())
+    ) {
+      throw new Error(`${label} changed before cleanup.`);
+    }
+    await handle.chmod(0o700);
+  } finally {
+    await handle.close();
+  }
+}
+
+async function removePreparedRequest(requestRoot, request, { complete = true } = {}) {
+  if (!request || !UUID_RE.test(request.jobId ?? "")) throw new Error("Builder cleanup request ID is invalid.");
+  const jobDir = path.join(requestRoot, request.jobId);
+  if (typeof request.jobDir !== "string" || normalizeCase(request.jobDir) !== normalizeCase(jobDir) || path.dirname(jobDir) !== requestRoot) {
+    throw new Error("Builder cleanup path is invalid.");
+  }
+  const jobInfo = await fsp.lstat(jobDir).catch((error) => {
+    if (error?.code === "ENOENT" && !complete) return null;
+    throw error;
+  });
+  if (!jobInfo) return;
+  const checkedJob = await inspectOwnedRequestDirectory(jobDir, requestRoot, "Builder request directory");
+  const names = (await fsp.readdir(jobDir)).sort();
+  if (names.some((name) => name !== "content" && name !== "manifest.json")) {
+    throw new Error("Builder request directory contains an unexpected entry.");
+  }
+  if (complete && JSON.stringify(names) !== JSON.stringify(["content", "manifest.json"])) {
+    throw new Error("Builder request directory is incomplete during cleanup.");
+  }
+  const contentDir = path.join(jobDir, "content");
+  const contentEntry = await fsp.lstat(contentDir).catch((error) => {
+    if (error?.code === "ENOENT" && !complete) return null;
+    throw error;
+  });
+  let checkedContent = null;
+  if (contentEntry) {
+    checkedContent = await inspectOwnedRequestDirectory(contentDir, jobDir, "Builder request content directory");
+    for (const name of await fsp.readdir(contentDir)) {
+      if (!MARKDOWN_RE.test(name)) throw new Error("Builder request content contains an unexpected entry.");
+      const info = await fsp.lstat(path.join(contentDir, name));
+      if (!info.isFile() || info.isSymbolicLink()) throw new Error("Builder request content entry is unsafe.");
+    }
+  }
+  const manifest = await fsp.lstat(path.join(jobDir, "manifest.json")).catch((error) => {
+    if (error?.code === "ENOENT" && !complete) return null;
+    throw error;
+  });
+  if (manifest && (!manifest.isFile() || manifest.isSymbolicLink())) throw new Error("Builder request manifest is unsafe.");
+  if (checkedContent) await thawOwnedRequestDirectory(contentDir, checkedContent, "Builder request content directory");
+  await thawOwnedRequestDirectory(jobDir, checkedJob, "Builder request directory");
+  await fsp.rm(jobDir, { recursive: true, force: true });
+}
+
 async function prepareRequest(requestRoot, clientProjectsDir) {
   const jobId = crypto.randomUUID();
   const nonce = crypto.randomBytes(32).toString("hex");
@@ -264,7 +339,11 @@ async function prepareRequest(requestRoot, clientProjectsDir) {
     }
     return { jobId, nonce, jobDir };
   } catch (error) {
-    await fsp.rm(jobDir, { recursive: true, force: true }).catch(() => {});
+    try {
+      await removePreparedRequest(requestRoot, { jobId, jobDir }, { complete: false });
+    } catch (cleanupError) {
+      throw new AggregateError([error, cleanupError], "Builder request preparation and cleanup failed.");
+    }
     throw error;
   }
 }
@@ -389,7 +468,7 @@ export function createIsolatedBuildRunner({ socketPath, requestRoot, timeoutMs =
     } finally {
       clearTimeout(timer);
       socket?.destroy();
-      await fsp.rm(request.jobDir, { recursive: true, force: true });
+      await removePreparedRequest(safeRequestRoot, request);
     }
   };
 }

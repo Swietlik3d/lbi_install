@@ -66,6 +66,16 @@ async function start(buildRunner, serverOptions = {}) {
 }
 
 async function syntheticBuild({ workspace, outDir, clientProjectsDir }) {
+  if (process.platform !== "win32") {
+    const requestJobs = await fsp.readdir(REQUESTS);
+    equal(requestJobs.length, 1, "one frozen admin request exists while the builder reads it");
+    const requestDir = path.join(REQUESTS, requestJobs[0]);
+    const requestContent = path.join(requestDir, "content");
+    equal((await fsp.stat(requestDir)).mode & 0o777, 0o550, "request directory stays frozen while the builder uses it");
+    equal((await fsp.stat(requestContent)).mode & 0o777, 0o550, "request content stays frozen while the builder uses it");
+    equal((await fsp.stat(path.join(requestDir, "manifest.json"))).mode & 0o777, 0o440, "request manifest stays read-only");
+    equal((await fsp.stat(path.join(requestContent, `${PROJECT_ID}.md`))).mode & 0o777, 0o440, "public Markdown stays read-only");
+  }
   check((await fsp.lstat(path.join(workspace, ".cache", "astro"))).isDirectory(), "builder creates a per-job Astro cache directory");
   check((await fsp.lstat(path.join(workspace, ".cache", "vite"))).isDirectory(), "builder creates a per-job Vite cache directory");
   const names = await fsp.readdir(clientProjectsDir);
@@ -126,6 +136,7 @@ if (process.platform !== "win32") {
   } finally {
     await server.close();
   }
+  equal((await fsp.readdir(REQUESTS)).length, 0, "admin thaws and removes its request after a builder rejection");
 }
 
 server = await start(async ({ outDir }) => {
@@ -142,6 +153,7 @@ try {
 } finally {
   await server.close();
 }
+equal((await fsp.readdir(REQUESTS)).length, 0, "admin thaws and removes its request after a quota rejection");
 
 server = await start(syntheticBuild, {
   async removeWorkspace() {
@@ -160,6 +172,7 @@ try {
   await fsp.rm(WORKSPACES, { recursive: true, force: true });
   await fsp.mkdir(WORKSPACES, { recursive: true });
 }
+equal((await fsp.readdir(REQUESTS)).length, 0, "admin removes its request when builder workspace cleanup fails");
 
 // An intentionally hostile protocol peer cannot escape the admin staging root.
 const hostileSocket = process.platform === "win32"
@@ -192,6 +205,59 @@ try {
 } finally {
   await new Promise((resolve, reject) => hostile.close((error) => error ? reject(error) : resolve()));
   if (process.platform !== "win32") await fsp.unlink(hostileSocket).catch(() => {});
+}
+equal((await fsp.readdir(REQUESTS)).length, 0, "admin removes its request after rejecting hostile output metadata");
+
+// Cleanup fails closed if the exact frozen tree no longer has the shape the
+// admin created. It must never traverse a substituted content symlink.
+if (process.platform !== "win32") {
+  const unsafeSocket = path.join(RUN_ROOT, "unsafe-cleanup.sock");
+  const outside = path.join(RUN_ROOT, "outside-cleanup-target");
+  const sentinel = path.join(outside, "sentinel.txt");
+  await fsp.mkdir(outside);
+  await fsp.writeFile(sentinel, "must survive\n");
+  let unsafeJobDir = null;
+  const unsafePeer = net.createServer((socket) => {
+    let buffered = "";
+    socket.on("data", async (chunk) => {
+      buffered += chunk.toString("utf8");
+      const newline = buffered.indexOf("\n");
+      if (newline === -1 || unsafeJobDir) return;
+      const request = JSON.parse(buffered.slice(0, newline));
+      unsafeJobDir = path.join(REQUESTS, request.jobId);
+      const content = path.join(unsafeJobDir, "content");
+      try {
+        await fsp.chmod(unsafeJobDir, 0o700);
+        await fsp.chmod(content, 0o700);
+        await fsp.rm(content, { recursive: true });
+        await fsp.symlink(outside, content, "dir");
+        socket.end(`${JSON.stringify({ version: 1, ok: false, jobId: request.jobId, nonce: request.nonce, code: "synthetic", message: "Synthetic rejection." })}\n`);
+      } catch (error) {
+        socket.destroy(error);
+      }
+    });
+  });
+  await new Promise((resolve, reject) => {
+    unsafePeer.once("error", reject);
+    unsafePeer.listen(unsafeSocket, resolve);
+  });
+  try {
+    const runner = createIsolatedBuildRunner({ socketPath: unsafeSocket, requestRoot: REQUESTS, timeoutMs: 3_000 });
+    await assert.rejects(
+      runner({ outDir: path.join(RUN_ROOT, "unsafe-cleanup-output"), clientProjectsDir: INPUT, maxOutputBytes: 1024, maxOutputFiles: 10 }),
+      /unsafe/u
+    );
+    assertions += 1;
+    equal(await fsp.readFile(sentinel, "utf8"), "must survive\n", "unsafe cleanup never traverses a substituted content link");
+    check(Boolean(await fsp.lstat(unsafeJobDir).catch(() => null)), "unsafe request remains for explicit operator reconciliation");
+  } finally {
+    await new Promise((resolve, reject) => unsafePeer.close((error) => error ? reject(error) : resolve()));
+    await fsp.unlink(unsafeSocket).catch(() => {});
+    if (unsafeJobDir) {
+      await fsp.unlink(path.join(unsafeJobDir, "content")).catch(() => {});
+      await fsp.rm(unsafeJobDir, { recursive: true, force: true });
+    }
+  }
 }
 
 console.log(`PASS project-admin-builder protocol (${assertions} assertions)`);

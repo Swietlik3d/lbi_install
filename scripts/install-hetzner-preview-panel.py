@@ -118,7 +118,8 @@ def prepare_source(archive, expected_hash, manifest, destination):
             target.chmod(0o644)
     # npm rejects one file being loaded as both the user and global config.
     # Use distinct fresh empty files so no operator/provider config is inherited.
-    npm_configs = (BASE / 'empty-user.npmrc', BASE / 'empty-global.npmrc')
+    npm_configs = (BASE / (destination.name + '-empty-user.npmrc'),
+                   BASE / (destination.name + '-empty-global.npmrc'))
     for config in npm_configs:
         with config.open('x') as output:
             os.chmod(config, 0o600)
