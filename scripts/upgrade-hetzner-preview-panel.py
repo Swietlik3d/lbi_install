@@ -77,6 +77,15 @@ def main():
         # Refuse incomplete/new syntax errors before touching a running service.
         for script in ('index.mjs', 'builder.mjs', 'isolated-builder.mjs'):
             install.run('/usr/bin/node', '--check', str(source / 'server/project-admin' / script))
+        # Check real runtime UIDs before stopping the existing services. Root's
+        # syntax check cannot detect non-traversable dependency/source parents.
+        runtime_environment = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C.UTF-8'}
+        for user, program in (
+            (install.ADMIN, "await import('./server/project-admin/app.mjs');"),
+            (install.BUILDER, "await import('./server/project-admin/isolated-builder.mjs');await import('astro');await import('sharp');"),
+        ):
+            install.run('/usr/sbin/runuser', '-u', user, '--', '/usr/bin/node', '--input-type=module', '-e', program,
+                        cwd=source, env=runtime_environment, timeout=30)
         guard_sites(preflight)
         require(not (install.DATA / 'publication-pending.json').exists(), 'Publication started during preparation')
         for file, value in originals.items():

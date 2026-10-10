@@ -89,6 +89,16 @@ def wait_panel_http(url, expected_hash, headers=None, public=False):
         time.sleep(0.5)
 
 def prepare_source(archive, expected_hash, manifest, destination):
+    # A root-private upgrade transaction may use 0077. Public immutable source
+    # and dependency parents must still be traversable by the separate UIDs.
+    previous_umask = os.umask(0o022)
+    try:
+        _prepare_public_source(archive, expected_hash, manifest, destination)
+    finally:
+        os.umask(previous_umask)
+
+
+def _prepare_public_source(archive, expected_hash, manifest, destination):
     require(digest(archive) == expected_hash, 'Public source archive hash mismatch')
     require(not destination.exists(), 'Immutable source version already exists')
     inventory = {item['path']: item for item in manifest['files']}
