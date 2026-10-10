@@ -68,6 +68,26 @@ def check_configs(preflight, allow_lbi=None):
         file = Path('/etc/nginx/sites-enabled') / name
         require(digest(file) == (allow_lbi if name == 'lbi-preview' and allow_lbi else expected), 'Nginx config drift: ' + name)
 
+def wait_panel_http(url, expected_hash, headers=None, public=False):
+    # systemctl start/reload may return while app loading or old nginx workers
+    # still serve requests. Keep TLS verification and demand the exact UI bytes.
+    deadline = time.monotonic() + 30
+    request = urllib.request.Request(url, headers=headers or {})
+    while True:
+        try:
+            with urllib.request.urlopen(request, timeout=2) as response:
+                ready = (response.status == 200 and response.geturl() == url and
+                         hashlib.sha256(response.read(1024 * 1024)).hexdigest() == expected_hash and
+                         (not public or 'noindex' in response.headers.get('X-Robots-Tag', '')))
+            if ready:
+                return
+        except urllib.error.URLError:
+            pass
+        require(time.monotonic() < deadline, 'Panel HTTP readiness timed out')
+        units = (*UNITS, 'nginx') if public else UNITS
+        require(all(subprocess.run(['systemctl', 'is-active', '--quiet', unit]).returncode == 0 for unit in units), 'Owned service failed during readiness check')
+        time.sleep(0.5)
+
 def prepare_source(archive, expected_hash, manifest, destination):
     require(digest(archive) == expected_hash, 'Public source archive hash mismatch')
     require(not destination.exists(), 'Immutable source version already exists')
@@ -240,25 +260,13 @@ def activate(preflight, state):
         run('systemctl', 'start', BUILDER + '.service')
         run('systemctl', 'start', ADMIN + '.service')
         run('systemctl', 'is-active', *UNITS)
-        request = urllib.request.Request('http://127.0.0.1:4335/beheer/projecten/', headers={'Host': ORIGIN.split('://')[1]})
-        # Type=simple is active before Node finishes loading the app. Require
-        # real HTTP readiness, without exposing the proxy during that interval.
-        deadline = time.monotonic() + 30
-        while True:
-            try:
-                with urllib.request.urlopen(request, timeout=2) as response:
-                    require(response.status == 200, 'Panel loopback preflight failed')
-                break
-            except urllib.error.URLError:
-                require(time.monotonic() < deadline, 'Panel loopback readiness timed out')
-                require(all(subprocess.run(['systemctl', 'is-active', '--quiet', unit]).returncode == 0 for unit in UNITS), 'Panel service failed during startup')
-                time.sleep(0.5)
+        frontend_hash = digest(Path(state['source']) / 'public/beheer/projecten/index.html')
+        wait_panel_http('http://127.0.0.1:4335/beheer/projecten/', frontend_hash, {'Host': ORIGIN.split('://')[1]})
         write_atomic(NGINX, changed)
         run('nginx', '-t')
         check_configs(preflight, state['nginx_after_sha256'])
         run('systemctl', 'reload', 'nginx')
-        with urllib.request.urlopen(ORIGIN + '/beheer/projecten/', timeout=25) as response:
-            require(response.status == 200 and 'noindex' in response.headers.get('X-Robots-Tag', ''), 'Public panel HTTPS check failed')
+        wait_panel_http(ORIGIN + '/beheer/projecten/', frontend_hash, public=True)
         run('systemctl', 'enable', *UNITS)
         state['status'] = 'ACTIVE'
     except Exception:
