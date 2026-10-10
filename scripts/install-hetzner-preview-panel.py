@@ -17,6 +17,8 @@ import re
 import shutil
 import subprocess
 import tarfile
+import time
+import urllib.error
 import urllib.request
 
 BASE = Path('/srv/lbi-preview')
@@ -199,7 +201,9 @@ def prepare(args, preflight, state):
                   'source_commit': args.commit, 'previous': {site: item['target'] for site, item in preflight['sites'].items()}})
 
 def activate(preflight, state):
-    require(state.get('status') == 'PREPARED', 'Prepared installation state required')
+    require(state.get('status') in ('PREPARED', 'ACTIVATION_ROLLED_BACK') and not state.get('rollback_errors'), 'Prepared or completely rolled-back installation state required')
+    if state.get('status') == 'ACTIVATION_ROLLED_BACK':
+        require(all(subprocess.run(['systemctl', 'is-active', '--quiet', unit]).returncode != 0 for unit in UNITS), 'Recovered services must still be stopped before an explicit retry')
     check_configs(preflight)
     backup = Path(state['backup'])
     original = (backup / 'lbi-preview.nginx.before').read_text()
@@ -237,8 +241,18 @@ def activate(preflight, state):
         run('systemctl', 'start', ADMIN + '.service')
         run('systemctl', 'is-active', *UNITS)
         request = urllib.request.Request('http://127.0.0.1:4335/beheer/projecten/', headers={'Host': ORIGIN.split('://')[1]})
-        with urllib.request.urlopen(request, timeout=15) as response:
-            require(response.status == 200, 'Panel loopback preflight failed')
+        # Type=simple is active before Node finishes loading the app. Require
+        # real HTTP readiness, without exposing the proxy during that interval.
+        deadline = time.monotonic() + 30
+        while True:
+            try:
+                with urllib.request.urlopen(request, timeout=2) as response:
+                    require(response.status == 200, 'Panel loopback preflight failed')
+                break
+            except urllib.error.URLError:
+                require(time.monotonic() < deadline, 'Panel loopback readiness timed out')
+                require(all(subprocess.run(['systemctl', 'is-active', '--quiet', unit]).returncode == 0 for unit in UNITS), 'Panel service failed during startup')
+                time.sleep(0.5)
         write_atomic(NGINX, changed)
         run('nginx', '-t')
         check_configs(preflight, state['nginx_after_sha256'])
