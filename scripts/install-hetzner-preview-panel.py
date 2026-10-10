@@ -94,8 +94,15 @@ def prepare_source(archive, expected_hash, manifest, destination):
             with target.open('xb') as output:
                 output.write(content)
             target.chmod(0o644)
+    # npm rejects one file being loaded as both the user and global config.
+    # Use distinct fresh empty files so no operator/provider config is inherited.
+    npm_configs = (BASE / 'empty-user.npmrc', BASE / 'empty-global.npmrc')
+    for config in npm_configs:
+        with config.open('x') as output:
+            os.chmod(config, 0o600)
+            output.write('')
     environment = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C.UTF-8',
-                   'npm_config_userconfig': '/dev/null', 'npm_config_globalconfig': '/dev/null',
+                   'npm_config_userconfig': str(npm_configs[0]), 'npm_config_globalconfig': str(npm_configs[1]),
                    'npm_config_cache': str(BASE / 'install-npm-cache'), 'npm_config_registry': 'https://registry.npmjs.org'}
     install = run('/usr/bin/npm', 'ci', '--ignore-scripts', '--no-fund', '--no-audit', cwd=destination, env=environment, timeout=600)
     (destination.parent / (destination.name + '-npm-install.log')).write_text(install.stdout)
