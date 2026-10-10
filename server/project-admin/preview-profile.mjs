@@ -95,8 +95,18 @@ function rewriteOrigins(value, profile) {
   let rewritten = value;
   for (const id of SITE_IDS) {
     const hostname = new URL(profile.productionOrigins[id]).hostname.replace(/^www\./u, "");
-    const pattern = new RegExp(`https?://(?:www\\.)?${hostname.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}(?=[/:?#\"'\\s<]|$)`, "giu");
-    rewritten = rewritten.replace(pattern, profile.previewOrigins[id]);
+    const escapedHostname = hostname.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+    const originPattern = new RegExp(`https?://(?:www\\.)?${escapedHostname}(?=[/:?#\"'\\s<]|$)`, "giu");
+    rewritten = rewritten.replace(originPattern, profile.previewOrigins[id]);
+
+    // Some pages mention the public hostname as prose rather than as a URL.
+    // Replace only a complete hostname, and never an email-domain occurrence.
+    const hostnamePattern = new RegExp(
+      `(^|[^A-Za-z0-9.@-])(?:www\\.)?${escapedHostname}(?![A-Za-z0-9-]|\\.[A-Za-z0-9])`,
+      "giu"
+    );
+    const previewHostname = new URL(profile.previewOrigins[id]).hostname;
+    rewritten = rewritten.replace(hostnamePattern, (_match, prefix) => `${prefix}${previewHostname}`);
   }
   return rewritten;
 }

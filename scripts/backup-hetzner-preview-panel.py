@@ -96,7 +96,10 @@ def verify(archive, expected_hash):
         restored = Path(temporary)
         with tarfile.open(archive, 'r:gz') as packed:
             regular = {}
-            for member in packed.getmembers():
+            directories = []
+            members = packed.getmembers()
+            require(len(members) <= 120000, 'Too many backup members')
+            for member in members:
                 name = PurePosixPath(member.name)
                 require(not name.is_absolute() and '..' not in name.parts and name.parts[0] == 'snapshot', 'Unsafe backup path')
                 require(member.isfile() or member.isdir(), 'Backup links/special files forbidden')
@@ -104,11 +107,19 @@ def verify(archive, expected_hash):
                     relative = str(PurePosixPath(*name.parts[1:]))
                     require(relative not in regular, 'Duplicate backup member')
                     regular[relative] = member
+                else:
+                    directories.append(str(PurePosixPath(*name.parts[1:])))
             require('manifest.json' in regular and regular['manifest.json'].size < 24 * 1024 * 1024, 'Backup manifest missing/too large')
             manifest = json.load(packed.extractfile(regular['manifest.json']))
             files = {item['path']: item for item in manifest['files']}
             require(len(files) == len(manifest['files']) <= 60000 and set(regular) == set(files) | {'manifest.json'}, 'Backup inventory mismatch')
             require(sum(item['size'] for item in files.values()) <= 2 * 1024 ** 3, 'Restore exceeds quota')
+            # Preserve empty records/media folders too; an empty fresh panel
+            # is a valid snapshot and must not fail a later readdir check.
+            for relative in directories:
+                target = restored / relative
+                require(target.resolve().is_relative_to(restored), 'Restored directory outside scratch')
+                target.mkdir(parents=True, exist_ok=True, mode=0o700)
             for relative, item in files.items():
                 member = regular[relative]
                 require(member.size == item['size'], 'Restored file size mismatch')
@@ -129,9 +140,10 @@ const records=await fs.readdir(path.join(root,'data/records'));
 for(const file of records){const r=JSON.parse(await fs.readFile(path.join(root,'data/records',file),'utf8'));if(r.draft?.id!==file.slice(0,-5))throw Error('Restored record identity mismatch');}
 for(const file of await fs.readdir(path.join(root,'data/media'))){if(file.endsWith('.webp'))await sharp(path.join(root,'data/media',file)).metadata();}
 for(const file of ['index.html','projecten/index.html','robots.txt','sitemap.xml'])await fs.access(path.join(root,'public',file));
-if(await fs.readFile(path.join(root,'public/robots.txt'),'utf8')!=='User-agent: *\\nDisallow: /\\n')throw Error('Restored preview robots invalid');
+if(await fs.readFile(path.join(root,'public/robots.txt'),'utf8')!==['User-agent: *','Disallow: /',''].join(String.fromCharCode(10)))throw Error('Restored preview robots invalid');
 '''
-        subprocess.run(['/usr/bin/node', '--input-type=module', '-e', program, str(restored)], cwd=source, check=True, capture_output=True, text=True)
+        validation = subprocess.run(['/usr/bin/node', '--input-type=module', '-e', program, str(restored)], cwd=source, capture_output=True, text=True, timeout=30)
+        require(validation.returncode == 0, 'Restored payload validation failed; private output suppressed')
         return {'status': 'RESTORE_FILES_PASS', 'archive': str(archive), 'sha256': expected_hash,
                 'restored_files': len(files), 'records': len(list((restored / 'data/records').glob('*.json'))),
                 'media': len(list((restored / 'data/media').glob('*.webp'))),
