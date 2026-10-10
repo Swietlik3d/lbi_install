@@ -10,6 +10,13 @@ HTTPS virtual hosts. Their URLs do not use the BezwaarPilot domain.
 | Lekkage | https://lekkage-preview.178-105-195-84.sslip.io/ |
 | Gas | https://gas-preview.178-105-195-84.sslip.io/ |
 
+All four previews were updated on **2026-10-10** to release
+`20261010T122434Z`. The password-protected project panel is live at
+https://lbi-preview.178-105-195-84.sslip.io/beheer/projecten/ . Actual HTTPS
+login, photo upload, isolated publication and logout passed; owned test data
+was quarantined and the clean four-site release restored. See the
+[deployment evidence and recovery record](hetzner-preview-2026-10-10.md).
+
 ## Preparing an update
 
 ```sh
@@ -107,6 +114,17 @@ production-domain installation. Static `YYYYMMDDTHHMMSSZ` release names and
 panel-generated release names must both be supported by guarded rollback and
 crash recovery.
 
+For an already installed panel, use `scripts/upgrade-hetzner-preview-panel.py`
+with a fresh four-site/Nginx preflight, the exact previous source directory,
+and a manifest-approved committed source archive. It installs a new immutable
+source/dependency version, checks imports under both runtime users before
+stopping services, backs up the three owned configuration files, and switches
+only those source references. It verifies both services and exact UI bytes over
+HTTPS. A failed switch restores the previous configuration and records any
+incomplete recovery. Private data, password hash, static releases and Nginx
+configuration are preserved; the first-install workflow refuses to overwrite
+an existing panel.
+
 `scripts/test-hetzner-preview-panel-live.mjs` is an explicitly invoked staging
 API test. It creates two marked synthetic records and one photo, publishes one
 project, checks HTTPS authentication/CSRF and the actual public result, and logs
@@ -127,7 +145,8 @@ production use.
 
 ## Verified release, 2026-09-19
 
-Release `20260919T002319Z` is active on all four sites. The archive SHA-256 is
+Release `20260919T002319Z` was active on all four sites at that inspection and
+is retained as the previous release. The archive SHA-256 is
 `d47d56a882fb0b128ed03329ec356433cdd43eab33d937e207865dbc93d38bd8`.
 The server verified all 163 live files against the manifest. A separate client
 check passed for 27 page routes and 48 resources, HTTPS, HTTP redirects,
@@ -155,5 +174,7 @@ logs, or old releases are deleted by the deployment.
 A read-only SSH check confirmed 73,901,281,280 bytes (about 68.8 GiB) available
 to ordinary users, active Nginx and the same four `current` release targets.
 The September full-disk observation is no longer a current blocker. No server
-files or services were changed. The new client project panel is still local;
-its requirements are in [Production readiness](production-readiness.md).
+files or services were changed during that capacity inspection. The panel was
+subsequently installed on 2026-10-10; its current deployment is documented
+[here](hetzner-preview-2026-10-10.md). Production-domain requirements are in
+[Production readiness](production-readiness.md).

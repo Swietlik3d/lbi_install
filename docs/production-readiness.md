@@ -1,6 +1,6 @@
 # LBI — gotowość produkcyjna
 
-Stan sprawdzony **10 października 2026, Europe/Berlin**. **Migracja zależności i izolacja buildera: PASS.** Poprawki są gotowe w repozytorium i przeszły rzeczywisty test na Linuksie. Cztery aktywne podglądy klienta i dotychczasowa strona pod domeną LBI nie zostały przełączone. Instalacja docelowych usług, hasło klienta, domeny i końcowe dane wymagają przygotowania przed uruchomieniem produkcji.
+Stan sprawdzony **10 października 2026, Europe/Berlin**. **Migracja zależności, izolacja buildera i wdrożenie podglądów: PASS.** Kod jest zatwierdzony i wypchnięty. Cztery podglądy Hetznera oraz panel z osobnym hasłem są aktywne; rzeczywiste logowanie/upload/publikacja przez HTTPS i odtworzenie plików kopii przeszły. Dotychczasowa strona pod domeną LBI i DNS pozostają bez przełączenia. Domeny produkcyjne, końcowe dane i stała eksploatacja wymagają domknięcia przed uruchomieniem produkcji. Szczegóły: [wdrożenie 10.10.2026](hetzner-preview-2026-10-10.md).
 
 ## Migracja bez zmiany wyglądu
 
@@ -21,7 +21,7 @@ Builder ma kod i zależności tylko do odczytu, osobny zapisywalny katalog na ka
 
 **Rzeczywisty Linux proof: PASS**, 10.10.2026 o 11:51 CEST, na odrębnej publicznej kopii kodu i transient services. Potwierdzono odmowę odczytu prywatnych danych i środowiska panelu przez kernel, brak sieci, granice cgroup, zakończenie procesów potomnych oraz rzeczywistą publikację przez daemon i API panelu. Vite pierwotnie próbował pisać do `node_modules/.vite`; poprawka kieruje jego cache do katalogu zadania, zachowując zależności tylko do odczytu.
 
-Wszystkie katalogi i usługi testowe na Hetznerze usunięto. PID i konfiguracja aktywnego Nginx, cztery wskaźniki wydań oraz hashe stron przed i po teście są identyczne. Snapshot `81470702-0b30-45e6-8ea2-235e95390a7a`, SHA-256 `bb1a6167fdeec00bb1ce2bf75fc8962a1c32255e62145e2c8edcfa98e6325d6d`: **166/166 plików zgodnych w chwili tego testu**. Po teście zmieniono wyłącznie dwa pliki: zegar etapów dla reduced motion i skrypt raportujący kontrolę wyglądu. Niezależne porównanie manifestu potwierdziło, że kod panelu/buildera, usługi, konfiguracja i zależności pozostają identyczne. Linux proof jest dowodem tych zabezpieczeń; końcowy frontend podlega osobnemu buildowi i testowi przeglądarki.
+Wszystkie katalogi i usługi tego wcześniejszego testu na Hetznerze usunięto. PID i konfiguracja aktywnego Nginx, cztery wskaźniki wydań oraz hashe stron przed i po tym teście były identyczne. Snapshot `81470702-0b30-45e6-8ea2-235e95390a7a`, SHA-256 `bb1a6167fdeec00bb1ce2bf75fc8962a1c32255e62145e2c8edcfa98e6325d6d`: **166/166 plików zgodnych w chwili tego testu**. Pierwsze porównanie po teście obejmowało wyłącznie zegar reduced motion i skrypt kontroli wyglądu. Podczas późniejszego wdrożenia poprawiono jeszcze sprzątanie zamrożonych requestów i przepisywanie hostów w profilu preview; te zmiany przeszły odpowiednio 40 asercji na Linuksie oraz 30 asercji z rzeczywistym buildem. Końcowy kod panelu przetestowano publikacją HTTPS przez trwałe, izolowane usługi. Wcześniejszy proof pozostaje dowodem architektury zabezpieczeń, a nie identyczności wszystkich plików obecnego źródła.
 
 Dowody: [wynik Linux proof](../artifacts/linux-production-proof/81470702-0b30-45e6-8ea2-235e95390a7a/result.json), [sprzątanie i kontrola aktywnych stron](../artifacts/linux-production-proof/81470702-0b30-45e6-8ea2-235e95390a7a/cleanup.log), [porównanie z końcowym kodem](../artifacts/linux-production-proof-current-source.json). Instalacja i obsługa: [panel projektów](project-admin.md), [usługa buildera](../deploy/project-admin-builder.service.example), [tmpfiles](../deploy/project-admin-builder.tmpfiles.example), [usługa panelu](../deploy/project-admin.service.example).
 
@@ -29,8 +29,9 @@ Dowody: [wynik Linux proof](../artifacts/linux-production-proof/81470702-0b30-45
 
 | Kontrola | Wynik i zakres |
 | --- | --- |
-| `npm run test:admin` | PASS, 103 asercje: walidacja, upload, sesje, CSRF, publikacja, rollback, limity i rotacja hasła |
-| `npm run test:admin:builder` | PASS, 22 asercje: protokół, cache, ograniczona diagnostyka i odmowa sukcesu przy błędzie sprzątania |
+| `npm run test:admin` | PASS, 106 asercji: walidacja, upload, sesje, CSRF, publikacja, rollback, limity, statyczne wydania i rotacja hasła |
+| `npm run test:admin:builder` | PASS, 25 asercji na Windows oraz 40 na Linuksie jako użytkownik admina: protokół, cache, diagnostyka, bezpieczne sprzątanie zamrożonych requestów i odmowa przejścia przez dowiązanie |
+| Operator publikacji preview | PASS, 30 asercji, w tym rzeczywisty build LBI; pełne URL-e i hosty w prozie zmienione na preview, kontakt zachowany |
 | `npm run test:admin:e2e` | PASS: prawdziwe logowanie/API, upload, build Astro 7, strona główna, timeline, zdjęcie i ukrycie drugiego szkicu |
 | `npm run build:all` | PASS: LBI, Elektra, Lekkage, Gas; końcowy build po poprawce reduced motion |
 | `npm run check:all` | PASS dla czterech stron: 0 błędów, 0 ostrzeżeń; dwa nieblokujące hints na stronę |
@@ -72,12 +73,12 @@ Wynik nie stanowi rezerwacji. Nie zakupiono domen i nie zmieniono DNS. Dowód: [
 ## Pozostałe czynności przed uruchomieniem produkcji
 
 1. **Domeny i HTTPS.** Zarejestrować uzgodnione domeny, zapewnić dostęp do DNS i zabezpieczyć obecną stronę LBI. Sprawdzić rekordy pocztowe, certyfikaty apex/www, przekierowania HTTP→HTTPS→www, cztery virtual hosty oraz canonicale po przełączeniu.
-2. **Docelowe usługi.** Zainstalować konta, grupy, katalogi, systemd/tmpfiles i Nginx zgodnie z dokumentacją. Ustawić produkcyjne hasło klienta przez ukryty prompt. Test transient services potwierdza architekturę izolacji; po trwałej instalacji trzeba potwierdzić uprawnienia Nginx, limity logowania według rzeczywistego IP, HTTPS cookie, Origin/CSRF i odmowę dostępu buildera do prywatnych danych.
-3. **Eksploatacja.** Ustawić spójne kopie danych, mediów, hashu i wydań poza webrootem oraz kopię poza serwerem. Wykonać odtworzenie backupu i pełny scenariusz klienta na HTTPS staging. Sprawdzić rotację hasła z restartem i unieważnieniem sesji, retencję, monitoring miejsca i obsługę błędu publikacji. Lokalne testy rollbacku i crash recovery mają PASS; restore wdrożonego backupu pozostaje nieprzetestowany.
+2. **Docelowe usługi.** Trwałe konta, katalogi, systemd/tmpfiles, Nginx i osobne hasło działają już na preview. HTTPS E2E potwierdził publikację, cookie, Origin/CSRF i wylogowanie. Dla domen produkcyjnych ustawić docelowy origin/vhost/certyfikat i operator profile zgodnie z dokumentacją, przygotować produkcyjne dane dostępu oraz powtórzyć kontrolę HTTPS po przełączeniu. Nginx preview ma limit logowania według rzeczywistego IP; końcowa kontrola potwierdziła osobne UID-y, prywatne uprawnienia i limity buildera.
+3. **Eksploatacja.** Spójne prywatne kopie i chronione kopie poza serwerem istnieją; odtworzenie plików pustego panelu oraz dwóch rekordów i zdjęcia QA ma PASS na serwerze i poza nim. Pełny scenariusz klienta na HTTPS staging ma PASS. Pozostają automatyzacja kopii poza serwerem, retencja, monitoring miejsca i odtworzenie całych działających usług po utracie serwera. Rotacja hasła i crash recovery mają testy lokalne; działającego hasła klienta nie rotowano testowo.
 4. **Dane klienta.** Potwierdzić KVK, BTW, adres, kontakt i prawa do zdjęć. Trzy obecne realizacje zawierają oznaczone przykładowe daty/miejscowości; nie przedstawiać ich jako zweryfikowanych. Uzupełnić privacy/cookies o panel, sesję, zdjęcia, logi i uzgodnione przechowywanie danych. Formularze i śledzenie pozostają wyłączone.
 
 ## Hetzner — aktywne podglądy
 
-Kontrola z **10.10.2026** potwierdziła aktywny Nginx i `current` do `20260919T002319Z` dla czterech podglądów. Test izolacji nie zmienił ich konfiguracji ani zawartości. Testowe buildy i publikacja przeszły bez błędu braku miejsca; wolne miejsce nadal wymaga monitorowania. `/run` jest mniejszym tmpfs, dlatego duże katalogi testowe tworzono pod `/var/lib` i następnie usunięto.
+Końcowa kontrola z **10.10.2026** potwierdziła aktywny Nginx i `current` do `20261010T122434Z` dla czterech podglądów. Panel i builder używają kodu `d4d6098c0ec785883331750770d43cd6dbcb7962`, mają active/enabled, a API jest dostępne wyłącznie przez loopback i proxy HTTPS. Wszystkie 175 plików źródła zgadzają się z manifestem. Jedynie vhost LBI otrzymał obsługę panelu; sześć pozostałych konfiguracji zachowało hashe. Testy publikacji i backupu przeszły; dane własnego QA są w prywatnej kwarantannie, aktywny magazyn jest pusty. Wolne miejsce nadal wymaga stałego monitorowania.
 
-Adresy i procedura: [Hetzner client previews](hetzner-preview.md). Kod z tego zadania wymaga osobnego commit/push oraz kontrolowanego wdrożenia po przygotowaniu domen, usług i danych.
+Adresy i procedura: [Hetzner client previews](hetzner-preview.md). Faktyczny zakres wdrożenia, kopie i dowody: [raport 10.10.2026](hetzner-preview-2026-10-10.md). To są podglądy klienta z noindex, a przełączenie na domeny produkcyjne pozostaje oddzielną operacją.
