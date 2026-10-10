@@ -1,0 +1,70 @@
+[Unit]
+Description=LBI isolated Astro project builder
+After=local-fs.target
+Before=lbi-project-admin.service
+
+[Service]
+Type=simple
+User=lbi-project-builder
+Group=lbi-project-build
+WorkingDirectory=/var/cache/lbi-project-builder
+ExecStart=/usr/bin/node /srv/lbi/source/server/project-admin/builder.mjs
+Restart=on-failure
+RestartSec=5s
+UMask=0027
+KillMode=control-group
+TimeoutStopSec=15s
+
+# Fixed, non-secret deployment paths. Never add the admin EnvironmentFile.
+Environment=LBI_BUILDER_SOURCE_DIR=/srv/lbi/source
+Environment=LBI_BUILDER_REQUEST_DIR=/var/spool/lbi-project-builder/requests
+Environment=LBI_BUILDER_WORKSPACE_DIR=/var/cache/lbi-project-builder/workspaces
+Environment=LBI_BUILDER_SOCKET=/run/lbi-project-builder/builder.sock
+
+RuntimeDirectory=lbi-project-builder
+RuntimeDirectoryMode=0750
+CacheDirectory=lbi-project-builder
+CacheDirectoryMode=0700
+
+# Dedicated UID, no network, immutable source/dependencies, and explicit denial
+# of all private admin state. Only the group-readable public requests cross in.
+NoNewPrivileges=true
+PrivateNetwork=true
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+PrivateTmp=true
+PrivateDevices=true
+DevicePolicy=closed
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+ProcSubset=pid
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+ReadOnlyPaths=/srv/lbi/source /var/spool/lbi-project-builder/requests
+ReadWritePaths=/run/lbi-project-builder /var/cache/lbi-project-builder
+InaccessiblePaths=/var/lib/lbi-project-admin /srv/lbi/published /etc/lbi
+
+# Daemon limits plus per-job code limits: five minutes, 1 GiB/50k output,
+# bounded diagnostics, and one active job. KillMode covers the whole tree.
+MemoryMax=1536M
+MemorySwapMax=0
+TasksMax=128
+CPUQuota=200%
+LimitNOFILE=65536
+LimitFSIZE=2G
+OOMPolicy=kill
+
+[Install]
+WantedBy=multi-user.target

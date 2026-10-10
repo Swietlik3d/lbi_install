@@ -1,0 +1,65 @@
+# Example dedicated server block. Adjust the certificate includes and host name
+# to the existing LBI virtual host; do not add this block beside a duplicate host.
+# This directive belongs in nginx's http context. It enforces a real client-IP
+# limit at the only trusted ingress; the Node service deliberately ignores all
+# forwarded-IP headers and applies a separate global loopback-ingress ceiling.
+limit_req_zone $binary_remote_addr zone=lbi_admin_login_per_ip:10m rate=5r/m;
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name lbi-helmond.nl;
+
+    # Use the certificate that covers both apex and www names.
+    # include /etc/letsencrypt/options-ssl-nginx.conf;
+    # ssl_certificate /etc/letsencrypt/live/www.lbi-helmond.nl/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/www.lbi-helmond.nl/privkey.pem;
+
+    return 301 https://www.lbi-helmond.nl$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.lbi-helmond.nl;
+
+    # Existing certificate configuration belongs here.
+    # include /etc/letsencrypt/options-ssl-nginx.conf;
+    # ssl_certificate /etc/letsencrypt/live/www.lbi-helmond.nl/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/www.lbi-helmond.nl/privkey.pem;
+
+    root /srv/lbi/published/current;
+    index index.html;
+
+    location = /beheer/api/login {
+        limit_req zone=lbi_admin_login_per_ip burst=3 nodelay;
+        limit_req_status 429;
+        client_max_body_size 16k;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://127.0.0.1:4335;
+        proxy_buffering off;
+        add_header Cache-Control "no-store" always;
+    }
+
+    location ^~ /beheer/ {
+        client_max_body_size 10m;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://127.0.0.1:4335;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        proxy_buffering off;
+        add_header Cache-Control "no-store" always;
+    }
+
+    location / {
+        try_files $uri $uri/ $uri/index.html =404;
+    }
+}

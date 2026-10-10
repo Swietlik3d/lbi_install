@@ -58,7 +58,8 @@ def main():
     args = parser.parse_args()
     require(re.fullmatch(r'[a-f0-9]{64}', args.sha256), 'Invalid archive hash')
     require(digest(args.archive) == args.sha256, 'Archive SHA-256 mismatch')
-    before = json.loads(args.preflight.read_text())
+    before = json.loads(args.preflight.read_text(encoding='utf-8-sig'))
+    require({file.name for file in Path('/etc/nginx/sites-enabled').iterdir()} == set(before['protected_configs']), 'Enabled nginx configuration set changed')
     previous = {}
     for site in SITES:
         link = ROOT / site / 'current'
@@ -83,7 +84,7 @@ def main():
                 require(member.isdir(), 'Archive root must be a directory')
                 continue
             require(parts[0] in SITES or (parts == ('manifest.json',) and member.isfile()), 'Unexpected archive root')
-            require(not any(part.startswith('.') or part in ('admin', 'concept') for part in parts), 'Excluded path in archive')
+            require(not any(part.startswith('.') or part in ('admin', 'beheer', 'concept') for part in parts), 'Excluded path in archive')
             if member.isfile():
                 name = str(entry)
                 require(name not in regular, 'Duplicate archive member')

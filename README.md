@@ -1,7 +1,7 @@
-# LBI Installaties — multi-site (Astro + Tailwind + Decap CMS)
+# LBI Installaties — multi-site (Astro + Tailwind + project administration)
 
 One codebase that builds **four separate static websites** from shared components,
-a shared design system and a shared CMS:
+a shared design system and a dedicated client project panel:
 
 | SITE_ID    | Brand                       | Domain                                   |
 | ---------- | --------------------------- | ---------------------------------------- |
@@ -14,27 +14,30 @@ The three microsites carry the subtitle **"Onderdeel van LBI Installaties"** and
 back to the main site, but each is a **standalone website** with its own domain,
 canonical URLs, sitemap and robots.txt. Microsites are **not** canonicalised back to LBI.
 
-- **Stack:** Astro 5 (static output), TypeScript (strict), Tailwind CSS v3, Decap CMS.
-- **No SSR, no database, no server functions.** Pure static HTML per site.
-- **Minimal JavaScript:** one tiny inline analytics-delegation script; menus and FAQ use
-  native `<details>` (no framework).
+- **Stack:** Astro 7.3.8 (static output), TypeScript (strict), Tailwind CSS 4.3.3
+  through its Vite plugin, Sharp 0.35.5, Three.js. The accepted Tailwind 3 reset
+  and color/shadow/radius values remain as static MIT-licensed compatibility CSS.
+- **Public websites:** static HTML per site, with procedural 3D emergency animations.
+- **Client project panel:** separate password-protected Node service, private file
+  storage and explicit rebuild/publication through a separate UID with no network
+  or access to private admin state; no GitHub account required for the client.
+- **Technical content editor:** optional Decap CMS at `/admin/`.
 
-> ⚠️ **This project was scaffolded but NOT built in the authoring environment**
-> (the sandbox had no disk space to run `npm install`). Run the commands below locally;
-> it is written against standard Astro 5 patterns and pinned versions. If anything fails,
-> see **Troubleshooting**.
+Current launch blockers and verified boundaries are in
+[Production readiness](docs/production-readiness.md). The new project panel is
+locally tested; its production service has not been activated.
 
 ---
 
 ## 1. Requirements
 
-- **Node.js ≥ 18.20** (or ≥ 20). Check with `node -v`.
+- **Node.js ≥ 22.12.0**. Check with `node -v`.
 - npm (ships with Node).
 
 ## 2. Install
 
 ```bash
-npm install
+npm ci
 ```
 
 ## 3. Local development
@@ -89,7 +92,7 @@ npm run check:all   # astro check for all four SITE_IDs
   the app and the Node build scripts can read it.
 - **`SITE_ID`** (env var) selects the active site at build time.
   `astro.config.ts` reads it to set `site` (domain) and `outDir` (`dist/<site>`).
-- **`src/pages/[...slug].astro`** is the only route. In `getStaticPaths()` it loads the
+- **`src/pages/[...slug].astro`** routes content pages. In `getStaticPaths()` it loads the
   `pages` content collection and keeps only entries whose `site` matches `SITE_ID` and
   that are not `draft`. The page's `path` frontmatter becomes the URL. A path that does
   not exist for the active site simply isn't generated → the per-site `404.astro` shows.
@@ -100,7 +103,25 @@ npm run check:all   # astro check for all four SITE_IDs
 
 ---
 
-## 7. Editing content in Decap CMS
+## 7. Client project panel
+
+The client adds and edits projects at **`/beheer/projecten/`**, using a separate
+password. A draft save does not publish. Publication preserves other drafts and
+existing repository projects, then updates the LBI homepage and project timeline.
+
+```sh
+npm run build:lbi
+npm run admin:preview    # disposable local preview on port 4335
+npm run test:admin
+```
+
+See [Project administration](docs/project-admin.md) for the local test account,
+client workflow, storage, deployment templates, password rotation and backups.
+The dependency migration and isolated builder passed validation. Production still
+requires installation and verification of the persistent services described in
+the readiness report; do not run the disposable preview on a public host.
+
+## 7a. Technical editing in Decap CMS
 
 The admin UI lives at **`/admin/`** (e.g. `https://www.lbi-helmond.nl/admin/`).
 It edits the markdown/JSON files in this repo through Git.
@@ -160,7 +181,8 @@ Search the repo for `TODO` and `[` placeholders. The important ones:
 - **Projects** — the LBI homepage and `/projecten/` share three projects with real photos
   from `pics/`. Their dates and locations are examples, visibly marked by
   `exampleDetails: true`. Replace these values and turn that flag off when confirmed.
-  Add entries through **Projecten** in the CMS or `src/content/projects/*.md`.
+  Clients add entries through `/beheer/projecten/`; maintainers can also edit
+  `src/content/projects/*.md` or use the technical CMS.
   Published entries require a title, summary, photo, alt text, date and location.
   The timeline sorts by date (newest first); the homepage shows the first three.
   `order` breaks date ties. Drafts stay hidden. The visible description comes from
@@ -215,7 +237,15 @@ and add a `1200×630` `og-default.jpg` per site for social previews.
 Each domain is a separate static deploy of its `dist/<site>` folder. Works on any static
 host (Netlify, Vercel, Cloudflare Pages, or plain hosting / FTP).
 
-### Option A — four Netlify sites (recommended; needed for CMS git-gateway)
+### Hetzner — client project service
+
+The selected hosting target is Hetzner. Public sites remain separate static
+virtual hosts; LBI additionally proxies `/beheer/` to the Node administration
+service. Uploading static HTML alone does not enable project saves or publication.
+Use [Project administration](docs/project-admin.md) and its systemd/Nginx templates
+only after the [production blockers](docs/production-readiness.md) are resolved.
+
+### Alternative — four Netlify sites (CMS git-gateway)
 
 For **each** site create a Netlify site from the same repo with:
 
@@ -266,8 +296,11 @@ No tracking IDs are hardcoded. Every phone/WhatsApp/submit element emits
 
 - **`Cannot find module 'astro:content'` / missing types** → run `npx astro sync`
   (build/dev/check do this automatically).
-- **Tailwind classes not applying** → ensure `tailwindcss@^3` is installed (this project
-  uses the `@astrojs/tailwind` integration, not Tailwind v4).
+- **Tailwind classes not applying** → use the locked Tailwind 4 Vite plugin and
+  `src/styles/global.css`; it loads the legacy reset/tokens and `tailwind.config.mjs`.
+- **Isolated build tries to write into `node_modules/.vite`** → both cache paths
+  must be inside the builder job: `ASTRO_CACHE_DIR` and `LBI_VITE_CACHE_DIR`.
+  The supplied builder sets them; source and dependencies remain read-only.
 - **A page 404s** → check its `path` has a leading **and** trailing slash and that `site`
   matches the build you ran (`SITE_ID`).
 - **Decap can't save `sites.json`** → keep all fields (incl. hidden ones) in the `company`
@@ -279,7 +312,7 @@ No tracking IDs are hardcoded. Every phone/WhatsApp/submit element emits
 src/
   components/    UI building blocks (Header, Footer, Hero, FAQ, SafetyAlert, …)
   config/        sites.json (+ sites.ts), navigation.ts, schema.ts (JSON-LD)
-  content/       pages/<site>/*.md, projects/, reviews/, settings/
+  content/       pages/<site>/*.md, projects/, client-projects/, reviews/, settings/
   content.config.ts   content-collection schemas (zod)
   layouts/       BaseLayout + Home/Page/Service/Emergency/Contact layouts
   lib/           small helpers (settings)
@@ -287,9 +320,10 @@ src/
   styles/        global.css (Tailwind + per-site theme vars)
 public/
   admin/         Decap CMS (index.html + config.yml)
+  beheer/        dedicated client project panel assets
   images/        per-site media folders + placeholder.svg
+server/project-admin/    auth, private records/media and publication service
 scripts/         build-site / build-all / generate-sitemap / generate-robots / check-all
 ```
 
 See **`TEST-CHECKLIST.md`** for a pre-launch QA list.
-```

@@ -29,7 +29,7 @@ const manifest = {
   release,
   createdAt: new Date().toISOString(),
   sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
-  includesWorkingTreeChanges: true,
+  includesWorkingTreeChanges: Boolean(execFileSync('git', ['status', '--porcelain'], { cwd: root, encoding: 'utf8' }).trim()),
   sites: {},
   files: [],
 };
@@ -39,7 +39,7 @@ for (const [id, origin] of Object.entries(config.sites)) {
   let htmlPages = 0;
   for (const full of tree(source)) {
     const relative = path.relative(source, full).split(path.sep).join('/');
-    if (/^(admin|concept)(\/|$)/.test(relative) || relative.split('/').some(part => part.startsWith('.')) || /(^|\/)README\.md$/i.test(relative)) continue;
+    if (/^(admin|beheer|concept)(\/|$)/.test(relative) || relative.split('/').some(part => part.startsWith('.')) || /(^|\/)README\.md$/i.test(relative)) continue;
     const extension = path.extname(full).toLowerCase();
     if (!staticExtensions.has(extension)) throw new Error('Unexpected build file: ' + relative);
     let bytes = fs.readFileSync(full);

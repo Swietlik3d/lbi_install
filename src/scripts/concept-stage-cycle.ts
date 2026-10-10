@@ -3,6 +3,7 @@ export function createStageCycle(advance: () => void) {
   let timer: number | undefined;
   let suspended = false;
   let disposed = false;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function stop() {
     window.clearTimeout(timer);
@@ -11,7 +12,7 @@ export function createStageCycle(advance: () => void) {
 
   function restart() {
     stop();
-    if (disposed || suspended || document.hidden) return;
+    if (disposed || suspended || document.hidden || reducedMotion.matches) return;
     timer = window.setTimeout(() => {
       advance();
       restart();
@@ -21,6 +22,7 @@ export function createStageCycle(advance: () => void) {
   const onPageHide = () => { suspended = true; stop(); };
   const onPageShow = () => { suspended = false; restart(); };
   document.addEventListener("visibilitychange", restart);
+  reducedMotion.addEventListener("change", restart);
   window.addEventListener("pagehide", onPageHide);
   window.addEventListener("pageshow", onPageShow);
   restart();
@@ -31,6 +33,7 @@ export function createStageCycle(advance: () => void) {
       disposed = true;
       stop();
       document.removeEventListener("visibilitychange", restart);
+      reducedMotion.removeEventListener("change", restart);
       window.removeEventListener("pagehide", onPageHide);
       window.removeEventListener("pageshow", onPageShow);
     },

@@ -1,0 +1,10 @@
+# Copy to /etc/tmpfiles.d/lbi-project-builder.conf only after creating:
+#   lbi-project-build (shared submission group)
+#   lbi-project-admin (member of lbi-project-build)
+#   lbi-project-builder (primary group lbi-project-build, no admin group)
+# Then run systemd-tmpfiles --create for this file. The request parent is
+# writable only by admin; builder receives group read/traverse access.
+d /var/spool/lbi-project-builder             0750 lbi-project-admin   lbi-project-build -
+d /var/spool/lbi-project-builder/requests    2750 lbi-project-admin   lbi-project-build -
+d /var/cache/lbi-project-builder             0700 lbi-project-builder lbi-project-build -
+d /var/cache/lbi-project-builder/workspaces  0700 lbi-project-builder lbi-project-build -

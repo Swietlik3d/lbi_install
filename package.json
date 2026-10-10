@@ -22,23 +22,32 @@
     "preview:gas": "cross-env SITE_ID=gas astro preview",
     "check": "cross-env SITE_ID=lbi astro check",
     "check:all": "node scripts/check-all.mjs",
-    "typecheck": "cross-env SITE_ID=lbi astro check"
+    "typecheck": "cross-env SITE_ID=lbi astro check",
+    "admin:start": "node server/project-admin/index.mjs",
+    "admin:builder": "node server/project-admin/builder.mjs",
+    "admin:password": "node scripts/project-admin-password.mjs",
+    "admin:preview": "node scripts/start-project-admin-preview.mjs",
+    "test:admin": "node scripts/test-project-admin.mjs",
+    "test:admin:e2e": "node scripts/test-project-admin-e2e.mjs",
+    "test:admin:builder": "node scripts/test-project-admin-builder.mjs",
+    "test:admin:linux": "node scripts/test-project-admin-builder-linux.mjs",
+    "test:sites": "node scripts/verify-production-sites.mjs"
   },
   "dependencies": {
-    "astro": "^5.7.0",
+    "astro": "7.3.8",
+    "sharp": "0.35.5",
     "three": "^0.180.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/tailwind": "^6.0.2",
-    "@types/node": "^20.17.0",
+    "@astrojs/check": "0.9.10",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "^24.0.0",
     "@types/three": "^0.180.0",
-    "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "4.3.3",
     "typescript": "^5.6.3"
   },
   "engines": {
-    "node": ">=18.20.0"
+    "node": ">=22.12.0"
   }
 }

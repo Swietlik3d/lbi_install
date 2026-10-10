@@ -29,6 +29,7 @@ export function generateSitemap({ distDir, domain }) {
 
   const filtered = routes
     .filter((u) => !u.startsWith("/admin"))
+    .filter((u) => !u.startsWith("/beheer"))
     .filter((u) => !u.startsWith("/404"))
     .sort();
 
@@ -48,7 +49,7 @@ export function generateSitemap({ distDir, domain }) {
 }
 
 // Standalone: `SITE_ID=lbi node scripts/generate-sitemap.mjs`
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const siteId = process.env.SITE_ID || "lbi";
   const sites = readSites();
   const site = sites[siteId];

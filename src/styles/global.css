@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "./tailwind-legacy-preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./tailwind-legacy-tokens.css";
+@config "../../tailwind.config.mjs";
 
 /*
   Per-site theme tokens. The active site sets `data-site` on <html>

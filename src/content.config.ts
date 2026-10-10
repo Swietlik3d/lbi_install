@@ -1,5 +1,8 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 import { glob } from "astro/loaders";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 /**
  * Content collections power every page. The dynamic route src/pages/[...slug].astro
@@ -98,9 +101,7 @@ const pages = defineCollection({
   }),
 });
 
-const projects = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
-  schema: z.object({
+const projectSchema = z.object({
     title: z.string(),
     site: siteEnum.default("lbi"),
     category: z.string().optional(),
@@ -117,13 +118,29 @@ const projects = defineCollection({
     if (project.draft) return;
     for (const field of ["title", "summary", "cover", "coverAlt", "location"] as const) {
       if (!project[field]?.trim()) {
-        context.addIssue({ code: z.ZodIssueCode.custom, path: [field], message: "Required for a published project." });
+        context.addIssue({ code: "custom", path: [field], message: "Required for a published project." });
       }
     }
     if (!project.date) {
-      context.addIssue({ code: z.ZodIssueCode.custom, path: ["date"], message: "Required for a published project." });
+      context.addIssue({ code: "custom", path: ["date"], message: "Required for a published project." });
     }
+  });
+
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+  schema: projectSchema,
+});
+
+// Only published snapshots are supplied by the project service. Editable drafts,
+// password hashes, and uploads are kept outside both the repository and webroot.
+const clientProjects = defineCollection({
+  loader: glob({
+    pattern: "*.md",
+    base: process.env.LBI_CLIENT_PROJECTS_DIR
+      ? pathToFileURL(path.resolve(process.env.LBI_CLIENT_PROJECTS_DIR) + path.sep)
+      : "./src/content/client-projects",
   }),
+  schema: projectSchema,
 });
 
 const reviews = defineCollection({
@@ -154,4 +171,4 @@ const settings = defineCollection({
   }),
 });
 
-export const collections = { pages, projects, reviews, settings };
+export const collections = { pages, projects, clientProjects, reviews, settings };

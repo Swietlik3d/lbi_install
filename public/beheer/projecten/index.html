@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <title>Projecten beheren · LBI Installaties</title>
+  <link rel="stylesheet" href="/beheer/projecten/styles.css">
+  <script type="module" src="/beheer/projecten/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="LBI Installaties — website"><strong>LBI<span>.</span></strong><span>INSTALLATIES<br>PROJECTBEHEER</span></a>
+    <div class="topbar-actions"><a href="/" target="_blank" rel="noopener">Bekijk website <span aria-hidden="true">↗</span></a><button id="logout" class="quiet" hidden>Uitloggen</button></div>
+  </header>
+  <main>
+    <p id="loading" class="loading" role="status">Even laden…</p>
+    <section id="login-view" class="login-card" aria-labelledby="login-title" hidden>
+      <span class="eyebrow">UW WERK. UW VERHAAL.</span>
+      <h1 id="login-title">Welkom terug.</h1>
+      <p>Log in om uw projecten en foto's te beheren.</p>
+      <form id="login-form">
+        <label for="password">Wachtwoord</label>
+        <div class="password-wrap"><input id="password" type="password" autocomplete="current-password" required maxlength="256"><button id="password-toggle" type="button" class="quiet" aria-pressed="false">Toon</button></div>
+        <button class="primary" type="submit">Inloggen <span aria-hidden="true">→</span></button>
+      </form>
+      <p id="login-message" role="status" class="message"></p>
+      <p class="help">Wachtwoord vergeten? Neem contact op met uw websitebeheerder.</p>
+    </section>
+    <section id="workspace" hidden aria-labelledby="workspace-title">
+      <div class="intro"><div><span class="eyebrow">LBI / REALISATIES</span><h1 id="workspace-title">Laat uw werk zien<span>.</span></h1><p>Voeg een project toe. Kies een foto, vertel kort wat u heeft gedaan en publiceer wanneer u klaar bent.</p></div><button id="new-project" class="primary">+ Nieuw project</button></div>
+      <p id="notice" class="notice" role="status" hidden></p>
+      <div class="workspace-grid">
+        <aside class="project-sidebar" aria-labelledby="list-title"><div class="sidebar-heading"><h2 id="list-title">Uw projecten</h2><span id="project-count" class="count">0</span></div><p id="empty-list" class="help">Uw eerste project begint hier. Opgeslagen concepten zijn alleen in dit panel zichtbaar.</p><div id="project-list" class="project-list"></div><p class="sidebar-note">Eerdere projecten op de website blijven behouden. Hier beheert u de projecten die u met dit panel toevoegt.</p></aside>
+        <div class="editor">
+          <div class="editor-heading"><div><span class="eyebrow" id="editor-kicker">NIEUW PROJECT</span><h2 id="editor-title">Van klus naar realisatie.</h2></div><span id="editor-status" class="badge">Concept</span></div>
+          <form id="project-form">
+            <input id="project-id" type="hidden"><input id="cover" type="hidden">
+            <div class="photo-field"><div class="photo-preview"><img id="photo-preview" alt="Gekozen projectfoto" hidden><span id="photo-placeholder" aria-hidden="true">↗</span></div><div><label for="photo">Een foto die het verhaal vertelt</label><p class="help">JPG, PNG of WebP · maximaal 10 MB. De foto wordt automatisch verkleind.</p><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><p id="photo-message" class="help" role="status"></p></div></div>
+            <label for="title">Projectnaam</label><input id="title" maxlength="120" placeholder="Bijvoorbeeld: badkamer met vrijstaand bad">
+            <div class="field-row"><div><label for="category">Soort project</label><select id="category"><option>Badkamer</option><option>Keuken</option><option>Aanbouw</option><option>Renovatie</option><option>Elektra</option><option>Water &amp; leidingen</option><option>Vloeren</option><option>Overig</option></select></div><div><label for="date">Datum van oplevering</label><input id="date" type="date"></div></div>
+            <label for="location">Plaats</label><input id="location" maxlength="120" placeholder="Bijvoorbeeld: Helmond"><p class="help">Gebruik de plaatsnaam; een volledig klantadres is niet nodig.</p>
+            <label for="summary">Korte omschrijving</label><textarea id="summary" rows="3" maxlength="600" placeholder="Wat was de klus en wat maakt het resultaat bijzonder?"></textarea>
+            <label for="coverAlt">Wat is er op de foto te zien?</label><input id="coverAlt" maxlength="240" placeholder="Bijvoorbeeld: lichte badkamer met vrijstaand bad en houten meubel"><p class="help">Deze beschrijving helpt bezoekers die de foto niet kunnen zien.</p>
+            <details class="extra"><summary>Notitie voor uzelf <span class="help">(optioneel)</span></summary><label for="body">Interne notitie</label><textarea id="body" rows="5" maxlength="6000" aria-describedby="body-help"></textarea><p id="body-help" class="help">Deze notitie verschijnt niet op de website. Gebruik de korte omschrijving voor de tekst die bezoekers zien.</p></details>
+            <label class="consent"><input id="photo-consent" type="checkbox"><span>Ik mag deze foto publiceren en de getoonde gegevens zijn juist.</span></label>
+            <div class="form-actions"><p id="save-note" class="help">Een concept is nog niet zichtbaar op de website.</p><div><button id="save-draft" type="submit" class="secondary">Concept opslaan</button><button id="publish-project" type="submit" class="primary">Publiceren <span aria-hidden="true">↗</span></button></div></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>Een kleine stap van uw werk naar uw website. <span>LBI Installaties</span></footer>
+</body>
+</html>

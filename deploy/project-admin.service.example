@@ -1,0 +1,59 @@
+[Unit]
+Description=LBI project administration service
+Requires=lbi-project-builder.service
+After=network.target lbi-project-builder.service
+
+[Service]
+Type=simple
+User=lbi-project-admin
+Group=lbi-project-admin
+SupplementaryGroups=lbi-project-build
+WorkingDirectory=/srv/lbi/source
+EnvironmentFile=/etc/lbi/project-admin.env
+ExecStart=/usr/bin/node /srv/lbi/source/server/project-admin/index.mjs
+Restart=on-failure
+RestartSec=5s
+UMask=0027
+
+# The environment file contains paths/origin, never the admin password:
+# LBI_ADMIN_ORIGIN=https://www.lbi-helmond.nl
+# LBI_ADMIN_DATA_DIR=/var/lib/lbi-project-admin
+# LBI_ADMIN_PUBLISH_ROOT=/srv/lbi/published
+# LBI_ADMIN_SOURCE_DIR=/srv/lbi/source
+# LBI_ADMIN_PORT=4335
+# LBI_ADMIN_BUILDER_SOCKET=/run/lbi-project-builder/builder.sock
+# LBI_ADMIN_BUILDER_REQUEST_DIR=/var/spool/lbi-project-builder/requests
+# Preview deployments only: the file must be a real file below the immutable
+# LBI_ADMIN_SOURCE_DIR/deploy directory. Its LBI origin must exactly equal
+# LBI_ADMIN_ORIGIN. Omit this setting for production publication.
+# LBI_ADMIN_PREVIEW_PROFILE=/srv/lbi/source/deploy/hetzner-preview.json
+#
+# HTTPS refuses to start without both isolated-builder settings. Only public
+# build manifests/Markdown enter requests. Records, drafts, password hashes,
+# media, snapshots, journals, and releases remain inaccessible to the builder.
+
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+ProcSubset=pid
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadOnlyPaths=/srv/lbi/source /run/lbi-project-builder
+ReadWritePaths=/var/lib/lbi-project-admin /srv/lbi/published /var/spool/lbi-project-builder/requests
+InaccessiblePaths=/var/cache/lbi-project-builder
+
+[Install]
+WantedBy=multi-user.target

@@ -3,12 +3,18 @@ dist/
 
 # local preview packages, screenshots, and deployment reports
 /artifacts/
+/.artifacts/
+/.local/
 
 # astro
 .astro/
 
 # dependencies
 node_modules/
+
+# Python helper caches
+__pycache__/
+*.pyc
 
 # logs
 npm-debug.log*

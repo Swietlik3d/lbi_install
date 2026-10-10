@@ -88,8 +88,11 @@ if (needProjects) {
     "projects",
     ({ data }) => data.site === siteId && data.draft !== true
   );
-  projectItems = projects
-    .map((project) => ({ ...project.data, id: project.id }))
+  const clientProjects = siteId === "lbi"
+    ? await getCollection("clientProjects", ({ data }) => data.site === "lbi" && !data.draft)
+    : [];
+  projectItems = [...projects.map((project) => ({ ...project.data, id: project.id })),
+    ...clientProjects.map((project) => ({ ...project.data, id: `client-${project.id}` }))]
     .sort(compareProjects);
 }
 if (needReviews) {

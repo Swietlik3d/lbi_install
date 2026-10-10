@@ -25,7 +25,7 @@ origins in `deploy/hetzner-preview.json`. Source files and production builds kee
 their production URLs. Preview HTML and robots.txt prohibit indexing; the
 existing nginx configuration also sends `X-Robots-Tag`.
 
-Admin files, concept routes, hidden files, and repository source are excluded.
+Admin files (both `/admin/` and `/beheer/`), concept routes, hidden files, and repository source are excluded.
 The public phone, email, and WhatsApp links remain usable. Forms are currently
 disabled in the site configuration.
 
@@ -59,14 +59,71 @@ current paths. For a deliberate rollback, first verify that each current link
 still targets that release, then atomically replace it with its recorded previous
 target and verify the sites again. Do not overwrite a later deployment.
 
-No nginx edits, service restarts, firewall changes, or unrelated application
-changes are required.
+Static updates do not require nginx edits or service restarts. Installing the
+project panel separately changes only the LBI preview vhost and dedicated
+`lbi-preview-*` services; unrelated applications and vhosts stay untouched.
 
 After deployment, verify the public endpoints from the client machine:
 
 ```sh
 node scripts/verify-live-hetzner-preview.mjs
 ```
+
+## Password-protected project panel
+
+The client panel URL is
+https://lbi-preview.178-105-195-84.sslip.io/beheer/projecten/ . It uses a separate
+password, without GitHub or a username. Generate fresh preview access with
+`scripts/prepare-hetzner-preview-access.mjs` only inside a protected, ignored
+local directory. Upload only its scrypt hash to a new root-only staging
+directory; never include the password in Git, shell arguments, logs or public
+packages. Share the local access file with the client separately.
+
+`scripts/preflight-hetzner-preview.py` captures the existing sites and all enabled
+vhost hashes. `scripts/install-hetzner-preview-panel.py prepare` verifies a
+manifest-approved public source archive and installs immutable source/dependencies,
+dedicated users, private state, systemd/tmpfiles and the operator preview profile.
+Nothing is activated or exposed during preparation. Deploy the four validated
+static releases, then run `activate`. Activation verifies loopback availability,
+changes only the backed-up LBI vhost, checks nginx and public HTTPS, and enables
+the two isolated services. A failed activation records guarded recovery status.
+Use the exact static deployment record with `scripts/recover-hetzner-preview.py
+rollback-static` only after stopping the owned panel; it refuses intervening
+releases. Failed preparations preserve dedicated paths for inspection and refuse
+an implicit overwrite.
+
+Preview paths are `/srv/lbi-preview/source-<commit>`,
+`/var/lib/lbi-preview-project-admin`, `/etc/lbi-preview`, and separate builder
+cache/spool/runtime directories. Nginx continues to serve
+`/var/www/strony/lbi/current`, which the panel can replace atomically. The admin
+and builder have separate users; the builder cannot read admin data, credentials,
+published releases or environment and has no network access.
+
+Set `LBI_ADMIN_PREVIEW_PROFILE` to the immutable source's
+`deploy/hetzner-preview.json`. Every panel publication then rewrites all four
+site origins to the preview hosts, validates its canonical URLs, excludes static
+admin routes, and keeps deny-all robots/noindex. Omit this setting for a real
+production-domain installation. Static `YYYYMMDDTHHMMSSZ` release names and
+panel-generated release names must both be supported by guarded rollback and
+crash recovery.
+
+`scripts/test-hetzner-preview-panel-live.mjs` is an explicitly invoked staging
+API test. It creates two marked synthetic records and one photo, publishes one
+project, checks HTTPS authentication/CSRF and the actual public result, and logs
+out. Secrets stay in memory. Afterwards `recover-hetzner-preview.py clean-qa`
+uses the exact QA report and pre-test current release to quarantine only those
+owned records/media/snapshot/release outside the webroot and restore the clean
+static release. Inventory/current drift causes a refusal.
+
+`scripts/backup-hetzner-preview-panel.py backup` briefly stops only the panel and
+copies consistent private records, media, auth hash, current public release and
+configuration into a root-only archive under `/var/backups/lbi-preview`.
+`verify --archive <exact-path> --sha256 <exact-hash>` restores files into an
+isolated scratch directory and checks inventory/hashes, auth record, project
+JSON, image decoding and public entrypoints. It does not switch the live site.
+Keep an additional protected copy off the server. Scheduling, retention,
+ongoing off-server replication and monitoring remain operator tasks before
+production use.
 
 ## Verified release, 2026-09-19
 
@@ -92,3 +149,11 @@ about 72 MB. The deploy script requires at least twice the payload size plus
 256 MiB before staging. This observation is separate from successful website
 checks: the server needs a scoped disk-space investigation. No unrelated data,
 logs, or old releases are deleted by the deployment.
+
+### Capacity recheck, 2026-10-09
+
+A read-only SSH check confirmed 73,901,281,280 bytes (about 68.8 GiB) available
+to ordinary users, active Nginx and the same four `current` release targets.
+The September full-disk observation is no longer a current blocker. No server
+files or services were changed. The new client project panel is still local;
+its requirements are in [Production readiness](production-readiness.md).

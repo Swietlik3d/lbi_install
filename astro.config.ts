@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
+import tailwind from "@tailwindcss/vite";
 import { SITES, resolveSiteId } from "./src/config/sites";
 
 // The active site is selected at build time via the SITE_ID environment
@@ -12,6 +12,7 @@ const activeSite = SITES[siteId];
 export default defineConfig({
   site: activeSite.domain,
   outDir: `./dist/${siteId}`,
+  cacheDir: process.env.ASTRO_CACHE_DIR || "./.astro/cache",
   trailingSlash: "always",
   devToolbar: {
     enabled: false,
@@ -21,12 +22,10 @@ export default defineConfig({
     inlineStylesheets: "auto",
   },
   prefetch: false,
-  integrations: [
-    tailwind({
-      // We import the Tailwind entrypoint ourselves in global.css so we can
-      // add base layers and per-site theme variables.
-      applyBaseStyles: false,
-    }),
-  ],
+  vite: {
+    plugins: [tailwind()],
+    // The isolated builder supplies a cache inside its disposable workspace.
+    cacheDir: process.env.LBI_VITE_CACHE_DIR || "./node_modules/.vite",
+  },
   compressHTML: true,
 });

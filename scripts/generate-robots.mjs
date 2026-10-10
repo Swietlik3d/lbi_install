@@ -12,6 +12,7 @@ export function generateRobots({ distDir, domain }) {
     "User-agent: *",
     "Allow: /",
     "Disallow: /admin/",
+    "Disallow: /beheer/",
     "",
     `Sitemap: ${domain}/sitemap.xml`,
     "",
@@ -22,7 +23,7 @@ export function generateRobots({ distDir, domain }) {
 }
 
 // Standalone: `SITE_ID=lbi node scripts/generate-robots.mjs`
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const siteId = process.env.SITE_ID || "lbi";
   const sites = readSites();
   const site = sites[siteId];
