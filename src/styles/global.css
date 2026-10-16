@@ -1414,6 +1414,9 @@ html[data-site="gas"] {
   }
 
   .lbi-faq {
+    /* Utility text colors resolve these tokens after the component layer. */
+    --ink: 255 255 255;
+    --muted: 202 197 189;
     border-bottom: 1px solid var(--lbi-border);
     background: #0d0d0d;
   }

@@ -1,6 +1,26 @@
 # LBI — gotowość produkcyjna
 
-Stan sprawdzony **10 października 2026, Europe/Berlin**. **Migracja zależności, izolacja buildera i wdrożenie podglądów: PASS.** Kod jest zatwierdzony i wypchnięty. Cztery podglądy Hetznera oraz panel z osobnym hasłem są aktywne; rzeczywiste logowanie/upload/publikacja przez HTTPS i odtworzenie plików kopii przeszły. Dotychczasowa strona pod domeną LBI i DNS pozostają bez przełączenia. Domeny produkcyjne, końcowe dane i stała eksploatacja wymagają domknięcia przed uruchomieniem produkcji. Szczegóły: [wdrożenie 10.10.2026](hetzner-preview-2026-10-10.md).
+Stan domen i instalacji sprawdzony **16 października 2026, 19:03 CEST, Europe/Berlin**. Cztery strony i panel działają pod domeną LBI na istniejącym Hetznerze. DNS, HTTPS, automatyczne odnowienie certyfikatu, logowanie i zachowanie prywatnych danych: **PASS**. Wdrożone źródło obejmuje trzy nowe adresy w konfiguracji i poprawkę kontrastu FAQ; jego manifest opisano poniżej. Wyniki testów aplikacji z 10.10 poniżej są historyczne i nie oznaczają ponownego wykonania pełnej publikacji produkcyjnej.
+
+## Aktywne domeny i kontrola 16.10.2026
+
+| Strona | Adres |
+| --- | --- |
+| LBI | https://www.lbi-helmond.nl/ |
+| Elektra | https://elektra.lbi-helmond.nl/ |
+| Lekkage | https://lekkage.lbi-helmond.nl/ |
+| Gas | https://gas.lbi-helmond.nl/ |
+| Panel projektów | https://www.lbi-helmond.nl/beheer/projecten/ |
+
+- Apex ma A `178.105.195.84`, a `www`, `elektra`, `lekkage`, `gas` mają CNAME do apexu, TTL 600. Brak AAAA. Apex przekierowuje 308 do www z zachowaniem ścieżki i query. MX `0 .` (null MX), Google TXT, CAA i serwery nazw pozostały bez zmian; rekord MX już przed operacją deklarował brak odbioru poczty. Własne tymczasowe rekordy ACME usunięto. Oba autorytatywne DNS: 28 kontroli PASS. Stare cache DNS mogą przejściowo wskazywać poprzedni serwer.
+- Certyfikat obejmuje pięć nazw i jest ważny do 14.01.2027. Certbot ma webroot HTTP dla wszystkich nazw i aktywny timer; próbne odnowienie w staging CA zakończyło się PASS. Zmieniono wyłącznie profil tego certyfikatu.
+- Produkcyjne wydania są w `/var/www/lbi-production/<site>/releases/20261016T165921Z`; cztery stare podglądy zachowano. Panel i izolowany builder używają immutable source `/srv/lbi-preview/source-production-c65279ed82a3d72d`, originu www i produkcyjnego publish root. 175 plików źródła zgadza się z manifestem. Pełny SHA archiwum: `c65279ed82a3d72dd97622a9df5a7a7b972bd49dc5c42fb49bd866596ec9bdec`.
+- Publiczny resolver 1.1.1.1 kieruje na Hetznera; 75 plików HTML/JS/CSS/robots/sitemap ma poprawny SHA przez zweryfikowany TLS. Przekierowania, indeksowalność i odcięcie prywatnych ścieżek: PASS. Odczytowe API HTTPS: logowanie, cookie, istniejący szkic i jego zdjęcie, CSRF, wylogowanie oraz odrzucenie starej sesji: PASS. Nie zapisano ani nie opublikowano projektu klienta.
+- Osiem plików prywatnych, jeden nieopublikowany szkic i trzy zdjęcia zachowano. Spójna kopia `snapshot-20261016T163128Z` ma chroniony egzemplarz poza serwerem; sprawdzenie SHA i odtworzenie plików/JSON/zdjęć: PASS. To nie jest pełne odtworzenie działających usług po utracie hosta. Istniejący skrypt backupu preview nie obejmuje automatycznie nowego produkcyjnego publish root.
+- Build czterech stron i kontrola statyczna: PASS. Sceny 3D niezmienione. QA czterech lokalnych buildów przy 1920×889 i reduced motion: PASS po jednej poprawce kontrastu FAQ. Trzy zdjęcia projektów wczytują się po przewinięciu; pierwszy pełny zrzut ich nie załadował. Nie powtarzano obecnie responsywności ani pomiaru zegara animacji.
+- Końcowo 5038 MiB dostępnego RAM, 62 GB wolnego dysku, load 0.53. Nginx, panel i builder active; builder nadal ma 1.5 GiB RAM, 2 CPU i brak sieci. Sześć pozostałych konfiguracji Nginx oraz cztery wskaźniki preview niezmienione. Dwa zastane błędy backup/restore-check WA Copilot są poza zakresem tej operacji.
+
+Dowody lokalne: [DNS](../artifacts/production-domain-20261016/final-dns.json), [serwer](../artifacts/production-domain-20261016/final-server.json), [HTTPS](../artifacts/production-domain-20261016/faq-repair/https-public-recursive.json), [uwierzytelnienie](../artifacts/production-domain-20261016/auth-readonly.json), [odnowienie TLS](../artifacts/production-domain-20261016/certificate-renewal.json), [QA](../artifacts/production-domain-20261016/browser-qa-report.json), [kopie poza serwerem](../artifacts/production-domain-20261016/offserver-restore.json). Raporty są ignorowane przez Git; nie zawierają hasła klienta. Skrypt pierwotnego rollbacku cutover dotyczył stanu przed DNS i nie powinien być uruchamiany po przełączeniu domen.
 
 ## Migracja bez zmiany wyglądu
 
@@ -57,7 +77,7 @@ Zachowane nieudane przebiegi dokumentują również błędy selektorów i czasow
 
 Wcześniejsze testy przeglądarki panelu z 9.10.2026 obejmowały ekran logowania i formularz z atrapą API w trzech rozdzielczościach. Nie są dowodem produkcyjnego logowania przez przeglądarkę; rzeczywiste uwierzytelnienie i publikację sprawdziły oddzielne testy API/E2E. Procedura: [TEST-CHECKLIST.md](../TEST-CHECKLIST.md).
 
-## Domeny — dostępność rejestracji, DNS i HTTPS
+## Domeny — archiwalna kontrola 10.10.2026
 
 Odczyt **10.10.2026**, według SIDN RDAP. HTTP 404 dla nazwy domeny oznacza status `free` zgodnie z [instrukcją SIDN](https://www.sidn.nl/downloads/1l3dvAfH8Ppqnjl0Y7p0jL/eb1fed1298c825dbca6c0e95c2f9c6aa/RDAP_Manual_v1.3.pdf). Brak DNS sprawdzono oddzielnie; sam brak DNS nie był podstawą oceny dostępności rejestracji.
 
@@ -68,17 +88,17 @@ Odczyt **10.10.2026**, według SIDN RDAP. HTTP 404 dla nazwy domeny oznacza stat
 | `gasleiding-service-helmond.nl` | Wolna, SIDN `free` | 11:21 | Apex/www ENOTFOUND |
 | `lbi-helmond.nl` | Rejestracji nie sprawdzano | 11:12 | Istniejąca strona HTTPS 200; apex `77.111.243.64`, www `142.250.27.121`, poza Hetznerem `178.105.195.84` |
 
-Wynik nie stanowi rezerwacji. Nie zakupiono domen i nie zmieniono DNS. Dowód: [raport domen](../artifacts/production-domain-availability-2026-10-10.json); ponowny odczyt: `node scripts/check-production-domains.mjs`.
+Ten historyczny wynik nie stanowi rezerwacji. Podczas kontroli 10.10 nie zakupiono domen i nie zmieniono DNS. Aktywne domeny po operacji 16.10 opisano wyżej. Dowód archiwalny: [raport domen](../artifacts/production-domain-availability-2026-10-10.json).
 
-## Pozostałe czynności przed uruchomieniem produkcji
+## Pozostałe czynności eksploatacyjne i odbiór klienta
 
-1. **Domeny i HTTPS.** Zarejestrować uzgodnione domeny, zapewnić dostęp do DNS i zabezpieczyć obecną stronę LBI. Sprawdzić rekordy pocztowe, certyfikaty apex/www, przekierowania HTTP→HTTPS→www, cztery virtual hosty oraz canonicale po przełączeniu.
-2. **Docelowe usługi.** Trwałe konta, katalogi, systemd/tmpfiles, Nginx i osobne hasło działają już na preview. HTTPS E2E potwierdził publikację, cookie, Origin/CSRF i wylogowanie. Dla domen produkcyjnych ustawić docelowy origin/vhost/certyfikat i operator profile zgodnie z dokumentacją, przygotować produkcyjne dane dostępu oraz powtórzyć kontrolę HTTPS po przełączeniu. Nginx preview ma limit logowania według rzeczywistego IP; końcowa kontrola potwierdziła osobne UID-y, prywatne uprawnienia i limity buildera.
+1. **Domeny i HTTPS — wykonane 16.10.** Użyto subdomen istniejącej domeny LBI. Nie kupowano trzech odrębnych domen; stare wyniki ich dostępności nie są aktualną ofertą.
+2. **Docelowe usługi — wykonane 16.10.** Produkcyjny origin/vhost/certyfikat i publikowanie są skonfigurowane, hasło zachowano, testy odczytowe HTTPS po przełączeniu mają PASS. Nie publikowano prywatnego szkicu w celu wykonania testu. Pełne E2E publikacji opisane niżej pochodzi z 10.10.
 3. **Eksploatacja.** Spójne prywatne kopie i chronione kopie poza serwerem istnieją; odtworzenie plików pustego panelu oraz dwóch rekordów i zdjęcia QA ma PASS na serwerze i poza nim. Pełny scenariusz klienta na HTTPS staging ma PASS. Pozostają automatyzacja kopii poza serwerem, retencja, monitoring miejsca i odtworzenie całych działających usług po utracie serwera. Rotacja hasła i crash recovery mają testy lokalne; działającego hasła klienta nie rotowano testowo.
 4. **Dane klienta.** Potwierdzić KVK, BTW, adres, kontakt i prawa do zdjęć. Trzy obecne realizacje zawierają oznaczone przykładowe daty/miejscowości; nie przedstawiać ich jako zweryfikowanych. Uzupełnić privacy/cookies o panel, sesję, zdjęcia, logi i uzgodnione przechowywanie danych. Formularze i śledzenie pozostają wyłączone.
 
-## Hetzner — aktywne podglądy
+## Hetzner — archiwalny stan podglądów 10.10.2026
 
 Końcowa kontrola z **10.10.2026** potwierdziła aktywny Nginx i `current` do `20261010T122434Z` dla czterech podglądów. Panel i builder używają kodu `d4d6098c0ec785883331750770d43cd6dbcb7962`, mają active/enabled, a API jest dostępne wyłącznie przez loopback i proxy HTTPS. Wszystkie 175 plików źródła zgadzają się z manifestem. Jedynie vhost LBI otrzymał obsługę panelu; sześć pozostałych konfiguracji zachowało hashe. Testy publikacji i backupu przeszły; dane własnego QA są w prywatnej kwarantannie, aktywny magazyn jest pusty. Wolne miejsce nadal wymaga stałego monitorowania.
 
-Adresy i procedura: [Hetzner client previews](hetzner-preview.md). Faktyczny zakres wdrożenia, kopie i dowody: [raport 10.10.2026](hetzner-preview-2026-10-10.md). To są podglądy klienta z noindex, a przełączenie na domeny produkcyjne pozostaje oddzielną operacją.
+Adresy i procedura: [Hetzner client previews](hetzner-preview.md). Faktyczny zakres starego wdrożenia, kopie i dowody: [raport 10.10.2026](hetzner-preview-2026-10-10.md). Podglądy zachowują noindex. Panel preview od 16.10 przekierowuje do produkcyjnego panelu, a stare API preview zwraca 410.

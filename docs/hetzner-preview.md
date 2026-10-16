@@ -1,5 +1,16 @@
 # Hetzner client previews
 
+**2026-10-16:** the current four sites are now served at
+https://www.lbi-helmond.nl/ and its `elektra`, `lekkage`, `gas` subdomains.
+The panel is https://www.lbi-helmond.nl/beheer/projecten/ with its existing
+password and private draft preserved. The older static previews below remain
+available; their panel redirects to production and the old preview API returns
+410. Production uses separate `/var/www/lbi-production/<site>` roots and
+immutable source `source-production-c65279ed82a3d72d`. See
+[current production evidence](production-readiness.md). The preview deployment
+and backup commands below retain their original preview scope; they are not a
+production updater or a scheduled backup of the new production roots.
+
 The four previews use the existing Hetzner host `178.105.195.84` and separate
 HTTPS virtual hosts. Their URLs do not use the BezwaarPilot domain.
 

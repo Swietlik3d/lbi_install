@@ -23,7 +23,7 @@
   },
   "elektra": {
     "id": "elektra",
-    "domain": "https://www.elektrastoring-helmond.nl",
+    "domain": "https://elektra.lbi-helmond.nl",
     "brandName": "Elektra Storing Helmond",
     "parentBrand": "LBI Installaties",
     "subtitle": "Onderdeel van LBI Installaties",
@@ -45,7 +45,7 @@
   },
   "lekkage": {
     "id": "lekkage",
-    "domain": "https://www.lekkage-reparatie-helmond.nl",
+    "domain": "https://lekkage.lbi-helmond.nl",
     "brandName": "Lekkage Reparatie Helmond",
     "parentBrand": "LBI Installaties",
     "subtitle": "Onderdeel van LBI Installaties",
@@ -67,7 +67,7 @@
   },
   "gas": {
     "id": "gas",
-    "domain": "https://www.gasleiding-service-helmond.nl",
+    "domain": "https://gas.lbi-helmond.nl",
     "brandName": "Gasleiding Service Helmond",
     "parentBrand": "LBI Installaties",
     "subtitle": "Onderdeel van LBI Installaties",
